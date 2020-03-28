@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <script type="text/javascript" src="elm.js"></script>
 
@@ -15,8 +16,17 @@
 <body>
 <div id="app"></div>
 <script>
-    var app = Elm.Main.init({node: document.getElementById('app')})
-    // you can use ports and stuff here
+    var app = Elm.Main.init(
+        {node: document.getElementById('app')}
+    );
+    var ws = new WebSocket("wss://localhost:8080");
+    ws.onmessage = function (message) {
+        console.log(message);
+        app.ports.websocketIn.send(JSON.stringify({data: message.data, timeStamp: message.timeStamp}));
+    };
+    app.ports.websocketOut.subscribe(function (msg) {
+        ws.send(msg);
+    });
 </script>
 </body>
 </html>

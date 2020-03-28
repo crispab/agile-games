@@ -1,7 +1,21 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Browser
 import Html exposing (Html, div, text)
+
+
+
+-- JavaScript usage: app.ports.websocketIn.send(response);
+
+
+port websocketIn : (String -> msg) -> Sub msg
+
+
+
+-- JavaScript usage: app.ports.websocketOut.subscribe(handler);
+
+
+port websocketOut : String -> Cmd msg
 
 
 main =
@@ -14,11 +28,12 @@ main =
 
 
 type Msg
-    = NoOp
+    = WebsocketIn String
+    | Submit String
 
 
 type alias Model =
-    { hello : String
+    { message : String
     }
 
 
@@ -29,7 +44,7 @@ init _ =
 
 initialModel : Model
 initialModel =
-    { hello = "Hello World" }
+    { message = "Hello World" }
 
 
 
@@ -39,8 +54,13 @@ initialModel =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoOp ->
-            ( { model | hello = "Hello" }, Cmd.none )
+        WebsocketIn message ->
+            ( { model | message = message }, Cmd.none )
+
+        Submit value ->
+            ( model
+            , websocketOut value
+            )
 
 
 
@@ -50,7 +70,7 @@ update msg model =
 view : Model -> Html Msg
 view model =
     div []
-        [ text model.hello ]
+        [ text model.message ]
 
 
 
@@ -58,5 +78,5 @@ view model =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.none
+subscriptions _ =
+    websocketIn WebsocketIn
