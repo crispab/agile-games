@@ -2,9 +2,16 @@ plugins {
     id "net.ltgt.apt-eclipse" version "0.21"
     id "com.github.johnrengelman.shadow" version "5.2.0"
     id "application"
+    id "org.mohme.gradle.elm-plugin" version "4.0.1"
 }
 
-
+elm {
+    buildDir = file("src/main/resources/static")
+    sourceDir = file("src/main/elm/src")
+    executionDir = "src/main/elm"
+    executable = org.mohme.gradle.Executable.Provided.INSTANCE
+    debug = true
+}
 
 version "0.1"
 group "agile.games"
