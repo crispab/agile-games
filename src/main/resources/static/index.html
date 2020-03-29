@@ -19,12 +19,17 @@
     var app = Elm.Main.init(
         {node: document.getElementById('app')}
     );
-    var ws = new WebSocket("wss://localhost:8080");
+    var host = location.hostname + ":" + location.port;
+    var ws = new WebSocket("ws://" + host + "/ws/chat/atopic/auser");
+    //var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/ws/chat/" + hash[1] + "/" + hash[2]);
     ws.onmessage = function (message) {
         console.log(message);
-        app.ports.websocketIn.send(JSON.stringify({data: message.data, timeStamp: message.timeStamp}));
+        const jsonString = JSON.stringify({data: message.data, timeStamp: Date.now()});
+        console.log(jsonString);
+        app.ports.websocketIn.send(jsonString);
     };
     app.ports.websocketOut.subscribe(function (msg) {
+        console.log(msg);
         ws.send(msg);
     });
 </script>

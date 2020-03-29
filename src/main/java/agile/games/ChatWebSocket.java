@@ -7,19 +7,24 @@ import io.micronaut.websocket.annotation.OnMessage;
 import io.micronaut.websocket.annotation.OnOpen;
 import io.micronaut.websocket.annotation.ServerWebSocket;
 import org.reactivestreams.Publisher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.Predicate;
 
 @ServerWebSocket("/ws/chat/{topic}/{username}")
 public class ChatWebSocket {
+    private static final Logger LOG = LoggerFactory.getLogger(ChatWebSocket.class);
+
     private WebSocketBroadcaster broadcaster;
-    
+
     public ChatWebSocket(WebSocketBroadcaster broadcaster) {
         this.broadcaster = broadcaster;
     }
 
     @OnOpen
     public Publisher<String> onOpen(String topic, String username, WebSocketSession session) {
+        LOG.info("Joiner {}", session.getId());
         String msg = "[" + username + "] Joined!";
         return broadcaster.broadcast(msg, isValid(topic));
     }
