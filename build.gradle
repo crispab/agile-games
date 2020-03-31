@@ -23,7 +23,10 @@ repositories {
 
 configurations {
     // for dependencies that are needed for development only
-    developmentOnly 
+    developmentOnly
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
 }
 
 dependencies {
@@ -44,6 +47,9 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api"
     testImplementation "io.micronaut.test:micronaut-test-junit5"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+    testRuntimeOnly "org.junit.jupiter:junit-vintage-engine"
+    testImplementation 'io.cucumber:cucumber-java:5.5.0'
+    testImplementation "de.monochromata.cucumber:reporting-plugin:4.0.37"
 }
 
 test.classpath += configurations.developmentOnly
@@ -65,4 +71,15 @@ shadowJar {
 tasks.withType(JavaExec) {
     classpath += configurations.developmentOnly
     jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote')
+}
+
+task cucumber() {
+    dependsOn assemble, compileTestJava
+    doLast {
+        javaexec {
+            main = "io.cucumber.core.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = ['--plugin', 'html:cucumber-html', '--plugin','de.monochromata.cucumber.report.PrettyReports:pretty-cucumber', '--glue', 'agile/games', 'src/test/resources']
+        }
+    }
 }
