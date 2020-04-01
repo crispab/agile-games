@@ -5,7 +5,6 @@ Feature: Game Execution of Tap the Shoulder
 
   Scenario: A player gets immediately a third target, the starting point
     Given a player at position 3,8
-    And the player moves in direction "right"
     Then the player has end goal to reach 3,8
 
   Scenario: When the facilitator starts the assignment, players gets two other players as goal
