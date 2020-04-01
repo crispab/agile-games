@@ -11,6 +11,7 @@ public class GameSession {
     private static final Logger LOG = LoggerFactory.getLogger(GameSession.class);
 
     private GamePhase gamePhase;
+    private Map<UserId, User> users = new HashMap<>();
     private Map<PlayerId, Player> players = new HashMap<>();
     private Board board;
 
@@ -23,7 +24,9 @@ public class GameSession {
         this.board = new Board(x, y);
     }
 
-    public PlayerId addPlayer() {
+    public PlayerId addPlayer(UserId userId) {
+        User user = findUserById(userId);
+        user.setAsPlayer();
         Player player = new Player(0, 0, board);
         players.put(player.getId(), player);
         return player.getId();
@@ -68,6 +71,12 @@ public class GameSession {
         emit(GameEvent.NEW_PLAYER_STATE);
     }
 
+    public UserId newUser() {
+        User user = new User();
+        users.put(user.getUserId(), user);
+        return user.getUserId();
+    }
+
     private void emit(GameEvent gameEvent) {
         LOG.info("Emitted event {}", gameEvent);
         switch (gameEvent) {
@@ -89,5 +98,17 @@ public class GameSession {
             }
         }
         emit(GameEvent.GAME_OVER);
+    }
+
+    public void setFacilitator(UserId userId) {
+        findUserById(userId).setAsFacilitator();
+    }
+
+    public UserRole getUserRole(UserId userId) {
+        return findUserById(userId).getUserRole();
+    }
+
+    private User findUserById(UserId userId) {
+        return users.get(userId);
     }
 }

@@ -1,9 +1,6 @@
 package agile.games;
 
-import agile.games.tts.GamePhase;
-import agile.games.tts.GameSession;
-import agile.games.tts.PlayerId;
-import agile.games.tts.PlayerState;
+import agile.games.tts.*;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -16,11 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class GameFlowSteps {
 
     private GameSession gameSession;
-
-    @Then("the game is in phase {string}")
-    public void theGameIsInPhase(String phase) {
-        assertEquals(GamePhase.valueOf(phase.toUpperCase()), gameSession.getGamePhase());
-    }
+    private UserId userId;
 
     @Given("a game is in phase {string}")
     public void aGameInPhase(String phase) {
@@ -31,6 +24,11 @@ public class GameFlowSteps {
     @When("the facilitator starts the assignments")
     public void theFacilitatorStartsTheAssignments() {
         gameSession.assignTargets();
+    }
+
+    @Then("the game is in phase {string}")
+    public void theGameIsInPhase(String phase) {
+        assertEquals(GamePhase.valueOf(phase.toUpperCase()), gameSession.getGamePhase());
     }
 
     @When("the facilitator starts the game")
@@ -49,7 +47,37 @@ public class GameFlowSteps {
     @And("there are {int} players in the game")
     public void thereArePlayersInTheGame(int noPlayers) {
         for (int n = 0; n < noPlayers; n++) {
-            gameSession.addPlayer();
+            gameSession.addPlayer(gameSession.newUser());
         }
+    }
+
+    @Given("a user")
+    public void aUser() {
+        userId = getGameSession().newUser();
+    }
+
+    @When("the user chose to facilitate a game")
+    public void theUserChoseToFacilitateAGame() {
+        getGameSession().setFacilitator(userId);
+    }
+
+    @And("the user gets the role {string}")
+    public void theUserGetsTheRole(String roleName) {
+        UserRole expectedRole = UserRole.valueOf(roleName.toUpperCase());
+        UserRole hasRole = getGameSession().getUserRole(userId);
+        assertEquals(expectedRole, hasRole);
+    }
+
+    @When("the user chose to join the game")
+    public void theUserChoseToJoinTheGame() {
+        getGameSession().addPlayer(userId);
+    }
+
+
+    private GameSession getGameSession() {
+        if (gameSession == null) {
+            gameSession = new GameSession();
+        }
+        return gameSession;
     }
 }

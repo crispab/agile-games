@@ -1,7 +1,5 @@
 package agile.games.tts;
 
-import java.util.UUID;
-
 class Player {
     private final PlayerId id;
     private final Board board;
@@ -9,7 +7,7 @@ class Player {
     private PlayerPosition position;
 
     public Player(int x, int y, Board board) {
-        this.id = new PlayerId(UUID.randomUUID().toString());
+        this.id = new PlayerId();
         this.position = new PlayerPosition(x, y);
         this.board = board;
         this.state = PlayerState.INTIAL;
@@ -20,7 +18,7 @@ class Player {
     }
 
     public Player setX(int x) {
-        if(x > 0 && x < board.getX()) {
+        if (x > 0 && x < board.getX()) {
             this.position = new PlayerPosition(x, getY());
         }
         return this;
@@ -31,7 +29,7 @@ class Player {
     }
 
     public void setY(int y) {
-        if(y > 0 && y < board.getY()) {
+        if (y > 0 && y < board.getY()) {
             this.position = new PlayerPosition(getX(), y);
         }
     }
@@ -49,7 +47,7 @@ class Player {
     }
 
     public void move(Direction direction) {
-        switch (direction){
+        switch (direction) {
             case UP:
                 setY(this.getY() - 1);
                 break;

@@ -6,6 +6,18 @@ Feature: Game Flow for Tap the Shoulder
   their starting position. When all are done, the reporting phase is the end where the summary
   is available
 
+  Scenario: Facilitator creates a new game
+    Given a user
+    When the user chose to facilitate a game
+    Then the game is in phase "gathering"
+    And the user gets the role "facilitator"
+
+  Scenario: Player joins a game
+    Given a game is in phase "gathering"
+    And a user
+    When the user chose to join the game
+    Then the user gets the role "player"
+
   Scenario: Facilitator starts the assignment
     Given a game is in phase "gathering"
     When the facilitator starts the assignments

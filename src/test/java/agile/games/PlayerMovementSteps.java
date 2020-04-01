@@ -20,7 +20,7 @@ public class PlayerMovementSteps {
 
     @And("a player on position {int},{int}")
     public void aPlayerOnPosition(int x, int y) {
-        playerId = gameSession.addPlayer();
+        playerId = gameSession.addPlayer(gameSession.newUser());
         gameSession.placePlayerAt(playerId, x, y);
     }
 
