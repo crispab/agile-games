@@ -71,10 +71,6 @@ class Player {
         this.position = position;
     }
 
-    public void moveTo(int x, int y) {
-        board.movePlayerTo(x, y, this);
-    }
-
     public PlayerPosition getEndGoal() {
         return endGoal;
     }
