@@ -1,3 +1,4 @@
+@1.0
 Feature: Game Flow for Tap the Shoulder
   The game has the following phases: gathering, assignment, executing and reporting.
   During the gathering, the game waits for the players to gather. When enough have gathered,

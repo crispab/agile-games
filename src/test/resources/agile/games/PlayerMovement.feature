@@ -1,3 +1,4 @@
+@1.0
 Feature: Player movement rules
   A game that is on phase execution allows the player to move across the board.
   The player can not move off the board or move to a square that is occupied by
