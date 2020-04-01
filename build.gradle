@@ -80,7 +80,7 @@ task cucumber() {
         javaexec {
             main = "io.cucumber.core.cli.Main"
             classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
-            args = ['--plugin', 'de.monochromata.cucumber.report.PrettyReports:build/pretty-cucumber', '--glue', 'agile/games', 'src/test/resources']
+            args = [' --strict', '--plugin', 'de.monochromata.cucumber.report.PrettyReports:build/pretty-cucumber', '--glue', 'agile/games', 'src/test/resources']
         }
     }
 }
