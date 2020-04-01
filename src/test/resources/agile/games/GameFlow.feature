@@ -8,10 +8,10 @@ Feature: Game Flow for Tap the Shoulder
   is available
 
   Scenario: Facilitator creates a new game
-    Given a user
+    Given a game is in phase "gathering"
+    And a user
     When the user chose to facilitate a game
-    Then the game is in phase "gathering"
-    And the user gets the role "facilitator"
+    Then the user gets the role "facilitator"
 
   Scenario: Player joins a game
     Given a game is in phase "gathering"

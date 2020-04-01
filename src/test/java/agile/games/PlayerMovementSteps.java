@@ -1,45 +1,40 @@
 package agile.games;
 
 import agile.games.tts.Direction;
-import agile.games.tts.GameSession;
-import agile.games.tts.PlayerId;
 import agile.games.tts.PlayerPosition;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
+import static agile.games.GameStepUtilities.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PlayerMovementSteps {
-    private GameSession gameSession;
-    private PlayerId playerId;
+public class PlayerMovementSteps  {
 
     @Given("a board with dimensions {int},{int}")
-    public void aBoardWithDimensions(int x, int y) {
-        gameSession = new GameSession(x, y);
+    public void aBoardWithDimensions(int width, int height) {
+        createGameSession(width, height);
     }
 
     @And("a player at position {int},{int}")
     public void aPlayerOnPosition(int x, int y) {
-        playerId = gameSession.addPlayer(gameSession.newUser());
-        gameSession.placePlayerAt(playerId, x, y);
+        playerId = getGameSession().addPlayerAt(getGameSession().newUser(), x, y);
     }
 
     @And("another player at position {int},{int}")
     public void anotherPlayerOnPosition(int x, int y) {
-        PlayerId anotherPlayerId = gameSession.addPlayer(gameSession.newUser());
-        gameSession.placePlayerAt(anotherPlayerId, x, y);
+       getGameSession().addPlayerAt(getGameSession().newUser(), x, y);
     }
 
     @When("the player moves in direction {string}")
     public void thePlayerMovesInDirectionUp(String direction) {
-        gameSession.movePlayer(playerId, Direction.valueOf(direction.toUpperCase()));
+        getGameSession().movePlayer(playerId, Direction.valueOf(direction.toUpperCase()));
     }
 
     @Then("the player is on position {int},{int}")
     public void thePlayerIsOnPosition(int x, int y) {
-        PlayerPosition playerPosition = gameSession.getPlayerPosition(playerId);
+        PlayerPosition playerPosition = getGameSession().getPlayerPosition(playerId);
         assertEquals(x, playerPosition.getX());
         assertEquals(y, playerPosition.getY());
     }

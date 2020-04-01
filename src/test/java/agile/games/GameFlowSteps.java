@@ -8,46 +8,45 @@ import io.cucumber.java.en.When;
 
 import java.util.Set;
 
+import static agile.games.GameStepUtilities.getGameSession;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GameFlowSteps {
+public class GameFlowSteps  {
 
-    private GameSession gameSession;
     private UserId userId;
 
     @Given("a game is in phase {string}")
     public void aGameInPhase(String phase) {
-        gameSession = new GameSession();
-        gameSession.setGamePhase(GamePhase.valueOf(phase.toUpperCase()));
+        getGameSession().setGamePhase(GamePhase.valueOf(phase.toUpperCase()));
     }
 
     @When("the facilitator starts the assignments")
     public void theFacilitatorStartsTheAssignments() {
-        gameSession.assignTargets();
+        getGameSession().assignTargets();
     }
 
     @Then("the game is in phase {string}")
     public void theGameIsInPhase(String phase) {
-        assertEquals(GamePhase.valueOf(phase.toUpperCase()), gameSession.getGamePhase());
+        assertEquals(GamePhase.valueOf(phase.toUpperCase()), getGameSession().getGamePhase());
     }
 
     @When("the facilitator starts the game")
     public void theFacilitatorStartsTheGame() {
-        gameSession.start();
+        getGameSession().start();
     }
 
     @When("all players of the game has reached their end goal")
     public void allPlayersOfTheGameHasReachedTheirEndGoal() {
-        Set<PlayerId> players = gameSession.getPlayers();
+        Set<PlayerId> players = getGameSession().getPlayers();
         for (PlayerId player : players) {
-            gameSession.setPlayerState(player, PlayerState.DONE);
+            getGameSession().setPlayerState(player, PlayerState.DONE);
         }
     }
 
     @And("there are {int} players in the game")
     public void thereArePlayersInTheGame(int noPlayers) {
         for (int n = 0; n < noPlayers; n++) {
-            gameSession.addPlayer(gameSession.newUser());
+            getGameSession().addPlayer(getGameSession().newUser());
         }
     }
 
@@ -73,11 +72,4 @@ public class GameFlowSteps {
         getGameSession().addPlayer(userId);
     }
 
-
-    private GameSession getGameSession() {
-        if (gameSession == null) {
-            gameSession = new GameSession();
-        }
-        return gameSession;
-    }
 }
