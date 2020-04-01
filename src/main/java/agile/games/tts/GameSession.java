@@ -51,7 +51,7 @@ public class GameSession {
     }
 
     public void placePlayerAt(PlayerId playerId, int x, int y) {
-        players.get(playerId).setX(x).setY(y);
+        players.get(playerId).moveTo(x, y);
     }
 
     public void movePlayer(PlayerId playerId, Direction direction) {

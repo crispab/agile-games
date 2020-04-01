@@ -1,6 +1,9 @@
 package agile.games;
 
-import agile.games.tts.*;
+import agile.games.tts.Direction;
+import agile.games.tts.GameSession;
+import agile.games.tts.PlayerId;
+import agile.games.tts.PlayerPosition;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -12,16 +15,21 @@ public class PlayerMovementSteps {
     private GameSession gameSession;
     private PlayerId playerId;
 
-
     @Given("a board with dimensions {int},{int}")
     public void aBoardWithDimensions(int x, int y) {
         gameSession = new GameSession(x, y);
     }
 
-    @And("a player on position {int},{int}")
+    @And("a player at position {int},{int}")
     public void aPlayerOnPosition(int x, int y) {
         playerId = gameSession.addPlayer(gameSession.newUser());
         gameSession.placePlayerAt(playerId, x, y);
+    }
+
+    @And("another player at position {int},{int}")
+    public void anotherPlayerOnPosition(int x, int y) {
+        PlayerId anotherPlayerId = gameSession.addPlayer(gameSession.newUser());
+        gameSession.placePlayerAt(anotherPlayerId, x, y);
     }
 
     @When("the player moves in direction {string}")
@@ -34,9 +42,5 @@ public class PlayerMovementSteps {
         PlayerPosition playerPosition = gameSession.getPlayerPosition(playerId);
         assertEquals(x, playerPosition.getX());
         assertEquals(y, playerPosition.getY());
-    }
-
-    public GameSession getGameSession() {
-        return gameSession;
     }
 }

@@ -8,8 +8,8 @@ class Player {
 
     public Player(int x, int y, Board board) {
         this.id = new PlayerId();
-        this.position = new PlayerPosition(x, y);
         this.board = board;
+        board.movePlayerTo(x, y, this);
         this.state = PlayerState.INTIAL;
     }
 
@@ -17,21 +17,8 @@ class Player {
         return position.getX();
     }
 
-    public Player setX(int x) {
-        if (x > 0 && x < board.getX()) {
-            this.position = new PlayerPosition(x, getY());
-        }
-        return this;
-    }
-
     public int getY() {
         return position.getY();
-    }
-
-    public void setY(int y) {
-        if (y > 0 && y < board.getY()) {
-            this.position = new PlayerPosition(getX(), y);
-        }
     }
 
     public void setState(PlayerState state) {
@@ -49,16 +36,16 @@ class Player {
     public void move(Direction direction) {
         switch (direction) {
             case UP:
-                setY(this.getY() - 1);
+                board.movePlayerTo(this.getX(), this.getY() - 1, this);
                 break;
             case DOWN:
-                setY(this.getY() + 1);
+                board.movePlayerTo(this.getX(), this.getY() + 1, this);
                 break;
             case RIGHT:
-                setX(this.getX() + 1);
+                board.movePlayerTo((this.getX() + 1), this.getY(), this);
                 break;
             case LEFT:
-                setX(this.getX() - 1);
+                board.movePlayerTo((this.getX() - 1), this.getY(), this);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + direction);
@@ -72,5 +59,9 @@ class Player {
 
     public void setPosition(PlayerPosition position) {
         this.position = position;
+    }
+
+    public void moveTo(int x, int y) {
+        board.movePlayerTo(x, y, this);
     }
 }
