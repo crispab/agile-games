@@ -33,4 +33,9 @@ public class PlayerPosition {
         return Objects.hash(x, y);
     }
 
+    public int distance(PlayerPosition position) {
+        int xdist = Math.abs(position.x - this.x);
+        int ydist = Math.abs(position.y - this.y);
+        return xdist + ydist;
+    }
 }

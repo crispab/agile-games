@@ -2,14 +2,15 @@ package agile.games;
 
 import agile.games.tts.PlayerId;
 import agile.games.tts.PlayerPosition;
+import agile.games.tts.PlayerState;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 
 import static agile.games.GameStepUtilities.getGameSession;
 import static agile.games.GameStepUtilities.playerId;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static agile.games.tts.PlayerState.DONE;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GameExecution {
 
@@ -39,5 +40,35 @@ public class GameExecution {
         PlayerId goal2 = getGameSession().getPlayerGoal2(player);
         assertTrue(target1.equals(goal1) || target2.equals(goal1));
         assertTrue(target1.equals(goal2) || target2.equals(goal2));
+    }
+
+    @And("has as a first goal a player at position {int},{int}")
+    public void hasAsAFirstGoalAPlayerAtPosition(int x, int y) {
+        PlayerId targetId = getGameSession().addPlayerAt(getGameSession().newUser(), x, y);
+        getGameSession().setPlayerGoal1(playerId, targetId);
+    }
+
+    @And("has as a second goal a player at position {int},{int}")
+    public void hasAsASecondGoalAPlayerAtPosition(int x, int y) {
+        PlayerId targetId = getGameSession().addPlayerAt(getGameSession().newUser(), x, y);
+        getGameSession().setPlayerGoal2(playerId, targetId);
+    }
+
+    @Then("the player has reached the first goal")
+    public void thePlayerHasReachedTheFirstGoal() {
+        PlayerId playerGoal1 = getGameSession().getPlayerGoal1(playerId);
+        assertNull(playerGoal1);
+    }
+
+    @And("the player has reached the second goal")
+    public void thePlayerHasReachedTheSecondGoal() {
+        PlayerId playerGoal2 = getGameSession().getPlayerGoal2(playerId);
+        assertNull(playerGoal2);
+    }
+
+    @Then("the player is done")
+    public void thePlayerIsDone() {
+        PlayerState playerState = getGameSession().getPlayerState(playerId);
+        assertEquals(DONE, playerState);
     }
 }

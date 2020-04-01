@@ -14,7 +14,7 @@ class Player {
         this.id = new PlayerId();
         this.board = board;
         board.movePlayerTo(x, y, this);
-        this.state = PlayerState.INTIAL;
+        this.state = PlayerState.INITIAL;
         this.endGoal = position;
         this.name = name;
     }
@@ -89,5 +89,17 @@ class Player {
 
     public void setGoal2(PlayerId goal2) {
         this.goal2 = goal2;
+    }
+
+    public boolean isTargetingGoal1() {
+        return this.goal1 != null;
+    }
+
+    public boolean isTargetingGoal2() {
+        return !isTargetingGoal1() && this.getGoal2() != null;
+    }
+
+    public boolean isTargetingEndGoal() {
+        return !isTargetingGoal1() && !isTargetingGoal2();
     }
 }
