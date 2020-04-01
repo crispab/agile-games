@@ -1,3 +1,4 @@
+@1.0
 Feature: Game Execution of Tap the Shoulder
   The game has an execution phase where each player has three objectives to reach, a first
   player and second player to tap on the shoulder and finally return to their starting position.
