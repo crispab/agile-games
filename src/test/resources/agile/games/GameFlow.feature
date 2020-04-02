@@ -1,17 +1,24 @@
 @1.0
-Feature: Game Flow for Tap the Shoulder
-  The game has the following phases: gathering, assignment, executing and reporting.
-  During the gathering, the game waits for the players to gather. When enough have gathered,
-  the assignment takes place where each player is assigned two other players as their targets.
-  The execution phase begins next and the players try to reach their targets and return to
-  their starting position. When all are done, the reporting phase is the end where the summary
-  is available
+Feature: Game Flow
+  The game has the following phases: gathering, assignment, executing and reporting. A game
+  is created when someone chose to facilitate. The game starts in phase gathering.
+  During the gathering, the game waits for the players to gather.
+
+  The facilitator decides when enough have gathered by initiating assignment.
+  where the game assigns each player two other players as their goals.
+
+  On the initiative of the facilitator, the execution phase is started.
+  The execution phase is when the players try to reach their targets and return to
+  their starting position.
+
+  When all players are done, the game automatically enters the reporting phase
+  and the summary report is available.
 
   Scenario: Facilitator creates a new game
-    Given a game is in phase "gathering"
-    And a user
+    Given a user
     When the user chose to facilitate a game
     Then the user gets the role "facilitator"
+    And the game is in phase "gathering"
 
   Scenario: Player joins a game
     Given a game is in phase "gathering"

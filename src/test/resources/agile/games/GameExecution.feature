@@ -1,5 +1,5 @@
 @1.0
-Feature: Game Execution of Tap the Shoulder
+Feature: Game Execution
   The game has an execution phase where each player has three goals to reach, a first
   player and second player to tap on the shoulder and finally return to their starting
   position. The players are assigned their goals during the assignment phase.
