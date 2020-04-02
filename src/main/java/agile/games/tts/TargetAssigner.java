@@ -17,22 +17,28 @@ public class TargetAssigner {
             for (int attempts = 0; attempts <= MAX_ATTEMPTS; attempts++) {
                 Player target1 = pickRandomlyFromList(random, playerList);
                 if (!target1.getId().equals(player.getId())) {
-                    player.setGoal1(target1.getId());
+                    assignGoal1(player, target1.getId());
                     break;
                 }
             }
             for (int attempts = 0; attempts <= MAX_ATTEMPTS; attempts++) {
                 Player target2 = pickRandomlyFromList(random, playerList);
                 if (!target2.getId().equals(player.getId()) && !target2.getId().equals(player.getGoal1())) {
-                    player.setGoal2(target2.getId());
+                    assignGoal2(player, target2.getId());
                     break;
                 }
             }
         }
     }
 
+    public static void assignGoal1(Player player, PlayerId goal) {
+        player.setGoal1(goal);
+    }
+    public static void assignGoal2(Player player, PlayerId goal) {
+        player.setGoal2(goal);
+    }
+
     private static Player pickRandomlyFromList(Random random, List<Player> playerList) {
         return playerList.get(random.nextInt(playerList.size()));
-
     }
 }

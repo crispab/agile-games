@@ -45,28 +45,24 @@ public class GameExecution {
         assertTrue(target1.equals(goal2) || target2.equals(goal2));
     }
 
-    @And("has as a first goal a player at position {int},{int}")
-    public void hasAsAFirstGoalAPlayerAtPosition(int x, int y) {
-        PlayerId targetId = getGameSession().addPlayerAt(getGameSession().newUser(), x, y);
-        getGameSession().setPlayerGoal1(playerId, targetId);
-    }
-
-    @And("has as a second goal a player at position {int},{int}")
-    public void hasAsASecondGoalAPlayerAtPosition(int x, int y) {
-        PlayerId targetId = getGameSession().addPlayerAt(getGameSession().newUser(), x, y);
-        getGameSession().setPlayerGoal2(playerId, targetId);
+    @And("player named {string} is assigned the two goals {string} and {string}")
+    public void playerNamedIsAssignedTwoGoalsAnd(String playerName, String targetName1, String targetName2) {
+        PlayerId playerId = getGameSession().findPlayerByName(playerName);
+        PlayerId target1 = getGameSession().findPlayerByName(targetName1);
+        PlayerId target2 = getGameSession().findPlayerByName(targetName2);
+        getGameSession().setPlayerGoals(playerId, target1, target2);
     }
 
     @Then("the player has reached the first goal")
     public void thePlayerHasReachedTheFirstGoal() {
         PlayerId playerGoal1 = getGameSession().getPlayerGoal1(playerId);
-        assertNull(playerGoal1);
+        assertNull(playerGoal1, "Player has not reached goal 1.");
     }
 
     @And("the player has reached the second goal")
     public void thePlayerHasReachedTheSecondGoal() {
         PlayerId playerGoal2 = getGameSession().getPlayerGoal2(playerId);
-        assertNull(playerGoal2);
+        assertNull(playerGoal2, "Player has not reached goal 2.");
     }
 
     @Then("the player is done")

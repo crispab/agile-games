@@ -26,9 +26,9 @@ public class GameSession {
         addPlayerAt("test", userId);
     }
 
-    public PlayerId addPlayerAt(String name, UserId userId) {
+    public void addPlayerAt(String name, UserId userId) {
         PlayerPosition p = board.getRandomFreeSquare();
-        return addPlayerAt(name, userId, p.getX(), p.getY());
+        addPlayerAt(name, userId, p.getX(), p.getY());
     }
 
     public PlayerId addPlayerAt(UserId userId, int x, int y) {
@@ -96,6 +96,11 @@ public class GameSession {
     public void setPlayerState(PlayerId playerId, PlayerState playerState) {
         findPlayerById(playerId).setState(playerState);
         emit(GameEvent.NEW_PLAYER_STATE);
+    }
+
+    public void setPlayerGoals(PlayerId playerId, PlayerId goal1, PlayerId goal2) {
+        TargetAssigner.assignGoal1(findPlayerById(playerId), goal1);
+        TargetAssigner.assignGoal2(findPlayerById(playerId), goal2);
     }
 
     public UserId newUser() {
@@ -200,16 +205,6 @@ public class GameSession {
     public PlayerId getPlayerGoal2(PlayerId playerId) {
         Player player = findPlayerById(playerId);
         return player.getGoal2();
-    }
-
-    public void setPlayerGoal1(PlayerId playerId, PlayerId targetId) {
-        Player player = findPlayerById(playerId);
-        player.setGoal1(targetId);
-    }
-
-    public void setPlayerGoal2(PlayerId playerId, PlayerId targetId) {
-        Player player = findPlayerById(playerId);
-        player.setGoal2(targetId);
     }
 
     public PlayerState getPlayerState(PlayerId playerId) {
