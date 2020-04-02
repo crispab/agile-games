@@ -14,7 +14,7 @@ public class GameSession {
     private Board board;
 
     public GameSession() {
-        this(10, 10);
+        this(5, 5);
     }
 
     public GameSession(int x, int y) {
@@ -23,7 +23,12 @@ public class GameSession {
     }
 
     public void addPlayer(UserId userId) {
-        addPlayerAt(userId, 0, 0);
+        addPlayerAt("test", userId);
+    }
+
+    public PlayerId addPlayerAt(String name, UserId userId) {
+        PlayerPosition p = board.getRandomFreeSquare();
+        return addPlayerAt(name, userId, p.getX(), p.getY());
     }
 
     public PlayerId addPlayerAt(UserId userId, int x, int y) {
@@ -36,6 +41,20 @@ public class GameSession {
         Player player = new Player(name, x, y, board);
         players.put(player.getId(), player);
         return player.getId();
+    }
+
+    public void placePlayerAt(PlayerId playerId, int x, int y) {
+        Player player = findPlayerById(playerId);
+        Player otherPlayer = board.getPlayerAt(x, y);
+        if (otherPlayer == null) {
+            board.movePlayerTo(x, y, player);
+        } else {
+            board.swapPlayerPosition(player, otherPlayer);
+        }
+    }
+
+    public String getRow(int row) {
+        return board.getRowAsString(row);
     }
 
     public void start() {
@@ -170,7 +189,7 @@ public class GameSession {
         if (player.isPresent()) {
             return player.get().getId();
         }
-        throw new IllegalArgumentException("Not player named: '" + playerName + "'.");
+        throw new IllegalArgumentException("No player named: '" + playerName + "'.");
     }
 
     public PlayerId getPlayerGoal1(PlayerId playerId) {
@@ -196,4 +215,5 @@ public class GameSession {
     public PlayerState getPlayerState(PlayerId playerId) {
         return findPlayerById(playerId).getState();
     }
+
 }

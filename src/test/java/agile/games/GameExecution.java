@@ -14,6 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class GameExecution {
 
+    private boolean inGivenMode;
+
     @Then("the player has end goal to reach {int},{int}")
     public void thePlayerHasEndGoalToReach(int x, int y) {
         PlayerPosition endPosition = getGameSession().getPlayerEndGoal(playerId);
@@ -25,9 +27,10 @@ public class GameExecution {
         playerId = getGameSession().addPlayerAt(name, getGameSession().newUser(), x, y);
     }
 
-    @And("another player at position {int},{int} named {string}")
-    public void anotherPlayerAtPositionNamed(int x, int y, String name) {
-        getGameSession().addPlayerAt(name, getGameSession().newUser(), x, y);
+
+    @And("another player named {string}")
+    public void anotherPlayerAtPositionNamed(String name) {
+        getGameSession().addPlayerAt(name, getGameSession().newUser());
     }
 
     @Then("player named {string} has two goals {string} and {string}")
@@ -71,4 +74,48 @@ public class GameExecution {
         PlayerState playerState = getGameSession().getPlayerState(playerId);
         assertEquals(DONE, playerState);
     }
+
+    @And("the board looks as:")
+    public void theBoardIsAs() {
+        inGivenMode = true;
+    }
+
+    @Then("the board should look like:")
+    public void theGridShouldLookLike() {
+        inGivenMode = false;
+    }
+
+
+    @And("{int} {string}")
+    public void boardState(int row, String rowContent) {
+        if (inGivenMode) {
+            createRowOnBoard(row, rowContent);
+        } else {
+            assertRowOfBoard(row, rowContent);
+        }
+    }
+
+    private void createRowOnBoard(int row, String desiredContent) {
+        int xPos = 0;
+        for (int n = 0; n < desiredContent.length(); n++) {
+            char current = desiredContent.charAt(n);
+            switch (current) {
+                case ' ':
+                    xPos++;
+                    continue;
+                case '|':
+                    continue;
+                default:
+                    PlayerId player = getGameSession().findPlayerByName("" + current);
+                    getGameSession().placePlayerAt(player, xPos, row);
+                    xPos++;
+            }
+        }
+    }
+
+    private void assertRowOfBoard(int row, String expectedContent) {
+        String actual = getGameSession().getRow(row);
+        assertEquals(expectedContent, actual, "On row " + row);
+    }
+
 }

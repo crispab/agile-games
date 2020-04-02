@@ -28,7 +28,7 @@ public class PlayerMovementSteps  {
     }
 
     @When("the player moves in direction {string}")
-    public void thePlayerMovesInDirectionUp(String direction) {
+    public void thePlayerMovesInDirection(String direction) {
         getGameSession().movePlayer(playerId, Direction.valueOf(direction.toUpperCase()));
     }
 
