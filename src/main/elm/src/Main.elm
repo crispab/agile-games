@@ -1,16 +1,16 @@
-port module Main exposing (ChatMessage, main, messageDecoder)
+port module Main exposing (main)
 
+import Bootstrap.Alert as Alert
 import Bootstrap.Button as Button
+import Bootstrap.Card as Card
+import Bootstrap.Card.Block as Block
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
 import Bootstrap.Grid as Grid
-import Bootstrap.Grid.Col exposing (xs, xs3)
+import Bootstrap.Grid.Col as Col exposing (xs, xs3)
 import Browser
-import Html exposing (Html, div, text)
-import Html.Attributes exposing (for)
-import Json.Decode exposing (errorToString)
-import Json.Decode.Pipeline exposing (required)
-import Time
+import Html exposing (Html, div, h1, text)
+import Html.Attributes exposing (class, for, href, style)
 
 
 port websocketIn : (String -> msg) -> Sub msg
@@ -30,19 +30,19 @@ main =
 
 type Msg
     = WebsocketIn String
-    | ChangeMessage String
-    | SendMessage
+    | ChangeCode String
+    | JoinGame
+    | DismissAlert Alert.Visibility
+
+
+type Page
+    = LobbyPage
 
 
 type alias Model =
-    { message : String
-    , messages : List ChatMessage
-    }
-
-
-type alias ChatMessage =
-    { data : String
-    , timeStamp : Time.Posix
+    { currentPage : Page
+    , code : String
+    , alertVisibility : Alert.Visibility
     }
 
 
@@ -53,8 +53,9 @@ init _ =
 
 initialModel : Model
 initialModel =
-    { message = ""
-    , messages = []
+    { currentPage = LobbyPage
+    , code = "x"
+    , alertVisibility = Alert.closed
     }
 
 
@@ -66,41 +67,16 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         WebsocketIn message ->
-            ( { model | messages = decodeMessage message :: model.messages }, Cmd.none )
+            ( model, Cmd.none )
 
-        SendMessage ->
-            ( { model | message = "" }
-            , websocketOut model.message
-            )
+        ChangeCode code ->
+            ( { model | code = code, alertVisibility = Alert.closed }, Cmd.none )
 
-        ChangeMessage message ->
-            ( { model | message = message }, Cmd.none )
+        JoinGame ->
+            ( { model | alertVisibility = Alert.shown }, Cmd.none )
 
-
-decodeMessage : String -> ChatMessage
-decodeMessage message =
-    case Json.Decode.decodeString messageDecoder message of
-        Ok chatMessage ->
-            chatMessage
-
-        Err e ->
-            ChatMessage (errorToString e) (Time.millisToPosix 0)
-
-
-messageDecoder : Json.Decode.Decoder ChatMessage
-messageDecoder =
-    Json.Decode.succeed ChatMessage
-        |> required "data" Json.Decode.string
-        |> required "timeStamp" decodeTime
-
-
-decodeTime : Json.Decode.Decoder Time.Posix
-decodeTime =
-    Json.Decode.int
-        |> Json.Decode.andThen
-            (\ms ->
-                Json.Decode.succeed <| Time.millisToPosix ms
-            )
+        DismissAlert _ ->
+            ( { model | alertVisibility = Alert.closed }, Cmd.none )
 
 
 
@@ -109,39 +85,80 @@ decodeTime =
 
 view : Model -> Html Msg
 view model =
+    case model.currentPage of
+        LobbyPage ->
+            viewLobby model
+
+
+viewLobby : Model -> Html Msg
+viewLobby model =
     Grid.container []
         [ Grid.row []
-            [ Grid.col []
-                [ viewMessages model
-                , viewFormToAddMember model
+            [ Grid.col [ Col.sm ]
+                [ viewLobbyHeadline
+                , viewJoinOrFacility model
                 ]
             ]
         ]
 
 
-viewMessages : Model -> Html Msg
-viewMessages model =
-    Grid.row []
-        [ Grid.col [] <| List.map viewMessage model.messages
+viewLobbyHeadline : Html Msg
+viewLobbyHeadline =
+    div [ class "jumbotron", style "text-align" "center" ]
+        [ h1 [] [ text "Welcome to tap-the-shoulder" ]
         ]
 
 
-viewMessage : ChatMessage -> Html Msg
-viewMessage message =
-    div [] [ text message.data ]
+viewJoinOrFacility : Model -> Html Msg
+viewJoinOrFacility model =
+    Grid.row []
+        [ Grid.col []
+            [ Card.config [ Card.outlinePrimary ]
+                |> Card.headerH4 [] [ text "Join a game" ]
+                |> Card.block []
+                    [ Block.text [] [ text "Enter the game code to join." ]
+                    , Block.custom <| viewAlert model
+                    , Block.custom <|
+                        viewJoinGameForm model
+                    ]
+                |> Card.view
+            ]
+        , Grid.col []
+            [ Card.config [ Card.outlineSecondary ]
+                |> Card.headerH4 [] [ text "Facilitate a game" ]
+                |> Card.block []
+                    [ Block.text [] [ text "Create a new game session for other to join." ]
+                    , Block.custom <|
+                        Button.linkButton
+                            [ Button.primary, Button.attrs [ href "#facilitate" ] ]
+                            [ text "Facilitate" ]
+                    ]
+                |> Card.view
+            ]
+        ]
 
 
-viewFormToAddMember : Model -> Html Msg
-viewFormToAddMember model =
+viewAlert model =
+    Alert.config
+        |> Alert.danger
+        |> Alert.dismissable DismissAlert
+        |> Alert.children
+            [ text <| "Found no game with code '" ++ model.code ++ "'!"
+            ]
+        |> Alert.view model.alertVisibility
+
+
+viewJoinGameForm : Model -> Html Msg
+viewJoinGameForm model =
     Form.form []
         [ Form.group []
             [ Grid.row []
                 [ Grid.col [ xs3 ]
-                    [ Form.label [ for "message" ] [ text "Enter message:" ] ]
+                    [ Form.label [ for "code" ] [ text "Enter code:" ] ]
                 , Grid.col [ xs ]
-                    [ Input.text [ Input.id "message", Input.onInput ChangeMessage, Input.value model.message ]
+                    [ Input.text [ Input.id "code", Input.onInput ChangeCode, Input.value model.code ]
                     ]
-                , Grid.col [ xs3 ] [ Button.button [ Button.primary, Button.onClick SendMessage ] [ text "Send" ] ]
+                , Grid.col [ xs3 ] [ Button.button [ Button.primary, Button.onClick JoinGame ] [ text "Join" ] ]
                 ]
             ]
         ]
