@@ -235,4 +235,9 @@ public class GameSession {
     public void setRemainingEstimations() {
         players.values().forEach(Player::setRemainingEstimations);
     }
+
+    public int getPlayerSteps1(PlayerId playerId) {
+        Player player = findPlayerById(playerId);
+        return player.getSteps1();
+    }
 }

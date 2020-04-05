@@ -22,7 +22,7 @@ public class GameExecution {
         assertEquals(new PlayerPosition(x, y), endPosition);
     }
 
-    @Given("a player at position {int},{int} named {string}")
+    @Given("the player is at position {int},{int} named {string}")
     public void aPlayerAtPositionNamed(int x, int y, String name) {
         playerId = getGameSession().addPlayerAt(name, getGameSession().newUser(), x, y);
     }

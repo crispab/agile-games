@@ -19,7 +19,7 @@ public class PlayerMovementSteps  {
         getGameSession().setGamePhase(GamePhase.EXECUTING);
     }
 
-    @And("a player at position {int},{int}")
+    @And("the player is at position {int},{int}")
     public void aPlayerOnPosition(int x, int y) {
         playerId = getGameSession().addPlayerAt(getGameSession().newUser(), x, y);
     }

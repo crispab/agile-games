@@ -20,13 +20,13 @@ class Board {
         }
     }
 
-    public void movePlayerTo(int x, int y, Player player) {
+    public int movePlayerTo(int x, int y, Player player) {
         if (x < 0 || x >= width || y < 0 || y >= height) {
-            return;
+            return 0;
         }
         Square square = squares[x][y];
         if (square.getPlayer() != null) {
-            return;
+            return 0;
         }
         if (player.getPosition() != null) {
             Square currentSquare = squares[player.getX()][player.getY()];
@@ -34,6 +34,7 @@ class Board {
         }
         square.setPlayer(player);
         player.setPosition(new PlayerPosition(x, y));
+        return 1;
     }
 
     public void swapPlayerPosition(Player player1, Player player2) {

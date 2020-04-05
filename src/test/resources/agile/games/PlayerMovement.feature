@@ -8,7 +8,7 @@ Feature: Player movement rules
 
   Scenario: Player move within the board
     Given a board with dimensions 5,3
-    And a player at position 3,1 named "P"
+    And the player is at position 3,1 named "P"
     And the board should look like:
     And 0 "| | | | | |"
     And 1 "| | | |P| |"
@@ -22,7 +22,7 @@ Feature: Player movement rules
 
   Scenario: Player can't move to an occupied square
     Given a board with dimensions 5,3
-    And a player at position 0,0 named "P"
+    And the player is at position 0,0 named "P"
     And a player named "A"
     And the board looks as:
     And 0 "|P| | | | |"
@@ -37,7 +37,7 @@ Feature: Player movement rules
 
   Scenario: Player at the bottom edge of the board
     Given a board with dimensions 5,3
-    And a player at position 1,2 named "P"
+    And the player is at position 1,2 named "P"
     And the board looks as:
     And 0 "| | | | | |"
     And 1 "| | | | | |"
@@ -50,7 +50,7 @@ Feature: Player movement rules
 
   Scenario: Player at the top edge of the board
     Given a board with dimensions 5,3
-    And a player at position 1,0 named "P"
+    And the player is at position 1,0 named "P"
     And the board looks as:
     And 0 "| |P| | | |"
     And 1 "| | | | | |"
@@ -63,6 +63,6 @@ Feature: Player movement rules
 
     Scenario: Player tries to move during assignment phase.
       Given a game is in phase "assignment"
-      And a player at position 1,1
+      And the player is at position 1,1
       When the player moves in direction "up"
       Then the player is on position 1,1

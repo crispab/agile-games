@@ -4,10 +4,13 @@ import agile.games.tts.PlayerId;
 import agile.games.tts.PlayerState;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.But;
+import io.cucumber.java.en.Then;
 
 import static agile.games.GameStepUtilities.getGameSession;
+import static agile.games.GameStepUtilities.playerId;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class Estimation {
+public class EstimationSteps {
 
     private static final int ESTIMATION_1 = 1;
     private static final int ESTIMATION_2 = 2;
@@ -30,5 +33,10 @@ public class Estimation {
     @And("all players has done their estimations")
     public void allPlayersHasDoneTheirEstimations() {
         getGameSession().setRemainingEstimations();
+    }
+
+    @Then("the player's steps for the first goal are {int}")
+    public void thePlayerSStepsIs(int steps) {
+        assertEquals(steps, getGameSession().getPlayerSteps1(playerId));
     }
 }

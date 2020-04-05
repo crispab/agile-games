@@ -12,6 +12,7 @@ class Player {
     private Integer estimation1;
     private Integer estimation2;
     private Integer estimation3;
+    private int steps1;
 
     public Player(String name, int x, int y, Board board) {
         this.id = new PlayerId();
@@ -47,23 +48,33 @@ class Player {
     }
 
     public void move(Direction direction) {
+        int steps;
         switch (direction) {
             case UP:
-                board.movePlayerTo(this.getX(), this.getY() - 1, this);
+                steps = board.movePlayerTo(this.getX(), this.getY() - 1, this);
                 break;
             case DOWN:
-                board.movePlayerTo(this.getX(), this.getY() + 1, this);
+                steps = board.movePlayerTo(this.getX(), this.getY() + 1, this);
                 break;
             case RIGHT:
-                board.movePlayerTo((this.getX() + 1), this.getY(), this);
+                steps = board.movePlayerTo((this.getX() + 1), this.getY(), this);
                 break;
             case LEFT:
-                board.movePlayerTo((this.getX() - 1), this.getY(), this);
+                steps = board.movePlayerTo((this.getX() - 1), this.getY(), this);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + direction);
         }
+        addSteps(steps);
+    }
 
+    private void addSteps(int steps) {
+        if (steps == 0) {
+            return;
+        }
+        if (isTargetingGoal1()) {
+            this.setSteps1(this.getSteps1()  + steps);
+        }
     }
 
     public PlayerPosition getPosition() {
@@ -153,5 +164,13 @@ class Player {
             estimation3 = 0;
         }
         checkIfAllEstimationsDone();
+    }
+
+    public int getSteps1() {
+        return steps1;
+    }
+
+    public void setSteps1(int steps1) {
+        this.steps1 = steps1;
     }
 }
