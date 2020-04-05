@@ -43,6 +43,12 @@ files in a directory tree and put everything in one HTML file.
 When you open the HTML file in Word, you can table of contents and
 change the formatting.
 
+A learning was that it is easy to get carried away and write all
+requirements you can think of and implement them without collecting 
+feedback. For example, I decided that the game should assign targets
+for the players, but that could have been done by themselves as well.
+So which option is best, automatic assignment or manual?
+
 ## Web sockets 
 
 I have done designs with REST API that are used by an Elm client.
