@@ -141,4 +141,17 @@ class Player {
             setState(PlayerState.ESTIMATION_COMPLETED);
         }
     }
+
+    public void setRemainingEstimations() {
+        if (estimation1 == null) {
+            estimation1 = 0;
+        }
+        if (estimation2 == null) {
+            estimation2 = 0;
+        }
+        if (estimation3 == null) {
+            estimation3 = 0;
+        }
+        checkIfAllEstimationsDone();
+    }
 }

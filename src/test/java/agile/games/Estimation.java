@@ -26,4 +26,9 @@ public class Estimation {
         getGameSession().setPlayerEstimation2(playerId, ESTIMATION_2);
         getGameSession().setPlayerEstimation3(playerId, ESTIMATION_3);
     }
+
+    @And("all players has done their estimations")
+    public void allPlayersHasDoneTheirEstimations() {
+        getGameSession().setRemainingEstimations();
+    }
 }

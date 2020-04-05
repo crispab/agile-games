@@ -85,8 +85,10 @@ public class GameSession {
     }
 
     public void movePlayer(PlayerId playerId, Direction direction) {
-        findPlayerById(playerId).move(direction);
-        emit(GameEvent.PLAYER_MAY_HAVE_MOVED);
+        if (gamePhase == GamePhase.EXECUTING) {
+            findPlayerById(playerId).move(direction);
+            emit(GameEvent.PLAYER_MAY_HAVE_MOVED);
+        }
     }
 
     public PlayerPosition getPlayerPosition(PlayerId playerId) {
@@ -228,5 +230,9 @@ public class GameSession {
     public void setPlayerEstimation3(PlayerId playerId, int estimation3) {
         Player player = findPlayerById(playerId);
         player.setEstimation3(estimation3);
+    }
+
+    public void setRemainingEstimations() {
+        players.values().forEach(Player::setRemainingEstimations);
     }
 }

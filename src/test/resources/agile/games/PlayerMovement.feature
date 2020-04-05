@@ -4,6 +4,8 @@ Feature: Player movement rules
   The player can not move off the board or move to a square that is occupied by
   another player.
 
+  Players can only move when the game is in the execution phase.
+
   Scenario: Player move within the board
     Given a board with dimensions 5,3
     And a player at position 3,1 named "P"
@@ -58,3 +60,9 @@ Feature: Player movement rules
     And 0 "| |P| | | |"
     And 1 "| | | | | |"
     And 2 "| | | | | |"
+
+    Scenario: Player tries to move during assignment phase.
+      Given a game is in phase "assignment"
+      And a player at position 1,1
+      When the player moves in direction "up"
+      Then the player is on position 1,1
