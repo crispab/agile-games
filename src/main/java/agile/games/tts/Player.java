@@ -9,6 +9,9 @@ class Player {
     private PlayerPosition endGoal;
     private PlayerId goal1;
     private PlayerId goal2;
+    private Integer estimation1;
+    private Integer estimation2;
+    private Integer estimation3;
 
     public Player(String name, int x, int y, Board board) {
         this.id = new PlayerId();
@@ -101,5 +104,41 @@ class Player {
 
     public boolean isTargetingEndGoal() {
         return !isTargetingGoal1() && !isTargetingGoal2();
+    }
+
+    public int getEstimation1() {
+        return estimation1;
+    }
+
+    public void setEstimation1(int estimation1) {
+        this.estimation1 = estimation1;
+        checkIfAllEstimationsDone();
+    }
+
+    public int getEstimation2() {
+        return estimation2;
+    }
+
+    public void setEstimation2(int estimation2) {
+        this.estimation2 = estimation2;
+        checkIfAllEstimationsDone();
+    }
+
+    public int getEstimation3() {
+        return estimation3;
+    }
+
+    public void setEstimation3(int estimation3) {
+        this.estimation3 = estimation3;
+        checkIfAllEstimationsDone();
+    }
+
+    private void checkIfAllEstimationsDone() {
+        if (getState() == PlayerState.INITIAL &&
+                estimation1 != null &&
+                estimation2 != null &&
+                estimation3 != null) {
+            setState(PlayerState.ESTIMATION_COMPLETED);
+        }
     }
 }

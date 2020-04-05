@@ -27,9 +27,8 @@ public class GameExecution {
         playerId = getGameSession().addPlayerAt(name, getGameSession().newUser(), x, y);
     }
 
-
-    @And("another player named {string}")
-    public void anotherPlayerAtPositionNamed(String name) {
+    @And("a player named {string}")
+    public void aPlayerAtPositionNamed(String name) {
         getGameSession().addPlayerAt(name, getGameSession().newUser());
     }
 

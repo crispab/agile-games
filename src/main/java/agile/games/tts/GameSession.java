@@ -58,9 +58,13 @@ public class GameSession {
     }
 
     public void start() {
-        if (gamePhase == GamePhase.ASSIGNMENT) {
+        if (gamePhase == GamePhase.ASSIGNMENT && allPlayersDoneEstimating()) {
             gamePhase = GamePhase.EXECUTING;
         }
+    }
+
+    private boolean allPlayersDoneEstimating() {
+        return players.values().stream().noneMatch(p -> p.getState() == PlayerState.INITIAL);
     }
 
     public GamePhase getGamePhase() {
@@ -211,4 +215,18 @@ public class GameSession {
         return findPlayerById(playerId).getState();
     }
 
+    public void setPlayerEstimation1(PlayerId playerId, int estimation1) {
+        Player player = findPlayerById(playerId);
+        player.setEstimation1(estimation1);
+    }
+
+    public void setPlayerEstimation2(PlayerId playerId, int estimation2) {
+        Player player = findPlayerById(playerId);
+        player.setEstimation2(estimation2);
+    }
+
+    public void setPlayerEstimation3(PlayerId playerId, int estimation3) {
+        Player player = findPlayerById(playerId);
+        player.setEstimation3(estimation3);
+    }
 }

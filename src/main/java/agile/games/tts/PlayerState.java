@@ -2,6 +2,6 @@ package agile.games.tts;
 
 public enum PlayerState {
     INITIAL,
-    DONE
+    ESTIMATION_COMPLETED, DONE
 
 }

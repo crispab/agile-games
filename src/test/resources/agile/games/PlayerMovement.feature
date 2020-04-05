@@ -21,7 +21,7 @@ Feature: Player movement rules
   Scenario: Player can't move to an occupied square
     Given a board with dimensions 5,3
     And a player at position 0,0 named "P"
-    And another player named "A"
+    And a player named "A"
     And the board looks as:
     And 0 "|P| | | | |"
     And 1 "|A| | | | |"

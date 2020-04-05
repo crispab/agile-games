@@ -11,8 +11,8 @@ Feature: Game Execution
   Scenario: As the facilitator starts the assignment, players gets two other players as goal
     Given a game is in phase "gathering"
     And a player at position 1,1 named "Jill"
-    And another player named "Caren"
-    And another player named "Betty"
+    And a player named "Caren"
+    And a player named "Betty"
     When the facilitator starts the assignments
     Then player named "Jill" has two goals "Caren" and "Betty"
     And player named "Caren" has two goals "Jill" and "Betty"
@@ -21,8 +21,8 @@ Feature: Game Execution
   Scenario: When a player moves close to their first goal player, the first goal is reached.
     Given a game is in phase "assignment"
     And a player at position 1,1 named "P"
-    And another player named "A"
-    And another player named "B"
+    And a player named "A"
+    And a player named "B"
     And the board looks as:
     And 0 "| | | | | |"
     And 1 "| |P| |A| |"
@@ -39,8 +39,8 @@ Feature: Game Execution
   Scenario: As a player has done the first goal and is next to their second goal, that goal is accomplished.
     Given a game is in phase "gathering"
     And a player at position 3,2 named "P"
-    And another player named "C"
-    And another player named "D"
+    And a player named "C"
+    And a player named "D"
     And the board looks as:
     And 0 "| | | |C| |"
     And 1 "| | | | |D|"
@@ -59,8 +59,8 @@ Feature: Game Execution
   Scenario: When a player has done their two goals and returned to the starting position, they are done.
     Given a game is in phase "gathering"
     And a player at position 3,2 named "P"
-    And another player named "A"
-    And another player named "B"
+    And a player named "A"
+    And a player named "B"
     And the board looks as:
     And 0 "| | | |A| |"
     And 1 "| | | | |B|"

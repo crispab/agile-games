@@ -33,6 +33,8 @@ Feature: Game Flow
 
   Scenario: A game in phase assignment is started
     Given a game is in phase "assignment"
+    And a player named "Bertram"
+    And "Bertram" has done their estimation
     When the facilitator starts the game
     Then the game is in phase "executing"
 
