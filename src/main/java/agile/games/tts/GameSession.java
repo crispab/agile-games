@@ -1,5 +1,6 @@
 package agile.games.tts;
 
+import agile.games.GameSessionId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +13,7 @@ public class GameSession {
     private Map<UserId, User> users = new HashMap<>();
     private Map<PlayerId, Player> players = new HashMap<>();
     private Board board;
+    private final GameSessionId id;
 
     public GameSession() {
         this(5, 5);
@@ -20,6 +22,7 @@ public class GameSession {
     public GameSession(int x, int y) {
         this.gamePhase = GamePhase.GATHERING;
         this.board = new Board(x, y);
+        id = new GameSessionId();
     }
 
     public void addPlayer(UserId userId) {
@@ -240,4 +243,9 @@ public class GameSession {
         Player player = findPlayerById(playerId);
         return player.getSteps1();
     }
+
+    public GameSessionId getId() {
+        return id;
+    }
+
 }
