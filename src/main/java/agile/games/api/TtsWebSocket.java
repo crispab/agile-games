@@ -23,10 +23,10 @@ public class TtsWebSocket {
     }
 
     @OnOpen
-    public Publisher<String> onOpen(WebSocketSession session) {
+    public Publisher<MessageResponse> onOpen(WebSocketSession session) {
         LOG.info("Joiner {}", session.getId());
-        String userSession = gameService.registerUser(session.getId());
-        return session.send(userSession);
+        gameService.registerUser(session.getId());
+        return session.send(MessageResponse.ok());
     }
 
     @OnMessage
@@ -37,13 +37,12 @@ public class TtsWebSocket {
             case JOIN:
                 return session.send(gameService.join());
             default:
-                return session.send(MessageResponse.failed());
+                return session.send(MessageResponse.failed("Unknown command." + message.getCommandType()));
         }
     }
 
     @OnClose
     public Publisher<String> onClose(WebSocketSession session) {
-
         return broadcaster.broadcast("Closed " + session.getId());
     }
 }

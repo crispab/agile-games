@@ -1,4 +1,4 @@
-port module Main exposing (main)
+port module Main exposing (MessageResponse, MessageResponseStatus(..), decodeMessage, main, messageResponseDecoder)
 
 import Bootstrap.Alert as Alert
 import Bootstrap.Button as Button
@@ -12,6 +12,8 @@ import Browser
 import Command
 import Html exposing (Html, div, h1, text)
 import Html.Attributes exposing (class, for, style)
+import Json.Decode
+import Json.Decode.Pipeline exposing (optional, required)
 import Json.Encode
 
 
@@ -46,6 +48,22 @@ type alias Model =
     { currentPage : Page
     , code : String
     , alertVisibility : Alert.Visibility
+    , errorMessage : String
+    }
+
+
+type MessageResponseStatus
+    = OK
+    | FAIL String
+
+
+type alias MessageResponse =
+    { status : MessageResponseStatus }
+
+
+type alias MessageResponseDto =
+    { status : String
+    , message : String
     }
 
 
@@ -59,6 +77,7 @@ initialModel =
     { currentPage = LobbyPage
     , code = "x"
     , alertVisibility = Alert.closed
+    , errorMessage = ""
     }
 
 
@@ -70,19 +89,59 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         WebsocketIn message ->
-            ( model, Cmd.none )
+            let
+                decodedMessage =
+                    decodeMessage message
+            in
+            case decodedMessage.status of
+                OK ->
+                    ( { model | alertVisibility = Alert.closed }, Cmd.none )
+
+                FAIL errorMessage ->
+                    ( { model | alertVisibility = Alert.shown, errorMessage = errorMessage }, Cmd.none )
 
         ChangeCode code ->
             ( { model | code = code, alertVisibility = Alert.closed }, Cmd.none )
 
         JoinGame ->
-            ( { model | alertVisibility = Alert.shown }, Cmd.none )
+            ( model, websocketOut Command.join )
 
         DismissAlert _ ->
             ( { model | alertVisibility = Alert.closed }, Cmd.none )
 
         Facilitate ->
             ( model, websocketOut Command.facilitate )
+
+
+decodeMessage : String -> MessageResponse
+decodeMessage string =
+    case Json.Decode.decodeString messageResponseDecoder string of
+        Ok m ->
+            dto2Response m
+
+        Err error ->
+            MessageResponse (FAIL (Json.Decode.errorToString error))
+
+
+messageResponseDecoder : Json.Decode.Decoder MessageResponseDto
+messageResponseDecoder =
+    Json.Decode.succeed MessageResponseDto
+        |> required "status" Json.Decode.string
+        |> optional "message" Json.Decode.string ""
+
+
+dto2Response : MessageResponseDto -> MessageResponse
+dto2Response dto =
+    MessageResponse <| stringToStatus dto.status dto.message
+
+
+stringToStatus : String -> String -> MessageResponseStatus
+stringToStatus status message =
+    if status == "OK" then
+        OK
+
+    else
+        FAIL message
 
 
 
@@ -149,7 +208,7 @@ viewAlert model =
         |> Alert.danger
         |> Alert.dismissable DismissAlert
         |> Alert.children
-            [ text <| "Found no game with code '" ++ model.code ++ "'!"
+            [ text model.errorMessage
             ]
         |> Alert.view model.alertVisibility
 

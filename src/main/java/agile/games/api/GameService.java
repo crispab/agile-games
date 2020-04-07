@@ -1,7 +1,7 @@
 package agile.games.api;
 
-import agile.games.GameSessionId;
 import agile.games.tts.GameSession;
+import agile.games.tts.GameSessionId;
 import agile.games.tts.UserId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +37,6 @@ public class GameService {
 
     public MessageResponse join() {
         LOG.info("Join");
-        return MessageResponse.failed();
+        return MessageResponse.failed("Can't find game");
     }
 }
