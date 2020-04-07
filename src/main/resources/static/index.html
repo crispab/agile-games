@@ -20,17 +20,21 @@
         {node: document.getElementById('app')}
     );
     var host = location.hostname + ":" + location.port;
-    var ws = new WebSocket("ws://" + host + "/ws/chat/atopic/auser");
-    //var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/ws/chat/" + hash[1] + "/" + hash[2]);
+    var ws = new WebSocket("ws://" + host + "/ws/tts");
+
     ws.onmessage = function (message) {
+        console.log("WebSocketIn");
         console.log(message);
         const jsonString = JSON.stringify({data: message.data, timeStamp: Date.now()});
         console.log(jsonString);
         app.ports.websocketIn.send(jsonString);
     };
+
     app.ports.websocketOut.subscribe(function (msg) {
+        console.log("WebSocketOut");
         console.log(msg);
-        ws.send(msg);
+        const jsonString = JSON.stringify(msg);
+        ws.send(jsonString);
     });
 </script>
 </body>

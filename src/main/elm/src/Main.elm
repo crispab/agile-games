@@ -9,14 +9,16 @@ import Bootstrap.Form.Input as Input
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col exposing (xs, xs3)
 import Browser
+import Command
 import Html exposing (Html, div, h1, text)
-import Html.Attributes exposing (class, for, href, style)
+import Html.Attributes exposing (class, for, style)
+import Json.Encode
 
 
 port websocketIn : (String -> msg) -> Sub msg
 
 
-port websocketOut : String -> Cmd msg
+port websocketOut : Json.Encode.Value -> Cmd msg
 
 
 main =
@@ -33,6 +35,7 @@ type Msg
     | ChangeCode String
     | JoinGame
     | DismissAlert Alert.Visibility
+    | Facilitate
 
 
 type Page
@@ -77,6 +80,9 @@ update msg model =
 
         DismissAlert _ ->
             ( { model | alertVisibility = Alert.closed }, Cmd.none )
+
+        Facilitate ->
+            ( model, websocketOut Command.facilitate )
 
 
 
@@ -129,8 +135,8 @@ viewJoinOrFacility model =
                 |> Card.block []
                     [ Block.text [] [ text "Create a new game session for other to join." ]
                     , Block.custom <|
-                        Button.linkButton
-                            [ Button.primary, Button.attrs [ href "#facilitate" ] ]
+                        Button.button
+                            [ Button.primary, Button.onClick Facilitate ]
                             [ text "Facilitate" ]
                     ]
                 |> Card.view
