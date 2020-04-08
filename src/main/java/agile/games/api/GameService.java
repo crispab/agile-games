@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static agile.games.api.MessageResponse.MessageType.FACILITATE;
+import static agile.games.api.MessageResponse.ParameterKey.GAME_SESSION_ID;
+
 @Singleton
 public class GameService {
     private static final Logger LOG = LoggerFactory.getLogger(GameService.class);
@@ -32,7 +35,7 @@ public class GameService {
         gameSession.setFacilitator(userId);
         GameSessionId gameSessionId = gameSession.getId();
         gameSessions.put(gameSessionId, gameSession);
-        return MessageResponse.ok();
+        return MessageResponse.ok(FACILITATE).put(GAME_SESSION_ID, gameSessionId.toString());
     }
 
     public MessageResponse join() {

@@ -10,6 +10,9 @@ import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static agile.games.api.MessageResponse.MessageType.SESSION_START;
+import static agile.games.api.MessageResponse.ParameterKey.USER_SESSION_ID;
+
 @ServerWebSocket("/ws/tts")
 public class TtsWebSocket {
     private static final Logger LOG = LoggerFactory.getLogger(TtsWebSocket.class);
@@ -25,8 +28,8 @@ public class TtsWebSocket {
     @OnOpen
     public Publisher<MessageResponse> onOpen(WebSocketSession session) {
         LOG.info("Joiner {}", session.getId());
-        gameService.registerUser(session.getId());
-        return session.send(MessageResponse.ok());
+        String userSessionId = gameService.registerUser(session.getId());
+        return session.send(MessageResponse.ok(SESSION_START).put(USER_SESSION_ID, userSessionId));
     }
 
     @OnMessage

@@ -1,6 +1,5 @@
-port module Main exposing (MessageResponse, MessageResponseStatus(..), decodeMessage, main, messageResponseDecoder)
+port module Main exposing (MessageResponse, MessageResponseStatus(..), MessageType(..), decodeMessage, main, messageResponseDecoder)
 
-import Array exposing (Array)
 import Bootstrap.Alert as Alert
 import Bootstrap.Button as Button
 import Bootstrap.Card as Card
@@ -50,13 +49,20 @@ type alias Model =
     { currentPage : Page
     , code : String
     , alertVisibility : Alert.Visibility
+    , userSessionId : String
     , errorMessage : String
     }
 
 
 type MessageResponseStatus
-    = OK
+    = OK MessageType
     | FAIL String
+
+
+type MessageType
+    = SessionStart
+    | FacilitateMessage
+    | Unknown
 
 
 type alias MessageResponse =
@@ -67,14 +73,9 @@ type alias MessageResponse =
 
 type alias MessageResponseDto =
     { status : String
+    , messageType : String
     , message : String
-    , parameters : Array KeyValue
-    }
-
-
-type alias KeyValue =
-    { key : String
-    , value : String
+    , parameters : Dict String String
     }
 
 
@@ -88,6 +89,7 @@ initialModel =
     { currentPage = LobbyPage
     , code = "x"
     , alertVisibility = Alert.closed
+    , userSessionId = ""
     , errorMessage = ""
     }
 
@@ -105,8 +107,8 @@ update msg model =
                     decodeMessage message
             in
             case decodedMessage.status of
-                OK ->
-                    ( { model | alertVisibility = Alert.closed }, Cmd.none )
+                OK messageType ->
+                    updateBasedOnType messageType decodedMessage.parameters model
 
                 FAIL errorMessage ->
                     ( { model | alertVisibility = Alert.shown, errorMessage = errorMessage }, Cmd.none )
@@ -124,6 +126,27 @@ update msg model =
             ( model, websocketOut Command.facilitate )
 
 
+updateBasedOnType : MessageType -> Dict String String -> Model -> ( Model, Cmd Msg )
+updateBasedOnType messageType parameters model =
+    let
+        alertClosed =
+            { model | alertVisibility = Alert.closed }
+    in
+    case messageType of
+        SessionStart ->
+            ( { alertClosed
+                | userSessionId = Maybe.withDefault "" <| Dict.get "USER_SESSION_ID" parameters
+              }
+            , Cmd.none
+            )
+
+        FacilitateMessage ->
+            ( alertClosed, Cmd.none )
+
+        Unknown ->
+            ( alertClosed, Cmd.none )
+
+
 decodeMessage : String -> MessageResponse
 decodeMessage string =
     case Json.Decode.decodeString messageResponseDecoder string of
@@ -138,34 +161,36 @@ messageResponseDecoder : Json.Decode.Decoder MessageResponseDto
 messageResponseDecoder =
     Json.Decode.succeed MessageResponseDto
         |> required "status" Json.Decode.string
+        |> optional "messageType" Json.Decode.string ""
         |> optional "message" Json.Decode.string ""
-        |> optional "parameters" (Json.Decode.array keyValueDecoder) Array.empty
-
-
-keyValueDecoder : Json.Decode.Decoder KeyValue
-keyValueDecoder =
-    Json.Decode.succeed KeyValue
-        |> required "key" Json.Decode.string
-        |> required "value" Json.Decode.string
+        |> optional "parameters" (Json.Decode.dict Json.Decode.string) Dict.empty
 
 
 dto2Response : MessageResponseDto -> MessageResponse
 dto2Response dto =
-    MessageResponse (stringToStatus dto.status dto.message) (dtoKeyValue2Dict dto.parameters)
+    MessageResponse (stringToStatus dto.status dto.message dto.messageType) dto.parameters
 
 
-dtoKeyValue2Dict : Array KeyValue -> Dict String String
-dtoKeyValue2Dict array =
-    Array.toList array |> List.map (\kv -> ( kv.key, kv.value )) |> Dict.fromList
-
-
-stringToStatus : String -> String -> MessageResponseStatus
-stringToStatus status message =
+stringToStatus : String -> String -> String -> MessageResponseStatus
+stringToStatus status message messageType =
     if status == "OK" then
-        OK
+        OK <| stringToMessageType messageType
 
     else
         FAIL message
+
+
+stringToMessageType : String -> MessageType
+stringToMessageType messageType =
+    Maybe.withDefault Unknown <| Dict.get messageType messageTypesDict
+
+
+messageTypesDict : Dict String MessageType
+messageTypesDict =
+    Dict.fromList
+        [ ( "SESSION_START", SessionStart )
+        , ( "FACILITATE", FacilitateMessage )
+        ]
 
 
 

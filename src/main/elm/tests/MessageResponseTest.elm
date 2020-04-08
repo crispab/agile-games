@@ -2,7 +2,7 @@ module MessageResponseTest exposing (all, expectedOkMessage, givenOkMessage)
 
 import Dict
 import Expect
-import Main exposing (MessageResponse, MessageResponseStatus(..), decodeMessage)
+import Main exposing (MessageResponse, MessageResponseStatus(..), MessageType(..), decodeMessage)
 import Test exposing (..)
 
 
@@ -26,38 +26,34 @@ all =
 
 givenOkMessage =
     """
-    {"status":"OK"}
+    {"status":"OK"
+    , "messageType" : "SESSION_START"}
     """
 
 
 expectedOkMessage : MessageResponse
 expectedOkMessage =
-    { status = OK
+    { status = OK SessionStart
     , parameters = Dict.empty
     }
 
 
+givenOkMessageWithParameters : String
 givenOkMessageWithParameters =
     """
-    {
-      "status": "OK",
-      "parameters": [
-        {
-          "key": "someKey1",
-          "value": "1stValue"
-        },
-        {
-          "key": "someKey2",
-          "value": "2ndValue"
-        }
-      ]
+  {
+    "status": "OK",
+    "parameters": {
+      "someKey1": "1stValue",
+      "someKey2": "2ndValue"
     }
+  }
     """
 
 
 expectedOkMessageWithParameters : MessageResponse
 expectedOkMessageWithParameters =
-    { status = OK
+    { status = OK Unknown
     , parameters = Dict.fromList [ ( "someKey1", "1stValue" ), ( "someKey2", "2ndValue" ) ]
     }
 
