@@ -67,7 +67,7 @@ public class MessageResponse {
     }
 
     public enum MessageType {
-        FACILITATE, SESSION_START
+        JOINED,FACILITATE, SESSION_START
     }
 
     public enum ParameterKey {

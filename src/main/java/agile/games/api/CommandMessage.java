@@ -1,5 +1,7 @@
 package agile.games.api;
 
+import java.util.Map;
+
 public class CommandMessage {
     public enum CommandType {
         FACILITATE,
@@ -8,6 +10,7 @@ public class CommandMessage {
 
     private CommandType commandType;
     private UserSessionId userSessionId;
+    private Map<String, String> parameters;
 
     public CommandType getCommandType() {
         return commandType;
@@ -23,5 +26,13 @@ public class CommandMessage {
 
     public void setUserSessionId(UserSessionId userSessionId) {
         this.userSessionId = userSessionId;
+    }
+
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
     }
 }

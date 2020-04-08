@@ -38,7 +38,7 @@ public class TtsWebSocket {
             case FACILITATE:
                 return session.send(gameService.facilitate());
             case JOIN:
-                return session.send(gameService.join());
+                return session.send(gameService.join(message.getParameters().get("gameSessionId")));
             default:
                 return session.send(MessageResponse.failed("Unknown command." + message.getCommandType()));
         }

@@ -38,6 +38,7 @@ type MessageResponseStatus
 type MessageType
     = SessionStart
     | FacilitateMessage
+    | JoinedMessage
     | Unknown
 
 
@@ -94,7 +95,7 @@ update msg model =
             ( { model | code = code, alertVisibility = Alert.closed }, Cmd.none )
 
         JoinGame ->
-            ( model, websocketOut <| Command.join model.userSessionId )
+            ( model, websocketOut <| Command.join model.userSessionId model.code )
 
         DismissAlert _ ->
             ( { model | alertVisibility = Alert.closed }, Cmd.none )
@@ -121,6 +122,13 @@ updateBasedOnType messageType parameters model =
             ( { alertClosed
                 | gameSessionId = gameSessionIdFromString <| Maybe.withDefault "" <| Dict.get "GAME_SESSION_ID" parameters
                 , currentPage = FacilitatorPage
+              }
+            , Cmd.none
+            )
+
+        JoinedMessage ->
+            ( { alertClosed
+                | currentPage = PlayerPage
               }
             , Cmd.none
             )
@@ -172,6 +180,7 @@ messageTypesDict =
     Dict.fromList
         [ ( "SESSION_START", SessionStart )
         , ( "FACILITATE", FacilitateMessage )
+        , ( "JOINED", JoinedMessage )
         ]
 
 

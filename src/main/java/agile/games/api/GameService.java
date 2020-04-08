@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static agile.games.api.MessageResponse.MessageType.FACILITATE;
+import static agile.games.api.MessageResponse.MessageType.JOINED;
 import static agile.games.api.MessageResponse.ParameterKey.GAME_SESSION_ID;
 
 @Singleton
@@ -37,8 +38,11 @@ public class GameService {
         return MessageResponse.ok(FACILITATE).put(GAME_SESSION_ID, gameSessionId.toString());
     }
 
-    public MessageResponse join() {
-        LOG.info("Join");
-        return MessageResponse.failed("Can't find game");
+    public MessageResponse join(String gameSessionUd) {
+        LOG.info("Join {}", gameSessionUd);
+        if (gameSessions.get(new GameSessionId(gameSessionUd)) != null) {
+            return MessageResponse.ok(JOINED);
+        }
+        return MessageResponse.failed("Can't find game " + gameSessionUd);
     }
 }
