@@ -1,5 +1,6 @@
 module MessageResponseTest exposing (all, expectedOkMessage, givenOkMessage)
 
+import Dict
 import Expect
 import Main exposing (MessageResponse, MessageResponseStatus(..), decodeMessage)
 import Test exposing (..)
@@ -12,6 +13,10 @@ all =
             \_ ->
                 decodeMessage givenOkMessage
                     |> Expect.equal expectedOkMessage
+        , test "OK message with parameters" <|
+            \_ ->
+                decodeMessage givenOkMessageWithParameters
+                    |> Expect.equal expectedOkMessageWithParameters
         , test "Simple FAIL message" <|
             \_ ->
                 decodeMessage givenFailMessage
@@ -28,6 +33,32 @@ givenOkMessage =
 expectedOkMessage : MessageResponse
 expectedOkMessage =
     { status = OK
+    , parameters = Dict.empty
+    }
+
+
+givenOkMessageWithParameters =
+    """
+    {
+      "status": "OK",
+      "parameters": [
+        {
+          "key": "someKey1",
+          "value": "1stValue"
+        },
+        {
+          "key": "someKey2",
+          "value": "2ndValue"
+        }
+      ]
+    }
+    """
+
+
+expectedOkMessageWithParameters : MessageResponse
+expectedOkMessageWithParameters =
+    { status = OK
+    , parameters = Dict.fromList [ ( "someKey1", "1stValue" ), ( "someKey2", "2ndValue" ) ]
     }
 
 
@@ -42,4 +73,5 @@ givenFailMessage =
 expectedFailMessage : MessageResponse
 expectedFailMessage =
     { status = FAIL "some fail message"
+    , parameters = Dict.empty
     }

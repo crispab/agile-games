@@ -1,5 +1,6 @@
 port module Main exposing (MessageResponse, MessageResponseStatus(..), decodeMessage, main, messageResponseDecoder)
 
+import Array exposing (Array)
 import Bootstrap.Alert as Alert
 import Bootstrap.Button as Button
 import Bootstrap.Card as Card
@@ -10,6 +11,7 @@ import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col exposing (xs, xs3)
 import Browser
 import Command
+import Dict exposing (Dict)
 import Html exposing (Html, div, h1, text)
 import Html.Attributes exposing (class, for, style)
 import Json.Decode
@@ -58,12 +60,21 @@ type MessageResponseStatus
 
 
 type alias MessageResponse =
-    { status : MessageResponseStatus }
+    { status : MessageResponseStatus
+    , parameters : Dict String String
+    }
 
 
 type alias MessageResponseDto =
     { status : String
     , message : String
+    , parameters : Array KeyValue
+    }
+
+
+type alias KeyValue =
+    { key : String
+    , value : String
     }
 
 
@@ -120,7 +131,7 @@ decodeMessage string =
             dto2Response m
 
         Err error ->
-            MessageResponse (FAIL (Json.Decode.errorToString error))
+            MessageResponse (FAIL (Json.Decode.errorToString error)) Dict.empty
 
 
 messageResponseDecoder : Json.Decode.Decoder MessageResponseDto
@@ -128,11 +139,24 @@ messageResponseDecoder =
     Json.Decode.succeed MessageResponseDto
         |> required "status" Json.Decode.string
         |> optional "message" Json.Decode.string ""
+        |> optional "parameters" (Json.Decode.array keyValueDecoder) Array.empty
+
+
+keyValueDecoder : Json.Decode.Decoder KeyValue
+keyValueDecoder =
+    Json.Decode.succeed KeyValue
+        |> required "key" Json.Decode.string
+        |> required "value" Json.Decode.string
 
 
 dto2Response : MessageResponseDto -> MessageResponse
 dto2Response dto =
-    MessageResponse <| stringToStatus dto.status dto.message
+    MessageResponse (stringToStatus dto.status dto.message) (dtoKeyValue2Dict dto.parameters)
+
+
+dtoKeyValue2Dict : Array KeyValue -> Dict String String
+dtoKeyValue2Dict array =
+    Array.toList array |> List.map (\kv -> ( kv.key, kv.value )) |> Dict.fromList
 
 
 stringToStatus : String -> String -> MessageResponseStatus
@@ -203,6 +227,7 @@ viewJoinOrFacility model =
         ]
 
 
+viewAlert : Model -> Html Msg
 viewAlert model =
     Alert.config
         |> Alert.danger

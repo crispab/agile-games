@@ -1,6 +1,11 @@
 package agile.games.api;
 
 public class CommandMessage {
+    public enum CommandType {
+        FACILITATE,
+        JOIN
+    }
+
     private CommandType commandType;
 
     public CommandType getCommandType() {
@@ -9,10 +14,5 @@ public class CommandMessage {
 
     public void setCommandType(CommandType commandType) {
         this.commandType = commandType;
-    }
-
-    public enum CommandType {
-        FACILITATE,
-        JOIN
     }
 }
