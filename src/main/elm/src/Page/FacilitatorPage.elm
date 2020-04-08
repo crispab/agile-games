@@ -4,7 +4,7 @@ import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
 import Html exposing (Html, div, h1, h2, text)
 import Html.Attributes exposing (class, style)
-import Model exposing (Model)
+import Model exposing (GameSessionId, Model, gameSessionId2String)
 import Msg exposing (Msg(..))
 
 
@@ -19,9 +19,9 @@ viewFacilitatorPage model =
         ]
 
 
-viewHeadLine : String -> Html Msg
+viewHeadLine : GameSessionId String -> Html Msg
 viewHeadLine gameSessionID =
     div [ class "jumbotron", style "text-align" "center" ]
         [ h1 [] [ text "Facilitator" ]
-        , h2 [] [ text <| "Game id: " ++ gameSessionID ]
+        , h2 [] [ text <| "Game id: " ++ gameSessionId2String gameSessionID ]
         ]

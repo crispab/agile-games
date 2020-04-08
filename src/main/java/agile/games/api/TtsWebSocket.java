@@ -27,9 +27,9 @@ public class TtsWebSocket {
 
     @OnOpen
     public Publisher<MessageResponse> onOpen(WebSocketSession session) {
-        LOG.info("Joiner {}", session.getId());
-        String userSessionId = gameService.registerUser(session.getId());
-        return session.send(MessageResponse.ok(SESSION_START).put(USER_SESSION_ID, userSessionId));
+        LOG.info("New session: {}", session.getId());
+        UserSessionId userSessionId = gameService.registerUser(session.getId());
+        return session.send(MessageResponse.ok(SESSION_START).put(USER_SESSION_ID, userSessionId.toString()));
     }
 
     @OnMessage

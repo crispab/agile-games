@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Singleton;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import static agile.games.api.MessageResponse.MessageType.FACILITATE;
 import static agile.games.api.MessageResponse.ParameterKey.GAME_SESSION_ID;
@@ -18,14 +17,14 @@ import static agile.games.api.MessageResponse.ParameterKey.GAME_SESSION_ID;
 public class GameService {
     private static final Logger LOG = LoggerFactory.getLogger(GameService.class);
 
-    private Map<String, UUID> userSessions = new HashMap<>();
+    private Map<String, UserSessionId> userSessions = new HashMap<>();
     private Map<GameSessionId, GameSession> gameSessions = new HashMap<>();
 
-    public String registerUser(String webSocketId) {
-        LOG.info("Register user: {}", webSocketId);
-        UUID uuid = UUID.randomUUID();
-        userSessions.put(webSocketId, uuid);
-        return uuid.toString();
+    public UserSessionId registerUser(String webSocketId) {
+        UserSessionId userSessionId = new UserSessionId();
+        userSessions.put(webSocketId, userSessionId);
+        LOG.info("Register user: {}", userSessionId);
+        return userSessionId;
     }
 
     public MessageResponse facilitate() {

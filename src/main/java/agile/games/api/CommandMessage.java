@@ -7,6 +7,7 @@ public class CommandMessage {
     }
 
     private CommandType commandType;
+    private UserSessionId userSessionId;
 
     public CommandType getCommandType() {
         return commandType;
@@ -14,5 +15,13 @@ public class CommandMessage {
 
     public void setCommandType(CommandType commandType) {
         this.commandType = commandType;
+    }
+
+    public UserSessionId getUserSessionId() {
+        return userSessionId;
+    }
+
+    public void setUserSessionId(UserSessionId userSessionId) {
+        this.userSessionId = userSessionId;
     }
 }

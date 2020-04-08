@@ -10,6 +10,10 @@ public class AbstractId {
         this.id = UUID.randomUUID().toString();
     }
 
+    protected AbstractId(String id) {
+        this.id = id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

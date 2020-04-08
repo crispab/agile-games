@@ -8,7 +8,7 @@ import Html exposing (Html)
 import Json.Decode
 import Json.Decode.Pipeline exposing (optional, required)
 import Json.Encode
-import Model exposing (Model, Page(..))
+import Model exposing (Model, Page(..), UserSessionId, gameSessionIdFromString, userSessionIdFromString)
 import Msg exposing (Msg(..))
 import Page.FacilitatorPage exposing (viewFacilitatorPage)
 import Page.LobbyPage exposing (viewLobbyPage)
@@ -65,8 +65,8 @@ initialModel =
     { currentPage = LobbyPage
     , code = "x"
     , alertVisibility = Alert.closed
-    , userSessionId = ""
-    , gameSessionId = ""
+    , userSessionId = userSessionIdFromString ""
+    , gameSessionId = gameSessionIdFromString ""
     , errorMessage = ""
     }
 
@@ -94,13 +94,13 @@ update msg model =
             ( { model | code = code, alertVisibility = Alert.closed }, Cmd.none )
 
         JoinGame ->
-            ( model, websocketOut Command.join )
+            ( model, websocketOut <| Command.join model.userSessionId )
 
         DismissAlert _ ->
             ( { model | alertVisibility = Alert.closed }, Cmd.none )
 
         Facilitate ->
-            ( model, websocketOut Command.facilitate )
+            ( model, websocketOut <| Command.facilitate model.userSessionId )
 
 
 updateBasedOnType : MessageType -> Dict String String -> Model -> ( Model, Cmd Msg )
@@ -112,14 +112,14 @@ updateBasedOnType messageType parameters model =
     case messageType of
         SessionStart ->
             ( { alertClosed
-                | userSessionId = Maybe.withDefault "" <| Dict.get "USER_SESSION_ID" parameters
+                | userSessionId = userSessionIdFromString <| Maybe.withDefault "" <| Dict.get "USER_SESSION_ID" parameters
               }
             , Cmd.none
             )
 
         FacilitateMessage ->
             ( { alertClosed
-                | gameSessionId = Maybe.withDefault "" <| Dict.get "GAME_SESSION_ID" parameters
+                | gameSessionId = gameSessionIdFromString <| Maybe.withDefault "" <| Dict.get "GAME_SESSION_ID" parameters
                 , currentPage = FacilitatorPage
               }
             , Cmd.none
