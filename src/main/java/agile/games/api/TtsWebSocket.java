@@ -45,7 +45,7 @@ public class TtsWebSocket {
                 return respondAndNewState(session, gameService.facilitate(session.getId()));
             case JOIN:
                 GameSessionId gameSessionId = new GameSessionId(commandMessage.getParameters().get("gameSessionId"));
-                PlayerName playerName = new PlayerName(commandMessage.getParameters().get("userName"));
+                PlayerName playerName = new PlayerName(commandMessage.getParameters().get("playerName"));
                 return respondAndNewState(session, gameService.join(gameSessionId, playerName, session.getId()));
             default:
                 return session.send(MessageResponse.failed("Unknown command." + commandMessage.getCommandType()));

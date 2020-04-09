@@ -46,7 +46,7 @@ public class GameService {
     }
 
     public MessageResponse join(GameSessionId gameSessionId, PlayerName playerName, String webSocketId) {
-        LOG.info("Join {}", gameSessionId);
+        LOG.info("Join {} {}", gameSessionId, playerName);
         if (playerName.getName().length() < 2) {
             return MessageResponse.failed("Name must be at least 2 characters");
         }

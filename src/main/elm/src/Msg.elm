@@ -6,6 +6,7 @@ import Bootstrap.Alert as Alert
 type Msg
     = WebsocketIn String
     | ChangeCode String
+    | ChangePlayerName String
     | JoinGame
     | DismissAlert Alert.Visibility
     | Facilitate

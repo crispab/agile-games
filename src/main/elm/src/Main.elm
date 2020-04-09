@@ -37,7 +37,8 @@ init _ =
 initialModel : Model
 initialModel =
     { currentPage = LobbyPage
-    , code = "x"
+    , code = ""
+    , playerName = ""
     , alertVisibility = Alert.closed
     , userSessionId = userSessionIdFromString ""
     , gameSessionId = gameSessionIdFromString ""
@@ -78,8 +79,11 @@ update msg model =
         ChangeCode code ->
             ( { model | code = code, alertVisibility = Alert.closed }, Cmd.none )
 
+        ChangePlayerName playerName ->
+            ( { model | playerName = playerName, alertVisibility = Alert.closed }, Cmd.none )
+
         JoinGame ->
-            ( model, websocketOut <| Command.join model.userSessionId model.code )
+            ( model, websocketOut <| Command.join model.userSessionId model.code model.playerName )
 
         DismissAlert _ ->
             ( { model | alertVisibility = Alert.closed }, Cmd.none )

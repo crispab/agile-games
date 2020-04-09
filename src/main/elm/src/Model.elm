@@ -13,6 +13,7 @@ type Page
 type alias Model =
     { currentPage : Page
     , code : String
+    , playerName : String
     , alertVisibility : Alert.Visibility
     , userSessionId : UserSessionId String
     , gameSessionId : GameSessionId String

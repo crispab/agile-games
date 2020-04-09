@@ -12,14 +12,15 @@ facilitate id =
         ]
 
 
-join : UserSessionId String -> String -> Encode.Value
-join userId gameCode =
+join : UserSessionId String -> String -> String -> Encode.Value
+join userId gameCode playerName =
     Encode.object
         [ ( "commandType", Encode.string "JOIN" )
         , ( "userSessionId", Encode.string <| userSessionId2String userId )
         , ( "parameters"
           , Encode.object
                 [ ( "gameSessionId", Encode.string gameCode )
+                , ( "playerName", Encode.string playerName )
                 ]
           )
         ]

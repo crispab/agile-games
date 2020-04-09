@@ -13,14 +13,14 @@ viewPlayerPage model =
     Grid.container []
         [ Grid.row []
             [ Grid.col [ Col.sm ]
-                [ viewHeadLine
+                [ viewHeadLine model.playerName
                 ]
             ]
         ]
 
 
-viewHeadLine : Html Msg
-viewHeadLine =
+viewHeadLine : String -> Html Msg
+viewHeadLine playerName =
     div [ class "jumbotron", style "text-align" "center" ]
-        [ h1 [] [ text "Player" ]
+        [ h1 [] [ text <| "Player " ++ playerName ]
         ]
