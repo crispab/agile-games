@@ -1,6 +1,7 @@
 module Model exposing (GameSessionId, Model, Page(..), UserSessionId, gameSessionId2String, gameSessionIdFromString, userSessionId2String, userSessionIdFromString)
 
 import Bootstrap.Alert as Alert
+import Message exposing (GameState)
 
 
 type Page
@@ -16,6 +17,7 @@ type alias Model =
     , userSessionId : UserSessionId String
     , gameSessionId : GameSessionId String
     , errorMessage : String
+    , gameState : GameState
     }
 
 

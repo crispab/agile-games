@@ -6,7 +6,7 @@ import Command
 import Dict exposing (Dict)
 import Html exposing (Html)
 import Json.Encode
-import Message exposing (MessageResponseStatus(..), MessageType(..), decodeMessage)
+import Message exposing (GamePhase(..), GameState, MessageResponseStatus(..), MessageType(..), decodeMessage)
 import Model exposing (Model, Page(..), UserSessionId, gameSessionIdFromString, userSessionIdFromString)
 import Msg exposing (Msg(..))
 import Page.FacilitatorPage exposing (viewFacilitatorPage)
@@ -42,6 +42,14 @@ initialModel =
     , userSessionId = userSessionIdFromString ""
     , gameSessionId = gameSessionIdFromString ""
     , errorMessage = ""
+    , gameState = initialGameState
+    }
+
+
+initialGameState : GameState
+initialGameState =
+    { phase = Gathering
+    , players = []
     }
 
 
@@ -60,6 +68,9 @@ update msg model =
             case decodedMessage.status of
                 OK messageType ->
                     updateBasedOnType messageType decodedMessage.parameters model
+
+                STATE gameState ->
+                    ( { model | gameState = gameState }, Cmd.none )
 
                 FAIL errorMessage ->
                     ( { model | alertVisibility = Alert.shown, errorMessage = errorMessage }, Cmd.none )
