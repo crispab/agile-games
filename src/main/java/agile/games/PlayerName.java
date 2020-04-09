@@ -4,7 +4,7 @@ public class PlayerName {
     private final String name;
 
     public PlayerName(String name) {
-        this.name = name;
+        this.name = name == null ? "" : name;
     }
 
     public String getName() {
