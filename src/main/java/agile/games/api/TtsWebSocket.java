@@ -1,5 +1,6 @@
 package agile.games.api;
 
+import agile.games.PlayerName;
 import agile.games.tts.GameSessionId;
 import io.micronaut.websocket.WebSocketBroadcaster;
 import io.micronaut.websocket.WebSocketSession;
@@ -44,7 +45,8 @@ public class TtsWebSocket {
                 return respondAndNewState(session, gameService.facilitate(session.getId()));
             case JOIN:
                 GameSessionId gameSessionId = new GameSessionId(commandMessage.getParameters().get("gameSessionId"));
-                return respondAndNewState(session, gameService.join(gameSessionId, session.getId()));
+                PlayerName playerName = new PlayerName(commandMessage.getParameters().get("userName"));
+                return respondAndNewState(session, gameService.join(gameSessionId, playerName, session.getId()));
             default:
                 return session.send(MessageResponse.failed("Unknown command." + commandMessage.getCommandType()));
         }

@@ -1,5 +1,6 @@
 package agile.games.api;
 
+import agile.games.PlayerName;
 import agile.games.tts.GamePhase;
 import agile.games.tts.GameSession;
 import agile.games.tts.GameSessionId;
@@ -44,12 +45,15 @@ public class GameService {
         return MessageResponse.ok(FACILITATE).put(GAME_SESSION_ID, gameSessionId.toString());
     }
 
-    public MessageResponse join(GameSessionId gameSessionId, String webSocketId) {
+    public MessageResponse join(GameSessionId gameSessionId, PlayerName playerName, String webSocketId) {
         LOG.info("Join {}", gameSessionId);
+        if (playerName.getName().length() < 2) {
+            return MessageResponse.failed("Name must be at least 2 characters");
+        }
         GameSession gameSession = gameSessions.get(gameSessionId);
         if (gameSession != null) {
             UserId userId = gameSession.newUser();
-            gameSession.addPlayerAt("some name", userId);
+            gameSession.addPlayerNamed(playerName.getName(), userId);
             socketSessions.put(webSocketId, gameSessionId);
             return MessageResponse.ok(JOINED).put(GAME_SESSION_ID, gameSessionId.toString());
         }

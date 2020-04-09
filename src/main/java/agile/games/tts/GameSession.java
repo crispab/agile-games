@@ -26,10 +26,10 @@ public class GameSession {
     }
 
     public void addPlayer(UserId userId) {
-        addPlayerAt("test", userId);
+        addPlayerNamed("test", userId);
     }
 
-    public void addPlayerAt(String name, UserId userId) {
+    public void addPlayerNamed(String name, UserId userId) {
         PlayerPosition p = board.getRandomFreeSquare();
         addPlayerAt(name, userId, p.getX(), p.getY());
     }

@@ -29,7 +29,7 @@ public class GameExecution {
 
     @And("a player named {string}")
     public void aPlayerAtPositionNamed(String name) {
-        getGameSession().addPlayerAt(name, getGameSession().newUser());
+        getGameSession().addPlayerNamed(name, getGameSession().newUser());
     }
 
     @Then("player named {string} has two goals {string} and {string}")
