@@ -29,9 +29,9 @@ public class GameSession {
         addPlayerNamed("test", userId);
     }
 
-    public void addPlayerNamed(String name, UserId userId) {
+    public PlayerId addPlayerNamed(String name, UserId userId) {
         PlayerPosition p = board.getRandomFreeSquare();
-        addPlayerAt(name, userId, p.getX(), p.getY());
+        return addPlayerAt(name, userId, p.getX(), p.getY());
     }
 
     public PlayerId addPlayerAt(UserId userId, int x, int y) {
@@ -250,5 +250,9 @@ public class GameSession {
 
     public List<String> getPlayerNames() {
         return players.values().stream().map(Player::getName).collect(Collectors.toList());
+    }
+
+    public void removePlayer(PlayerId playerId) {
+        players.remove(playerId);
     }
 }

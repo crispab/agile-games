@@ -1,10 +1,7 @@
 package agile.games.api;
 
 import agile.games.PlayerName;
-import agile.games.tts.GamePhase;
-import agile.games.tts.GameSession;
-import agile.games.tts.GameSessionId;
-import agile.games.tts.UserId;
+import agile.games.tts.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +22,7 @@ public class GameService {
 
     private Map<String, UserSessionId> userSessions = new HashMap<>();
     private Map<String, GameSessionId> socketSessions = new HashMap<>();
+    private Map<String, PlayerId> playerSessions = new HashMap<>();
     private Map<GameSessionId, GameSession> gameSessions = new HashMap<>();
 
     public UserSessionId registerUser(String webSocketId) {
@@ -53,8 +51,9 @@ public class GameService {
         GameSession gameSession = gameSessions.get(gameSessionId);
         if (gameSession != null) {
             UserId userId = gameSession.newUser();
-            gameSession.addPlayerNamed(playerName.getName(), userId);
+            PlayerId playerId = gameSession.addPlayerNamed(playerName.getName(), userId);
             socketSessions.put(webSocketId, gameSessionId);
+            playerSessions.put(webSocketId, playerId);
             return MessageResponse.ok(JOINED).put(GAME_SESSION_ID, gameSessionId.toString());
         }
         return MessageResponse.failed("Can't find game " + gameSessionId);
@@ -80,5 +79,12 @@ public class GameService {
             return gameStateMessage;
         }
         return MessageResponse.failed("Invalid game session id " + gameSessionId);
+    }
+
+    public void leave(String webSocketId) {
+        GameSessionId gameSessionId = socketSessions.get(webSocketId);
+        PlayerId playerId = playerSessions.get(webSocketId);
+        GameSession gameSession = gameSessions.get(gameSessionId);
+        gameSession.removePlayer(playerId);
     }
 }

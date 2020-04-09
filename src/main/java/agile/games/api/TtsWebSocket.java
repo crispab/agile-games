@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static agile.games.api.MessageResponse.MessageType.LEFT;
 import static agile.games.api.MessageResponse.MessageType.SESSION_START;
 import static agile.games.api.MessageResponse.ParameterKey.GAME_SESSION_ID;
 import static agile.games.api.MessageResponse.ParameterKey.USER_SESSION_ID;
@@ -53,8 +54,10 @@ public class TtsWebSocket {
     }
 
     @OnClose
-    public Publisher<String> onClose(WebSocketSession session) {
-        return broadcaster.broadcast("Closed " + session.getId());
+    public Publisher<Message> onClose(WebSocketSession session) {
+        LOG.info("Closed socket {}", session.getId());
+        gameService.leave(session.getId());
+        return session.send(MessageResponse.ok(LEFT));
     }
 
     private Publisher<Message> respondAndNewState(WebSocketSession session, MessageResponse messageResponse) {

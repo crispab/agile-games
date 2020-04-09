@@ -64,7 +64,7 @@ public class MessageResponse implements Message {
 
 
     public enum MessageType {
-        JOINED,FACILITATE, SESSION_START
+        JOINED, FACILITATE, SESSION_START, LEFT
     }
 
     public enum ParameterKey {
