@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameSession {
     private static final Logger LOG = LoggerFactory.getLogger(GameSession.class);
@@ -247,4 +248,7 @@ public class GameSession {
         return id;
     }
 
+    public List<String> getPlayerNames() {
+        return players.values().stream().map(Player::getName).collect(Collectors.toList());
+    }
 }

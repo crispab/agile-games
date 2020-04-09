@@ -1,5 +1,6 @@
 package agile.games.api;
 
+import agile.games.tts.GameSessionId;
 import io.micronaut.websocket.WebSocketBroadcaster;
 import io.micronaut.websocket.WebSocketSession;
 import io.micronaut.websocket.annotation.OnClose;
@@ -10,7 +11,11 @@ import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+import java.util.function.Predicate;
+
 import static agile.games.api.MessageResponse.MessageType.SESSION_START;
+import static agile.games.api.MessageResponse.ParameterKey.GAME_SESSION_ID;
 import static agile.games.api.MessageResponse.ParameterKey.USER_SESSION_ID;
 
 @ServerWebSocket("/ws/tts")
@@ -33,19 +38,31 @@ public class TtsWebSocket {
     }
 
     @OnMessage
-    public Publisher<MessageResponse> onMessage(CommandMessage message, WebSocketSession session) {
-        switch (message.getCommandType()) {
+    public Publisher<Message> onMessage(CommandMessage commandMessage, WebSocketSession session) {
+        switch (commandMessage.getCommandType()) {
             case FACILITATE:
-                return session.send(gameService.facilitate());
+                return respondAndNewState(session, gameService.facilitate(session.getId()));
             case JOIN:
-                return session.send(gameService.join(message.getParameters().get("gameSessionId")));
+                GameSessionId gameSessionId = new GameSessionId(commandMessage.getParameters().get("gameSessionId"));
+                return respondAndNewState(session, gameService.join(gameSessionId, session.getId()));
             default:
-                return session.send(MessageResponse.failed("Unknown command." + message.getCommandType()));
+                return session.send(MessageResponse.failed("Unknown command." + commandMessage.getCommandType()));
         }
     }
 
     @OnClose
     public Publisher<String> onClose(WebSocketSession session) {
         return broadcaster.broadcast("Closed " + session.getId());
+    }
+
+    private Publisher<Message> respondAndNewState(WebSocketSession session, MessageResponse messageResponse) {
+        session.sendSync(messageResponse);
+        GameSessionId gameSessionId = new GameSessionId(messageResponse.getParameters().get(GAME_SESSION_ID));
+        List<String> socketSessions = gameService.socketSessions(gameSessionId);
+        return broadcaster.broadcast(gameService.gameState(gameSessionId), isInGame(socketSessions));
+    }
+
+    private Predicate<WebSocketSession> isInGame(List<String> sessions) {
+        return s -> sessions.contains(s.getId());
     }
 }

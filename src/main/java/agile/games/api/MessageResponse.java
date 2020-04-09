@@ -3,7 +3,7 @@ package agile.games.api;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class MessageResponse {
+public class MessageResponse implements Message {
 
     private MessageType messageType;
     private String message;
@@ -62,9 +62,6 @@ public class MessageResponse {
         this.message = message;
     }
 
-    public enum Status {
-        OK, FAIL
-    }
 
     public enum MessageType {
         JOINED,FACILITATE, SESSION_START
