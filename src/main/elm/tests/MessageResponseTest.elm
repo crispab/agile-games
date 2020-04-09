@@ -2,7 +2,7 @@ module MessageResponseTest exposing (all, expectedOkMessage, givenOkMessage)
 
 import Dict
 import Expect
-import Message exposing (MessageResponse, MessageResponseStatus(..), MessageType(..), decodeMessage)
+import Message exposing (GamePhase(..), GameState, MessageResponse, MessageResponseStatus(..), MessageType(..), decodeMessage)
 import Test exposing (..)
 
 
@@ -21,6 +21,10 @@ all =
             \_ ->
                 decodeMessage givenFailMessage
                     |> Expect.equal expectedFailMessage
+        , test "Command state" <|
+            \_ ->
+                decodeMessage givenCommandState
+                    |> Expect.equal expectedCommandState
         ]
 
 
@@ -70,4 +74,38 @@ expectedFailMessage : MessageResponse
 expectedFailMessage =
     { status = FAIL "some fail message"
     , parameters = Dict.empty
+    }
+
+
+givenCommandState =
+    """
+      {
+      "status" : "STATE",
+        "gameState" : {
+          "players" : [
+            "Alice",
+            "Miriam",
+            "Eve"
+          ],
+          "phase" : "GATHERING"
+        }
+      }
+    """
+
+
+expectedCommandState : MessageResponse
+expectedCommandState =
+    { status = STATE expectedGameState
+    , parameters = Dict.empty
+    }
+
+
+expectedGameState : GameState
+expectedGameState =
+    { players =
+        [ "Alice"
+        , "Miriam"
+        , "Eve"
+        ]
+    , phase = Gathering
     }

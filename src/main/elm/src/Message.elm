@@ -1,13 +1,27 @@
-module Message exposing (MessageResponse, MessageResponseDto, MessageResponseStatus(..), MessageType(..), decodeMessage, dto2Response, messageResponseDecoder, messageTypesDict, stringToMessageType, stringToStatus)
+module Message exposing
+    ( GamePhase(..)
+    , GameState
+    , MessageResponse
+    , MessageResponseStatus(..)
+    , MessageType(..)
+    , decodeMessage
+    )
 
 import Dict exposing (Dict)
-import Json.Decode exposing (Decoder, decodeString, dict, errorToString, string, succeed)
+import Json.Decode exposing (Decoder, decodeString, dict, errorToString, list, map, string, succeed)
 import Json.Decode.Pipeline exposing (optional, required)
+
+
+type alias MessageResponse =
+    { status : MessageResponseStatus
+    , parameters : Dict String String
+    }
 
 
 type MessageResponseStatus
     = OK MessageType
     | FAIL String
+    | STATE GameState
 
 
 type MessageType
@@ -17,10 +31,16 @@ type MessageType
     | Unknown
 
 
-type alias MessageResponse =
-    { status : MessageResponseStatus
-    , parameters : Dict String String
+type alias GameState =
+    { phase : GamePhase
+    , players : List String
     }
+
+
+type GamePhase
+    = Gathering
+    | Assignment
+    | UnknownPhase
 
 
 type alias MessageResponseDto =
@@ -31,14 +51,24 @@ type alias MessageResponseDto =
     }
 
 
+type alias GameStateMessageDto =
+    { gameState : GameState
+    }
+
+
 decodeMessage : String -> MessageResponse
 decodeMessage string =
-    case decodeString messageResponseDecoder string of
-        Ok m ->
-            dto2Response m
+    case decodeString stateDecoder string of
+        Ok g ->
+            MessageResponse (STATE g.gameState) Dict.empty
 
-        Err error ->
-            MessageResponse (FAIL (errorToString error)) Dict.empty
+        Err _ ->
+            case decodeString messageResponseDecoder string of
+                Ok m ->
+                    dto2Response m
+
+                Err error ->
+                    MessageResponse (FAIL (errorToString error)) Dict.empty
 
 
 messageResponseDecoder : Decoder MessageResponseDto
@@ -48,6 +78,29 @@ messageResponseDecoder =
         |> optional "messageType" string ""
         |> optional "message" string ""
         |> optional "parameters" (dict string) Dict.empty
+
+
+stateDecoder : Decoder GameStateMessageDto
+stateDecoder =
+    succeed GameStateMessageDto
+        |> required "gameState" gameStateDecoder
+
+
+gameStateDecoder : Decoder GameState
+gameStateDecoder =
+    succeed GameState
+        |> required "phase" (map stringToPhase string)
+        |> required "players" (list string)
+
+
+stringToPhase : String -> GamePhase
+stringToPhase s =
+    Dict.fromList
+        [ ( "GATHERING", Gathering )
+        , ( "ASSIGNMENT", Assignment )
+        ]
+        |> Dict.get s
+        |> Maybe.withDefault UnknownPhase
 
 
 dto2Response : MessageResponseDto -> MessageResponse
