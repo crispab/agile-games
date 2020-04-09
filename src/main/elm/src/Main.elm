@@ -1,13 +1,12 @@
-port module Main exposing (MessageResponse, MessageResponseStatus(..), MessageType(..), decodeMessage, main, messageResponseDecoder)
+port module Main exposing (main)
 
 import Bootstrap.Alert as Alert
 import Browser
 import Command
 import Dict exposing (Dict)
 import Html exposing (Html)
-import Json.Decode
-import Json.Decode.Pipeline exposing (optional, required)
 import Json.Encode
+import Message exposing (MessageResponseStatus(..), MessageType(..), decodeMessage)
 import Model exposing (Model, Page(..), UserSessionId, gameSessionIdFromString, userSessionIdFromString)
 import Msg exposing (Msg(..))
 import Page.FacilitatorPage exposing (viewFacilitatorPage)
@@ -28,32 +27,6 @@ main =
         , update = update
         , subscriptions = subscriptions
         }
-
-
-type MessageResponseStatus
-    = OK MessageType
-    | FAIL String
-
-
-type MessageType
-    = SessionStart
-    | FacilitateMessage
-    | JoinedMessage
-    | Unknown
-
-
-type alias MessageResponse =
-    { status : MessageResponseStatus
-    , parameters : Dict String String
-    }
-
-
-type alias MessageResponseDto =
-    { status : String
-    , messageType : String
-    , message : String
-    , parameters : Dict String String
-    }
 
 
 init : () -> ( Model, Cmd Msg )
@@ -135,53 +108,6 @@ updateBasedOnType messageType parameters model =
 
         Unknown ->
             ( alertClosed, Cmd.none )
-
-
-decodeMessage : String -> MessageResponse
-decodeMessage string =
-    case Json.Decode.decodeString messageResponseDecoder string of
-        Ok m ->
-            dto2Response m
-
-        Err error ->
-            MessageResponse (FAIL (Json.Decode.errorToString error)) Dict.empty
-
-
-messageResponseDecoder : Json.Decode.Decoder MessageResponseDto
-messageResponseDecoder =
-    Json.Decode.succeed MessageResponseDto
-        |> required "status" Json.Decode.string
-        |> optional "messageType" Json.Decode.string ""
-        |> optional "message" Json.Decode.string ""
-        |> optional "parameters" (Json.Decode.dict Json.Decode.string) Dict.empty
-
-
-dto2Response : MessageResponseDto -> MessageResponse
-dto2Response dto =
-    MessageResponse (stringToStatus dto.status dto.message dto.messageType) dto.parameters
-
-
-stringToStatus : String -> String -> String -> MessageResponseStatus
-stringToStatus status message messageType =
-    if status == "OK" then
-        OK <| stringToMessageType messageType
-
-    else
-        FAIL message
-
-
-stringToMessageType : String -> MessageType
-stringToMessageType messageType =
-    Maybe.withDefault Unknown <| Dict.get messageType messageTypesDict
-
-
-messageTypesDict : Dict String MessageType
-messageTypesDict =
-    Dict.fromList
-        [ ( "SESSION_START", SessionStart )
-        , ( "FACILITATE", FacilitateMessage )
-        , ( "JOINED", JoinedMessage )
-        ]
 
 
 

@@ -2,7 +2,7 @@ module MessageResponseTest exposing (all, expectedOkMessage, givenOkMessage)
 
 import Dict
 import Expect
-import Main exposing (MessageResponse, MessageResponseStatus(..), MessageType(..), decodeMessage)
+import Message exposing (MessageResponse, MessageResponseStatus(..), MessageType(..), decodeMessage)
 import Test exposing (..)
 
 
