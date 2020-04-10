@@ -81,10 +81,11 @@ public class GameService {
         return MessageResponse.failed("Invalid game session id " + gameSessionId);
     }
 
-    public void leave(String webSocketId) {
+    public GameSessionId leave(String webSocketId) {
         GameSessionId gameSessionId = socketSessions.get(webSocketId);
         PlayerId playerId = playerSessions.get(webSocketId);
         GameSession gameSession = gameSessions.get(gameSessionId);
         gameSession.removePlayer(playerId);
+        return gameSessionId;
     }
 }

@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static agile.games.api.MessageResponse.MessageType.LEFT;
 import static agile.games.api.MessageResponse.MessageType.SESSION_START;
 import static agile.games.api.MessageResponse.ParameterKey.GAME_SESSION_ID;
 import static agile.games.api.MessageResponse.ParameterKey.USER_SESSION_ID;
@@ -56,15 +55,20 @@ public class TtsWebSocket {
     @OnClose
     public Publisher<Message> onClose(WebSocketSession session) {
         LOG.info("Closed socket {}", session.getId());
-        gameService.leave(session.getId());
-        return session.send(MessageResponse.ok(LEFT));
+        return broadcastNewState(gameService.leave(session.getId()));
     }
 
     private Publisher<Message> respondAndNewState(WebSocketSession session, MessageResponse messageResponse) {
         session.sendSync(messageResponse);
         GameSessionId gameSessionId = new GameSessionId(messageResponse.getParameters().get(GAME_SESSION_ID));
-        List<String> socketSessions = gameService.socketSessions(gameSessionId);
-        return broadcaster.broadcast(gameService.gameState(gameSessionId), isInGame(socketSessions));
+        return broadcastNewState(gameSessionId);
+    }
+
+    private Publisher<Message> broadcastNewState(GameSessionId gameSessionId) {
+        return broadcaster.broadcast(
+                gameService.gameState(gameSessionId),
+                isInGame(gameService.socketSessions(gameSessionId))
+        );
     }
 
     private Predicate<WebSocketSession> isInGame(List<String> sessions) {

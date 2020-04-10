@@ -3,6 +3,7 @@ package agile.games.api;
 import java.util.EnumMap;
 import java.util.Map;
 
+@SuppressWarnings({"unused"})
 public class MessageResponse implements Message {
 
     private MessageType messageType;
@@ -64,7 +65,9 @@ public class MessageResponse implements Message {
 
 
     public enum MessageType {
-        JOINED, FACILITATE, SESSION_START, LEFT
+        JOINED,
+        FACILITATE,
+        SESSION_START
     }
 
     public enum ParameterKey {

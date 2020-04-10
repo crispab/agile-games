@@ -40,7 +40,7 @@ viewJoinOrFacility model =
             [ Card.config [ Card.outlinePrimary ]
                 |> Card.headerH4 [] [ text "Join a game" ]
                 |> Card.block []
-                    [ Block.text [] [ text "Enter the game code to join." ]
+                    [ Block.text [] [ text "Enter your name and the game code to join." ]
                     , Block.custom <| viewAlert model
                     , Block.custom <|
                         viewJoinGameForm model

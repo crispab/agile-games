@@ -23,5 +23,5 @@ viewHeadLine : GameSessionId String -> Html Msg
 viewHeadLine gameSessionID =
     div [ class "jumbotron", style "text-align" "center" ]
         [ h1 [] [ text "Facilitator" ]
-        , h2 [] [ text <| "Game id: " ++ gameSessionId2String gameSessionID ]
+        , h2 [] [ text <| "Game code: " ++ gameSessionId2String gameSessionID ]
         ]
