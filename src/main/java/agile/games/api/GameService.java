@@ -20,20 +20,18 @@ import static agile.games.api.Status.STATE;
 public class GameService {
     private static final Logger LOG = LoggerFactory.getLogger(GameService.class);
 
-    private Map<String, UserSessionId> userSessions = new HashMap<>();
     private Map<String, GameSessionId> socketSessions = new HashMap<>();
     private Map<String, PlayerId> playerSessions = new HashMap<>();
     private Map<GameSessionId, GameSession> gameSessions = new HashMap<>();
 
     public UserSessionId registerUser(String webSocketId) {
         UserSessionId userSessionId = new UserSessionId();
-        userSessions.put(webSocketId, userSessionId);
-        LOG.info("Register user: {}", userSessionId);
+        LOG.info("Register user: {}", webSocketId);
         return userSessionId;
     }
 
     public MessageResponse facilitate(String webSocketId) {
-        LOG.info("Facilitate");
+        LOG.info("Facilitate: {}", webSocketId);
         GameSession gameSession = new GameSession();
         UserId userId = gameSession.newUser();
         gameSession.setFacilitator(userId);
@@ -49,14 +47,14 @@ public class GameService {
             return MessageResponse.failed("Name must be at least 2 characters");
         }
         GameSession gameSession = gameSessions.get(gameSessionId);
-        if (gameSession != null) {
-            UserId userId = gameSession.newUser();
-            PlayerId playerId = gameSession.addPlayerNamed(playerName.getName(), userId);
-            socketSessions.put(webSocketId, gameSessionId);
-            playerSessions.put(webSocketId, playerId);
-            return MessageResponse.ok(JOINED).put(GAME_SESSION_ID, gameSessionId.toString());
+        if (gameSession == null) {
+            return MessageResponse.failed("Can't find game " + gameSessionId);
         }
-        return MessageResponse.failed("Can't find game " + gameSessionId);
+        UserId userId = gameSession.newUser();
+        PlayerId playerId = gameSession.addPlayerNamed(playerName.getName(), userId);
+        socketSessions.put(webSocketId, gameSessionId);
+        playerSessions.put(webSocketId, playerId);
+        return MessageResponse.ok(JOINED).put(GAME_SESSION_ID, gameSessionId.toString());
     }
 
     public List<String> socketSessions(GameSessionId gameSessionId) {
@@ -82,6 +80,7 @@ public class GameService {
     }
 
     public GameSessionId leave(String webSocketId) {
+        LOG.info("Leave: {}", webSocketId);
         GameSessionId gameSessionId = socketSessions.get(webSocketId);
         PlayerId playerId = playerSessions.get(webSocketId);
         GameSession gameSession = gameSessions.get(gameSessionId);
