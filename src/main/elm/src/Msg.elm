@@ -1,6 +1,7 @@
 module Msg exposing (Msg(..))
 
 import Bootstrap.Alert as Alert
+import Message exposing (GamePhase)
 
 
 type Msg
@@ -10,3 +11,4 @@ type Msg
     | JoinGame
     | DismissAlert Alert.Visibility
     | Facilitate
+    | GotoPhase GamePhase

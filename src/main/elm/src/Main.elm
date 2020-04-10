@@ -91,6 +91,16 @@ update msg model =
         Facilitate ->
             ( model, websocketOut <| Command.facilitate model.userSessionId )
 
+        GotoPhase gamePhase ->
+            let
+                now =
+                    model.gameState
+
+                inNewPhase =
+                    { now | phase = gamePhase }
+            in
+            ( { model | gameState = inNewPhase }, Cmd.none )
+
 
 updateBasedOnType : MessageType -> Dict String String -> Model -> ( Model, Cmd Msg )
 updateBasedOnType messageType parameters model =

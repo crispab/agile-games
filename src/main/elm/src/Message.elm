@@ -40,6 +40,8 @@ type alias GameState =
 type GamePhase
     = Gathering
     | Assignment
+    | Executing
+    | Reporting
     | UnknownPhase
 
 
