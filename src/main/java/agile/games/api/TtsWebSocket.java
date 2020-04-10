@@ -54,9 +54,7 @@ public class TtsWebSocket {
     @OnClose
     public Publisher<Message> onClose(WebSocketSession session) {
         LOG.info("Closed socket {}", session.getId());
-        return gameService.leave(session.getId())
-                .map(this::broadcastNewState)
-                .orElseGet(() -> broadcaster.broadcast(noMessage(), toNoOne()));
+        return broadcaster.broadcast(noMessage(), toNoOne());
     }
 
     private Message tryResume(WebSocketSession session, UserSessionId userSessionId) {

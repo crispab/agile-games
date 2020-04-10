@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 import static agile.games.api.MessageResponse.MessageType.*;
 import static agile.games.api.MessageResponse.ParameterKey.*;
+import static agile.games.api.RoomType.Facilitator;
+import static agile.games.api.RoomType.Lobby;
 import static agile.games.api.Status.STATE;
 
 @Singleton
@@ -42,7 +44,7 @@ public class GameService {
                 return MessageResponse
                         .ok(RESUME)
                         .put(USER_SESSION_ID, sessionId.toString())
-                        .put(ROOM, "Lobby");
+                        .put(ROOM, Lobby.toString());
             }
             socketSessions.remove(oldWebSocketId);
             socketSessions.put(newWebSocketId, gameSessionCode);
@@ -56,7 +58,7 @@ public class GameService {
             return MessageResponse
                     .ok(RESUME)
                     .put(USER_SESSION_ID, sessionId.toString())
-                    .put(ROOM, playerId == null ? "Facilitator" : "Player")
+                    .put(ROOM, playerId == null ? Facilitator.toString() : RoomType.Player.toString())
                     .put(GAME_CODE, gameSession.getCode().toString());
         }
     }

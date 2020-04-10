@@ -28,6 +28,7 @@ type MessageType
     = SessionStart
     | FacilitateMessage
     | JoinedMessage
+    | ResumeMessage
     | Unknown
 
 
@@ -130,4 +131,5 @@ messageTypesDict =
         [ ( "SESSION_START", SessionStart )
         , ( "FACILITATE", FacilitateMessage )
         , ( "JOINED", JoinedMessage )
+        , ( "RESUME", ResumeMessage )
         ]

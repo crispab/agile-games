@@ -150,8 +150,28 @@ updateBasedOnType messageType parameters model =
             , Cmd.none
             )
 
+        ResumeMessage ->
+            ( { alertClosed
+                | currentPage = pageFromRoomParameter <| Dict.get "ROOM" parameters
+                , gameSessionId = gameSessionIdFromString <| Maybe.withDefault "" <| Dict.get "GAME_CODE" parameters
+              }
+            , Cmd.none
+            )
+
         Unknown ->
             ( alertClosed, Cmd.none )
+
+
+pageFromRoomParameter : Maybe String -> Page
+pageFromRoomParameter room =
+    if room == Just "Facilitator" then
+        FacilitatorPage
+
+    else if room == Just "Player" then
+        PlayerPage
+
+    else
+        LobbyPage
 
 
 
