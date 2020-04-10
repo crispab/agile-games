@@ -252,7 +252,7 @@ public class GameSession {
         return players.values().stream().map(Player::getName).collect(Collectors.toList());
     }
 
-    public void removePlayer(PlayerId playerId) {
-        players.remove(playerId);
+    public PlayerId removePlayer(PlayerId playerId) {
+        return players.remove(playerId).getId();
     }
 }

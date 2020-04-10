@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static agile.games.api.MessageResponse.MessageType.FACILITATE;
@@ -79,12 +80,27 @@ public class GameService {
         return MessageResponse.failed("Invalid game session id " + gameSessionId);
     }
 
-    public GameSessionId leave(String webSocketId) {
+    public Optional<GameSessionId> leave(String webSocketId) {
         LOG.info("Leave: {}", webSocketId);
-        GameSessionId gameSessionId = socketSessions.get(webSocketId);
-        PlayerId playerId = playerSessions.get(webSocketId);
-        GameSession gameSession = gameSessions.get(gameSessionId);
-        gameSession.removePlayer(playerId);
+        Optional<GameSessionId> gameSessionId = findGameSessionId(webSocketId);
+        if (gameSessionId.isPresent()) {
+            Optional<GameSession> gameSession = findGameSession(gameSessionId.get());
+            Optional<PlayerId> playerId = findPlayerId(webSocketId);
+            playerId.ifPresent(id -> gameSession.map(g -> g.removePlayer(id)));
+        }
+
         return gameSessionId;
+    }
+
+    private Optional<GameSessionId> findGameSessionId(String webSocketId) {
+        return Optional.ofNullable(socketSessions.get(webSocketId));
+    }
+
+    private Optional<GameSession> findGameSession(GameSessionId key) {
+        return Optional.ofNullable(gameSessions.get(key));
+    }
+
+    private Optional<PlayerId> findPlayerId(String webSocketId) {
+        return Optional.ofNullable(playerSessions.get(webSocketId));
     }
 }

@@ -55,7 +55,9 @@ public class TtsWebSocket {
     @OnClose
     public Publisher<Message> onClose(WebSocketSession session) {
         LOG.info("Closed socket {}", session.getId());
-        return broadcastNewState(gameService.leave(session.getId()));
+        return gameService.leave(session.getId())
+                .map(this::broadcastNewState)
+                .orElseGet(() -> broadcaster.broadcast(noMessage(), toNoOne()));
     }
 
     private Publisher<Message> respondAndNewState(WebSocketSession session, MessageResponse messageResponse) {
@@ -73,5 +75,13 @@ public class TtsWebSocket {
 
     private Predicate<WebSocketSession> isInGame(List<String> sessions) {
         return s -> sessions.contains(s.getId());
+    }
+
+    private Message noMessage() {
+        return new MessageResponse();
+    }
+
+    private Predicate<WebSocketSession> toNoOne() {
+        return (s -> false);
     }
 }
