@@ -1,7 +1,7 @@
 package agile.games.api;
 
 import agile.games.PlayerName;
-import agile.games.tts.GameSessionId;
+import agile.games.tts.GameSessionCode;
 import io.micronaut.websocket.WebSocketBroadcaster;
 import io.micronaut.websocket.WebSocketSession;
 import io.micronaut.websocket.annotation.OnClose;
@@ -15,9 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static agile.games.api.MessageResponse.MessageType.SESSION_START;
 import static agile.games.api.MessageResponse.ParameterKey.GAME_SESSION_ID;
-import static agile.games.api.MessageResponse.ParameterKey.USER_SESSION_ID;
 
 @ServerWebSocket("/ws/tts")
 public class TtsWebSocket {
@@ -34,8 +32,7 @@ public class TtsWebSocket {
     @OnOpen
     public Publisher<MessageResponse> onOpen(WebSocketSession session) {
         LOG.info("New session: {}", session.getId());
-        UserSessionId userSessionId = gameService.registerUser(session.getId());
-        return session.send(MessageResponse.ok(SESSION_START).put(USER_SESSION_ID, userSessionId.toString()));
+        return session.send(gameService.registerUser(session.getId()));
     }
 
     @OnMessage
@@ -44,9 +41,11 @@ public class TtsWebSocket {
             case FACILITATE:
                 return respondAndNewState(session, gameService.facilitate(session.getId()));
             case JOIN:
-                GameSessionId gameSessionId = new GameSessionId(commandMessage.getParameters().get("gameSessionId"));
+                GameSessionCode gameSessionCode = new GameSessionCode(commandMessage.getParameters().get("gameSessionId"));
                 PlayerName playerName = new PlayerName(commandMessage.getParameters().get("playerName"));
-                return respondAndNewState(session, gameService.join(gameSessionId, playerName, session.getId()));
+                return respondAndNewState(session, gameService.join(gameSessionCode, playerName, session.getId()));
+            case RESUME:
+                return session.send(tryResume(session, commandMessage.getUserSessionId()));
             default:
                 return session.send(MessageResponse.failed("Unknown command." + commandMessage.getCommandType()));
         }
@@ -60,16 +59,20 @@ public class TtsWebSocket {
                 .orElseGet(() -> broadcaster.broadcast(noMessage(), toNoOne()));
     }
 
-    private Publisher<Message> respondAndNewState(WebSocketSession session, MessageResponse messageResponse) {
-        session.sendSync(messageResponse);
-        GameSessionId gameSessionId = new GameSessionId(messageResponse.getParameters().get(GAME_SESSION_ID));
-        return broadcastNewState(gameSessionId);
+    private Message tryResume(WebSocketSession session, UserSessionId userSessionId) {
+        return gameService.tryResume(session.getId(), userSessionId);
     }
 
-    private Publisher<Message> broadcastNewState(GameSessionId gameSessionId) {
+    private Publisher<Message> respondAndNewState(WebSocketSession session, MessageResponse messageResponse) {
+        session.sendSync(messageResponse);
+        GameSessionCode gameSessionCode = new GameSessionCode(messageResponse.getParameters().get(GAME_SESSION_ID));
+        return broadcastNewState(gameSessionCode);
+    }
+
+    private Publisher<Message> broadcastNewState(GameSessionCode gameSessionCode) {
         return broadcaster.broadcast(
-                gameService.gameState(gameSessionId),
-                isInGame(gameService.socketSessions(gameSessionId))
+                gameService.gameState(gameSessionCode),
+                isInGame(gameService.socketSessions(gameSessionCode))
         );
     }
 

@@ -7,7 +7,7 @@ import Dict exposing (Dict)
 import Html exposing (Html)
 import Json.Encode
 import Message exposing (GamePhase(..), GameState, MessageResponseStatus(..), MessageType(..), decodeMessage)
-import Model exposing (Model, Page(..), UserSessionId, gameSessionIdFromString, userSessionIdFromString)
+import Model exposing (Model, Page(..), UserSessionId, gameSessionIdFromString, userSessionId2String, userSessionIdFromString)
 import Msg exposing (Msg(..))
 import Page.FacilitatorPage exposing (viewFacilitatorPage)
 import Page.LobbyPage exposing (viewLobbyPage)
@@ -20,6 +20,9 @@ port websocketIn : (String -> msg) -> Sub msg
 port websocketOut : Json.Encode.Value -> Cmd msg
 
 
+port setStorage : String -> Cmd msg
+
+
 main =
     Browser.element
         { init = init
@@ -29,18 +32,22 @@ main =
         }
 
 
-init : () -> ( Model, Cmd Msg )
-init _ =
-    ( initialModel, Cmd.none )
+init : String -> ( Model, Cmd Msg )
+init session =
+    ( initialModel session, Cmd.none )
 
 
-initialModel : Model
-initialModel =
+
+-- websocketOut <| Command.resume session
+
+
+initialModel : String -> Model
+initialModel session =
     { currentPage = LobbyPage
     , code = ""
     , playerName = ""
     , alertVisibility = Alert.closed
-    , userSessionId = userSessionIdFromString ""
+    , userSessionId = userSessionIdFromString session
     , gameSessionId = gameSessionIdFromString ""
     , errorMessage = ""
     , gameState = initialGameState
@@ -110,11 +117,23 @@ updateBasedOnType messageType parameters model =
     in
     case messageType of
         SessionStart ->
-            ( { alertClosed
-                | userSessionId = userSessionIdFromString <| Maybe.withDefault "" <| Dict.get "USER_SESSION_ID" parameters
-              }
-            , Cmd.none
-            )
+            if (String.length <| userSessionId2String model.userSessionId) > 1 then
+                ( { alertClosed
+                    | userSessionId = userSessionIdFromString ""
+                  }
+                , websocketOut <| Command.resume <| userSessionId2String model.userSessionId
+                )
+
+            else
+                let
+                    sessionId =
+                        Maybe.withDefault "" <| Dict.get "USER_SESSION_ID" parameters
+                in
+                ( { alertClosed
+                    | userSessionId = userSessionIdFromString <| sessionId
+                  }
+                , setStorage sessionId
+                )
 
         FacilitateMessage ->
             ( { alertClosed

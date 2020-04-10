@@ -13,7 +13,7 @@ public class GameSession {
     private Map<UserId, User> users = new HashMap<>();
     private Map<PlayerId, Player> players = new HashMap<>();
     private Board board;
-    private final GameSessionId id;
+    private final GameSessionCode code;
 
     public GameSession() {
         this(5, 5);
@@ -22,7 +22,7 @@ public class GameSession {
     public GameSession(int x, int y) {
         this.gamePhase = GamePhase.GATHERING;
         this.board = new Board(x, y);
-        id = new GameSessionId();
+        code = new GameSessionCode();
     }
 
     public void addPlayer(UserId userId) {
@@ -244,8 +244,8 @@ public class GameSession {
         return player.getSteps1();
     }
 
-    public GameSessionId getId() {
-        return id;
+    public GameSessionCode getCode() {
+        return code;
     }
 
     public List<String> getPlayerNames() {

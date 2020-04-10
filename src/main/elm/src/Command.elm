@@ -1,4 +1,4 @@
-module Command exposing (facilitate, join)
+module Command exposing (facilitate, join, resume)
 
 import Json.Encode as Encode
 import Model exposing (GameSessionId, UserSessionId, userSessionId2String)
@@ -23,4 +23,12 @@ join userId gameCode playerName =
                 , ( "playerName", Encode.string playerName )
                 ]
           )
+        ]
+
+
+resume : String -> Encode.Value
+resume session =
+    Encode.object
+        [ ( "commandType", Encode.string "RESUME" )
+        , ( "userSessionId", Encode.string session )
         ]

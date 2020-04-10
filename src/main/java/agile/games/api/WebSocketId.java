@@ -1,20 +1,16 @@
-package agile.games.tts;
+package agile.games.api;
 
 import java.util.Objects;
-import java.util.Random;
 
-public class GameSessionId  {
-    private static Random random = new Random();
+public class WebSocketId {
     private final String id;
 
-    public GameSessionId() {
-        int nextInt = random.nextInt(999999);
-        String tmpStr = String.format("%06d", nextInt);
-        id = tmpStr.substring(0,3) + " " + tmpStr.substring(3);
+    public WebSocketId(String id) {
+        this.id = id;
     }
 
-    public GameSessionId(String id) {
-        this.id = id;
+    public String getId() {
+        return id;
     }
 
     @Override
@@ -26,7 +22,7 @@ public class GameSessionId  {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GameSessionId that = (GameSessionId) o;
+        WebSocketId that = (WebSocketId) o;
         return Objects.equals(id, that.id);
     }
 

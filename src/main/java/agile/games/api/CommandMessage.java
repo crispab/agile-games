@@ -5,7 +5,8 @@ import java.util.Map;
 public class CommandMessage {
     public enum CommandType {
         FACILITATE,
-        JOIN
+        JOIN,
+        RESUME
     }
 
     private CommandType commandType;

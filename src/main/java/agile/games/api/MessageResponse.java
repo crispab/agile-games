@@ -67,11 +67,14 @@ public class MessageResponse implements Message {
     public enum MessageType {
         JOINED,
         FACILITATE,
-        SESSION_START
+        SESSION_START,
+        RESUME
     }
 
     public enum ParameterKey {
         USER_SESSION_ID,
-        GAME_SESSION_ID
+        GAME_SESSION_ID,
+        ROOM,
+        GAME_CODE
     }
 }

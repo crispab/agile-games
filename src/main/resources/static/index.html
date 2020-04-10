@@ -16,10 +16,16 @@
 <body>
 <div id="app"></div>
 <script>
+    var storedState = localStorage.getItem('session');
+    var startingState = storedState ? JSON.parse(storedState) : "";
+
     var app = Elm.Main.init(
-        {node: document.getElementById('app')}
+        {
+            node: document.getElementById('app'),
+            flags: startingState
+        }
     );
-    var host = location.hostname + ":" + location.port;
+    var host = location.hostname + ":" + 8080;
     var ws = new WebSocket("ws://" + host + "/ws/tts");
 
     ws.onmessage = function (message) {
@@ -33,6 +39,11 @@
         console.log(msg);
         const jsonString = JSON.stringify(msg);
         ws.send(jsonString);
+    });
+
+    app.ports.setStorage.subscribe(function (state) {
+        console.log("Setting storage " + state);
+        localStorage.setItem('session', JSON.stringify(state));
     });
 </script>
 </body>
