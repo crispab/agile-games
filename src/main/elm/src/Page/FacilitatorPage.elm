@@ -6,6 +6,7 @@ import Html exposing (Html, div, h1, h2, text)
 import Html.Attributes exposing (class, style)
 import Model exposing (GameSessionId, Model, gameSessionId2String)
 import Msg exposing (Msg(..))
+import Page.Common exposing (playerList)
 
 
 viewFacilitatorPage : Model -> Html Msg
@@ -15,6 +16,7 @@ viewFacilitatorPage model =
             [ Grid.col [ Col.sm ]
                 [ viewHeadLine model.gameSessionId
                 ]
+            , playerList model.gameState.players
             ]
         ]
 
