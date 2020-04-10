@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static agile.games.api.MessageResponse.ParameterKey.GAME_SESSION_ID;
+import static agile.games.api.MessageResponse.ParameterKey.GAME_SESSION_CODE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class GameServiceTest {
@@ -62,6 +62,6 @@ class GameServiceTest {
 
     private GameSessionCode createGame(GameService gameService) {
         MessageResponse facilitate = gameService.facilitate(SOME_WEB_SOCKET_ID);
-        return new GameSessionCode(facilitate.getParameters().get(GAME_SESSION_ID));
+        return new GameSessionCode(facilitate.getParameters().get(GAME_SESSION_CODE));
     }
 }

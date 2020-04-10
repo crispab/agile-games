@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static agile.games.api.MessageResponse.ParameterKey.GAME_SESSION_ID;
+import static agile.games.api.MessageResponse.ParameterKey.GAME_SESSION_CODE;
 
 @ServerWebSocket("/ws/tts")
 public class TtsWebSocket {
@@ -45,7 +45,7 @@ public class TtsWebSocket {
                 PlayerName playerName = new PlayerName(commandMessage.getParameters().get("playerName"));
                 return respondAndNewState(session, gameService.join(gameSessionCode, playerName, session.getId()));
             case RESUME:
-                return session.send(tryResume(session, commandMessage.getUserSessionId()));
+                return respondAndNewState(session, tryResume(session, commandMessage.getUserSessionId()));
             default:
                 return session.send(MessageResponse.failed("Unknown command." + commandMessage.getCommandType()));
         }
@@ -57,13 +57,13 @@ public class TtsWebSocket {
         return broadcaster.broadcast(noMessage(), toNoOne());
     }
 
-    private Message tryResume(WebSocketSession session, UserSessionId userSessionId) {
+    private MessageResponse tryResume(WebSocketSession session, UserSessionId userSessionId) {
         return gameService.tryResume(session.getId(), userSessionId);
     }
 
     private Publisher<Message> respondAndNewState(WebSocketSession session, MessageResponse messageResponse) {
         session.sendSync(messageResponse);
-        GameSessionCode gameSessionCode = new GameSessionCode(messageResponse.getParameters().get(GAME_SESSION_ID));
+        GameSessionCode gameSessionCode = new GameSessionCode(messageResponse.getParameters().get(GAME_SESSION_CODE));
         return broadcastNewState(gameSessionCode);
     }
 

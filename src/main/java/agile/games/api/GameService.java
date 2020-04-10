@@ -59,7 +59,7 @@ public class GameService {
                     .ok(RESUME)
                     .put(USER_SESSION_ID, sessionId.toString())
                     .put(ROOM, playerId == null ? Facilitator.toString() : RoomType.Player.toString())
-                    .put(GAME_CODE, gameSession.getCode().toString());
+                    .put(GAME_SESSION_CODE, gameSession.getCode().toString());
         }
     }
 
@@ -71,7 +71,7 @@ public class GameService {
         GameSessionCode gameSessionCode = gameSession.getCode();
         gameSessions.put(gameSessionCode, gameSession);
         socketSessions.put(new WebSocketId(webSocketIdStr), gameSessionCode);
-        return MessageResponse.ok(FACILITATE).put(GAME_SESSION_ID, gameSessionCode.toString());
+        return MessageResponse.ok(FACILITATE).put(GAME_SESSION_CODE, gameSessionCode.toString());
     }
 
     public MessageResponse join(GameSessionCode gameSessionCode, PlayerName playerName, String webSocketId) {
@@ -88,7 +88,7 @@ public class GameService {
         WebSocketId id = new WebSocketId(webSocketId);
         socketSessions.put(id, gameSessionCode);
         playerSessions.put(id, playerId);
-        return MessageResponse.ok(JOINED).put(GAME_SESSION_ID, gameSessionCode.toString());
+        return MessageResponse.ok(JOINED).put(GAME_SESSION_CODE, gameSessionCode.toString());
     }
 
     public List<String> socketSessions(GameSessionCode gameSessionCode) {

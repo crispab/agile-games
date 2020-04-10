@@ -137,7 +137,7 @@ updateBasedOnType messageType parameters model =
 
         FacilitateMessage ->
             ( { alertClosed
-                | gameSessionId = gameSessionIdFromString <| Maybe.withDefault "" <| Dict.get "GAME_SESSION_ID" parameters
+                | gameSessionId = gameSessionIdFromString <| Maybe.withDefault "" <| Dict.get "GAME_SESSION_CODE" parameters
                 , currentPage = FacilitatorPage
               }
             , Cmd.none
@@ -153,7 +153,7 @@ updateBasedOnType messageType parameters model =
         ResumeMessage ->
             ( { alertClosed
                 | currentPage = pageFromRoomParameter <| Dict.get "ROOM" parameters
-                , gameSessionId = gameSessionIdFromString <| Maybe.withDefault "" <| Dict.get "GAME_CODE" parameters
+                , gameSessionId = gameSessionIdFromString <| Maybe.withDefault "" <| Dict.get "GAME_SESSION_CODE" parameters
               }
             , Cmd.none
             )
