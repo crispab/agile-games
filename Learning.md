@@ -55,6 +55,25 @@ I have done designs with REST API that are used by an Elm client.
 I would like to learn designing something built on web sockets
 and event queues.
 
+I found that web sockets have their own challenges, of course. 
+A connection may be lost, e.g. when user reloads the page. In 
+a chat application that may be no problem, users just rejoins
+the same chat channel. You could do the same with a game if
+the gameId and userId is in the url. I opted to have the session
+in local storage instead which is better if you loose the url.
+Games are more stressful so you want the experience be as smooth
+as possible.
+
+However, here I discovered that the client needs to wait for the
+server to respond before sending the first command. When this app
+starts, it gets the last known session from local storage and
+tries to use it immediately. But then the sockets may not be 
+ready so instead it waits for the server to send its response
+to the socket connection establishment.
+
+In hindsight, the url approach had been easier to implement but
+user experience had suffered somewhat.
+
 ## Micronaut 
 
 I have built several services on Spring Boot but there is a new 
