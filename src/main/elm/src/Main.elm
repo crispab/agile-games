@@ -152,7 +152,8 @@ updateBasedOnType messageType parameters model =
 
         ResumeMessage ->
             ( { alertClosed
-                | currentPage = pageFromRoomParameter <| Dict.get "ROOM" parameters
+                | playerName = Maybe.withDefault "?" <| Dict.get "PLAYER_NAME" parameters
+                , currentPage = pageFromRoomParameter <| Dict.get "ROOM" parameters
                 , gameSessionId = gameSessionIdFromString <| Maybe.withDefault "" <| Dict.get "GAME_SESSION_CODE" parameters
               }
             , Cmd.none

@@ -59,6 +59,7 @@ public class GameService {
                     .ok(RESUME)
                     .put(USER_SESSION_ID, sessionId.toString())
                     .put(ROOM, playerId == null ? Facilitator.toString() : RoomType.Player.toString())
+                    .put(PLAYER_NAME, playerId == null ? Facilitator.toString() : gameSession.getPlayerName(playerId))
                     .put(GAME_SESSION_CODE, gameSession.getCode().toString());
         }
     }

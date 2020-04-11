@@ -248,6 +248,11 @@ public class GameSession {
         return code;
     }
 
+    public String getPlayerName(PlayerId playerId) {
+        Player player = findPlayerById(playerId);
+        return player.getName();
+    }
+
     public List<String> getPlayerNames() {
         return players.values().stream().map(Player::getName).collect(Collectors.toList());
     }

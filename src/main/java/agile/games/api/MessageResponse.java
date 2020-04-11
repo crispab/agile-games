@@ -74,6 +74,7 @@ public class MessageResponse implements Message {
     public enum ParameterKey {
         USER_SESSION_ID,
         GAME_SESSION_CODE,
-        ROOM
+        ROOM,
+        PLAYER_NAME
     }
 }
