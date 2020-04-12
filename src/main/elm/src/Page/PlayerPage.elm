@@ -6,7 +6,7 @@ import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
 import Html exposing (Html, div, h1, h4, img, p, table, td, text, tr)
 import Html.Attributes exposing (class, src, style, width)
-import Message exposing (GamePhase(..), GameState)
+import Message exposing (GamePhase(..), GameState, Square)
 import Model exposing (GameSessionId, Model, gameSessionId2String)
 import Msg exposing (Msg(..))
 import Page.Common exposing (playerList)
@@ -154,26 +154,9 @@ reportingText =
     """
 
 
-type alias Square =
-    { player : Maybe Player
-    }
-
-
-type alias Player =
-    { name : String
-    }
-
-
 boardView : Model -> Html Msg
 boardView model =
-    let
-        makeSquare =
-            Square Nothing
-
-        grid =
-            List.repeat 12 (List.repeat 12 makeSquare)
-    in
-    table [] (List.map boardRowView grid)
+    table [] (List.map boardRowView model.gameState.board)
 
 
 boardRowView : List Square -> Html Msg
@@ -192,7 +175,7 @@ imgUrl : Square -> String
 imgUrl square =
     case square.player of
         Nothing ->
-            "/assets/avatars/empty.png"
+            "/assets/empty.png"
 
         Just player ->
-            player.name
+            "/assets/avatars/" ++ player.avatar

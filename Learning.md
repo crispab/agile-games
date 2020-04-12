@@ -74,6 +74,10 @@ to the socket connection establishment.
 In hindsight, the url approach had been easier to implement but
 user experience had suffered somewhat.
 
+When all of a sudden some messages never come from the server,
+despite the broadcast, it may be a problem with serialization.
+As with REST, keep a set of classes meant for transportation.
+
 ## Micronaut 
 
 I have built several services on Spring Boot but there is a new 

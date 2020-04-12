@@ -1,5 +1,7 @@
 package agile.games.tts;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 class Board {
@@ -76,5 +78,17 @@ class Board {
             }
         }
         return null;
+    }
+
+    public List<List<Square>> getSquaresAsListList() {
+        List<List<Square>> board = new ArrayList<>();
+        for (int y = 0; y < height; y++) {
+            List<Square> row = new ArrayList<>();
+            for (int x = 0; x < width; x++) {
+                row.add(squares[x][y]);
+            }
+            board.add(row);
+        }
+        return board;
     }
 }

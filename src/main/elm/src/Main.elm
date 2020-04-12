@@ -58,6 +58,7 @@ initialGameState : GameState
 initialGameState =
     { phase = Gathering
     , players = []
+    , board = [ [] ]
     }
 
 
@@ -145,7 +146,8 @@ updateBasedOnType messageType parameters model =
 
         JoinedMessage ->
             ( { alertClosed
-                | currentPage = PlayerPage
+                | gameSessionId = gameSessionIdFromString <| Maybe.withDefault "" <| Dict.get "GAME_SESSION_CODE" parameters
+                , currentPage = PlayerPage
               }
             , Cmd.none
             )

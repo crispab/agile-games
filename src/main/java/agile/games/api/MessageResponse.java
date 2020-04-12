@@ -75,6 +75,7 @@ public class MessageResponse implements Message {
         USER_SESSION_ID,
         GAME_SESSION_CODE,
         ROOM,
-        PLAYER_NAME
+        PLAYER_NAME,
+        PLAYER_AVATAR
     }
 }

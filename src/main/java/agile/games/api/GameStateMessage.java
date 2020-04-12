@@ -27,6 +27,7 @@ public class GameStateMessage implements Message {
     public static class InnerState {
         private GamePhase phase;
         private List<String> players;
+        private List<List<SquareDto>> board;
 
         public GamePhase getPhase() {
             return phase;
@@ -42,6 +43,14 @@ public class GameStateMessage implements Message {
 
         public void setPlayers(List<String> players) {
             this.players = players;
+        }
+
+        public List<List<SquareDto>> getBoard() {
+            return board;
+        }
+
+        public void setBoard(List<List<SquareDto>> board) {
+            this.board = board;
         }
     }
 }

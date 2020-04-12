@@ -1,5 +1,7 @@
 package agile.games.tts;
 
+import agile.games.api.PlayerDto;
+import agile.games.api.SquareDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,15 +16,17 @@ public class GameSession {
     private Map<PlayerId, Player> players = new HashMap<>();
     private Board board;
     private final GameSessionCode code;
+    private final AvatarAssigner avatarAssigner;
 
     public GameSession() {
         this(5, 5);
     }
 
     public GameSession(int x, int y) {
-        this.gamePhase = GamePhase.GATHERING;
-        this.board = new Board(x, y);
+        gamePhase = GamePhase.GATHERING;
+        board = new Board(x, y);
         code = new GameSessionCode();
+        avatarAssigner = new AvatarAssigner();
     }
 
     public void addPlayer(UserId userId) {
@@ -41,7 +45,7 @@ public class GameSession {
     public PlayerId addPlayerAt(String name, UserId userId, int x, int y) {
         User user = findUserById(userId);
         user.setAsPlayer();
-        Player player = new Player(name, x, y, board);
+        Player player = new Player(name, x, y, board, avatarAssigner.nextAvatar());
         players.put(player.getId(), player);
         return player.getId();
     }
@@ -253,11 +257,32 @@ public class GameSession {
         return player.getName();
     }
 
+    public String getPlayerAvatar(PlayerId playerId) {
+        Player player = findPlayerById(playerId);
+        return player.getAvatar();
+    }
+
     public List<String> getPlayerNames() {
         return players.values().stream().map(Player::getName).collect(Collectors.toList());
     }
 
     public PlayerId removePlayer(PlayerId playerId) {
         return players.remove(playerId).getId();
+    }
+
+    public List<List<SquareDto>> getBoard() {
+        return board.getSquaresAsListList().stream().map(this::toDtos).collect(Collectors.toList());
+    }
+
+    private List<SquareDto> toDtos(List<Square> squares) {
+        return squares.stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    private SquareDto toDto(Square square) {
+        return new SquareDto(toPlayerDto(square.getPlayer()));
+    }
+
+    private PlayerDto toPlayerDto(Player player) {
+        return player == null ? null : new PlayerDto(player.getName(), player.getAvatar());
     }
 }

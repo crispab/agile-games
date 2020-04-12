@@ -4,6 +4,7 @@ class Player {
     private final PlayerId id;
     private final Board board;
     private final String name;
+    private final String avatar;
     private PlayerState state;
     private PlayerPosition position;
     private PlayerPosition endGoal;
@@ -14,13 +15,14 @@ class Player {
     private Integer estimation3;
     private int steps1;
 
-    public Player(String name, int x, int y, Board board) {
+    public Player(String name, int x, int y, Board board, String avatar) {
         this.id = new PlayerId();
         this.board = board;
         board.movePlayerTo(x, y, this);
         this.state = PlayerState.INITIAL;
         this.endGoal = position;
         this.name = name;
+        this.avatar = avatar;
     }
 
     public int getX() {
@@ -45,6 +47,10 @@ class Player {
 
     public String getName() {
         return name;
+    }
+
+    public String getAvatar() {
+        return avatar;
     }
 
     public void move(Direction direction) {

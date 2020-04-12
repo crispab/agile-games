@@ -87,7 +87,23 @@ givenCommandState =
             "Miriam",
             "Eve"
           ],
-          "phase" : "GATHERING"
+          "phase" : "GATHERING",
+          "board": [
+              [
+                {
+                  "player": {
+                    "name": "Alice",
+                    "avatar": "circle.png"
+                  }
+                }
+              ],
+              [
+                {
+                  "player": null
+                },
+                { }
+              ]
+            ]
         }
       }
     """
@@ -108,4 +124,10 @@ expectedGameState =
         , "Eve"
         ]
     , phase = Gathering
+    , board =
+        [ [ { player = Just { avatar = "circle.png", name = "Alice" } } ]
+        , [ { player = Nothing }
+          , { player = Nothing }
+          ]
+        ]
     }

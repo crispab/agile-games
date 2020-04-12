@@ -20,14 +20,22 @@
         "Miriam",
         "Eve"
       ],
-      "phase": "GATHERING"
+      "phase": "GATHERING",
+      "board": [
+        [
+          {
+            "player": {
+              "name": "Alice",
+              "avatar": "circle.png"
+            }
+          }
+        ],
+        [
+          {
+            "player": null
+          }
+        ]
+      ]
     }
-  },
-  {
-    "status": "STATE",
-    "phase": "GATHERING",
-    "players": [
-      "KKK"
-    ]
   }
 ]

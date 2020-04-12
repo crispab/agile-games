@@ -55,12 +55,11 @@ public class GameService {
                 playerSessions.put(newWebSocketId, playerId);
             }
             GameSession gameSession = gameSessions.get(gameSessionCode);
-            return MessageResponse
+            MessageResponse result = MessageResponse
                     .ok(RESUME)
-                    .put(USER_SESSION_ID, sessionId.toString())
-                    .put(ROOM, playerId == null ? Facilitator.toString() : RoomType.Player.toString())
-                    .put(PLAYER_NAME, playerId == null ? Facilitator.toString() : gameSession.getPlayerName(playerId))
-                    .put(GAME_SESSION_CODE, gameSession.getCode().toString());
+                    .put(USER_SESSION_ID, sessionId.toString());
+            result = appendDetails(playerId, gameSession, result);
+            return result ;
         }
     }
 
@@ -89,7 +88,9 @@ public class GameService {
         WebSocketId id = new WebSocketId(webSocketId);
         socketSessions.put(id, gameSessionCode);
         playerSessions.put(id, playerId);
-        return MessageResponse.ok(JOINED).put(GAME_SESSION_CODE, gameSessionCode.toString());
+        MessageResponse result = MessageResponse.ok(JOINED);
+        result = appendDetails(playerId, gameSession, result);
+        return result;
     }
 
     public List<String> socketSessions(GameSessionCode gameSessionCode) {
@@ -109,6 +110,7 @@ public class GameService {
             GameStateMessage.InnerState innerState = new GameStateMessage.InnerState();
             innerState.setPhase(GamePhase.GATHERING);
             innerState.setPlayers(gameSession.getPlayerNames());
+            innerState.setBoard(gameSession.getBoard());
             gameStateMessage.setGameState(innerState);
             return gameStateMessage;
         }
@@ -126,6 +128,14 @@ public class GameService {
         }
 
         return gameSessionId;
+    }
+
+    private MessageResponse appendDetails(PlayerId playerId, GameSession gameSession, MessageResponse result) {
+        return result
+                .put(ROOM, playerId == null ? Facilitator.toString() : RoomType.Player.toString())
+                .put(PLAYER_NAME, playerId == null ? Facilitator.toString() : gameSession.getPlayerName(playerId))
+                .put(GAME_SESSION_CODE, gameSession.getCode().toString())
+                .put(PLAYER_AVATAR, playerId == null ? Facilitator.toString() : gameSession.getPlayerAvatar(playerId));
     }
 
     private Optional<GameSessionCode> findGameSessionId(WebSocketId webSocketId) {

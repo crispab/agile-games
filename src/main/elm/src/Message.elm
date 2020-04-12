@@ -4,11 +4,26 @@ module Message exposing
     , MessageResponse
     , MessageResponseStatus(..)
     , MessageType(..)
+    , Player
+    , Square
     , decodeMessage
     )
 
 import Dict exposing (Dict)
-import Json.Decode exposing (Decoder, decodeString, dict, errorToString, list, map, string, succeed)
+import Json.Decode
+    exposing
+        ( Decoder
+        , decodeString
+        , dict
+        , errorToString
+        , list
+        , map
+        , null
+        , nullable
+        , oneOf
+        , string
+        , succeed
+        )
 import Json.Decode.Pipeline exposing (optional, required)
 
 
@@ -35,6 +50,18 @@ type MessageType
 type alias GameState =
     { phase : GamePhase
     , players : List String
+    , board : List (List Square)
+    }
+
+
+type alias Square =
+    { player : Maybe Player
+    }
+
+
+type alias Player =
+    { name : String
+    , avatar : String
     }
 
 
@@ -94,6 +121,7 @@ gameStateDecoder =
     succeed GameState
         |> required "phase" (map stringToPhase string)
         |> required "players" (list string)
+        |> required "board" (list (list squareDecoder))
 
 
 stringToPhase : String -> GamePhase
@@ -104,6 +132,27 @@ stringToPhase s =
         ]
         |> Dict.get s
         |> Maybe.withDefault UnknownPhase
+
+
+squareDecoder : Decoder Square
+squareDecoder =
+    succeed Square
+        |> optional "player" (nullable decodePlayer) Nothing
+
+
+nullable : Decoder a -> Decoder (Maybe a)
+nullable decoder =
+    oneOf
+        [ null Nothing
+        , map Just decoder
+        ]
+
+
+decodePlayer : Decoder Player
+decodePlayer =
+    succeed Player
+        |> required "name" string
+        |> required "avatar" string
 
 
 dto2Response : MessageResponseDto -> MessageResponse
