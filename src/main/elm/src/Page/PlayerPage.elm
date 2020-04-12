@@ -16,7 +16,7 @@ viewPlayerPage : Model -> Html Msg
 viewPlayerPage model =
     Grid.container []
         [ Grid.row []
-            [ headLine model.gameSessionId model.playerName
+            [ headLine model.gameSessionId model.playerName model.playerAvatar
             , playerList model.gameState.players
             ]
         , Grid.row []
@@ -33,12 +33,15 @@ mainContent model =
         ]
 
 
-headLine : GameSessionId String -> String -> Grid.Column Msg
-headLine code playerName =
+headLine : GameSessionId String -> String -> String -> Grid.Column Msg
+headLine code playerName playerAvatar =
     Grid.col []
         [ div [ class "jumbotron", style "text-align" "center" ]
             [ h4 [] [ text <| gameSessionId2String code ]
-            , h1 [] [ text <| "Player " ++ playerName ]
+            , h1 []
+                [ text <| "Player " ++ playerName
+                , img [ src <| imgPrefix ++ playerAvatar, width 40 ] []
+                ]
             ]
         ]
 
@@ -178,4 +181,8 @@ imgUrl square =
             "/assets/empty.png"
 
         Just player ->
-            "/assets/avatars/" ++ player.avatar
+            imgPrefix ++ player.avatar
+
+
+imgPrefix =
+    "/assets/avatars/"

@@ -7,7 +7,7 @@ import Dict exposing (Dict)
 import Html exposing (Html)
 import Json.Encode
 import Message exposing (GamePhase(..), GameState, MessageResponseStatus(..), MessageType(..), decodeMessage)
-import Model exposing (Model, Page(..), UserSessionId, gameSessionIdFromString, userSessionId2String, userSessionIdFromString)
+import Model exposing (Model, Page(..), UserSessionId, gameSessionIdFromString, initialModel, userSessionId2String, userSessionIdFromString)
 import Msg exposing (Msg(..))
 import Page.FacilitatorPage exposing (viewFacilitatorPage)
 import Page.LobbyPage exposing (viewLobbyPage)
@@ -35,31 +35,6 @@ main =
 init : String -> ( Model, Cmd Msg )
 init session =
     ( initialModel session, Cmd.none )
-
-
-
--- websocketOut <| Command.resume session
-
-
-initialModel : String -> Model
-initialModel session =
-    { currentPage = LobbyPage
-    , code = ""
-    , playerName = ""
-    , alertVisibility = Alert.closed
-    , userSessionId = userSessionIdFromString session
-    , gameSessionId = gameSessionIdFromString ""
-    , errorMessage = ""
-    , gameState = initialGameState
-    }
-
-
-initialGameState : GameState
-initialGameState =
-    { phase = Gathering
-    , players = []
-    , board = [ [] ]
-    }
 
 
 
@@ -147,6 +122,7 @@ updateBasedOnType messageType parameters model =
         JoinedMessage ->
             ( { alertClosed
                 | gameSessionId = gameSessionIdFromString <| Maybe.withDefault "" <| Dict.get "GAME_SESSION_CODE" parameters
+                , playerAvatar = Maybe.withDefault "?" <| Dict.get "PLAYER_AVATAR" parameters
                 , currentPage = PlayerPage
               }
             , Cmd.none
@@ -155,6 +131,7 @@ updateBasedOnType messageType parameters model =
         ResumeMessage ->
             ( { alertClosed
                 | playerName = Maybe.withDefault "?" <| Dict.get "PLAYER_NAME" parameters
+                , playerAvatar = Maybe.withDefault "?" <| Dict.get "PLAYER_AVATAR" parameters
                 , currentPage = pageFromRoomParameter <| Dict.get "ROOM" parameters
                 , gameSessionId = gameSessionIdFromString <| Maybe.withDefault "" <| Dict.get "GAME_SESSION_CODE" parameters
               }

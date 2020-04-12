@@ -1,7 +1,7 @@
-module Model exposing (GameSessionId, Model, Page(..), UserSessionId, gameSessionId2String, gameSessionIdFromString, userSessionId2String, userSessionIdFromString)
+module Model exposing (GameSessionId, Model, Page(..), UserSessionId, gameSessionId2String, gameSessionIdFromString, initialModel, userSessionId2String, userSessionIdFromString)
 
 import Bootstrap.Alert as Alert
-import Message exposing (GameState)
+import Message exposing (GamePhase(..), GameState)
 
 
 type Page
@@ -14,6 +14,7 @@ type alias Model =
     { currentPage : Page
     , code : String
     , playerName : String
+    , playerAvatar : String
     , alertVisibility : Alert.Visibility
     , userSessionId : UserSessionId String
     , gameSessionId : GameSessionId String
@@ -24,6 +25,28 @@ type alias Model =
 
 type UserSessionId s
     = UserSessionId String
+
+
+initialModel : String -> Model
+initialModel session =
+    { currentPage = LobbyPage
+    , code = ""
+    , playerName = ""
+    , playerAvatar = ""
+    , alertVisibility = Alert.closed
+    , userSessionId = userSessionIdFromString session
+    , gameSessionId = gameSessionIdFromString ""
+    , errorMessage = ""
+    , gameState = initialGameState
+    }
+
+
+initialGameState : GameState
+initialGameState =
+    { phase = Gathering
+    , players = []
+    , board = [ [] ]
+    }
 
 
 userSessionId2String : UserSessionId String -> String
