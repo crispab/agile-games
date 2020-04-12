@@ -4,8 +4,8 @@ import Bootstrap.Button as Button
 import Bootstrap.ButtonGroup as ButtonGroup
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
-import Html exposing (Html, div, h1, h4, p, text)
-import Html.Attributes exposing (class, style)
+import Html exposing (Html, div, h1, h4, img, p, table, td, text, tr)
+import Html.Attributes exposing (class, src, style, width)
 import Message exposing (GamePhase(..), GameState)
 import Model exposing (GameSessionId, Model, gameSessionId2String)
 import Msg exposing (Msg(..))
@@ -16,8 +16,11 @@ viewPlayerPage : Model -> Html Msg
 viewPlayerPage model =
     Grid.container []
         [ Grid.row []
-            [ mainContent model
+            [ headLine model.gameSessionId model.playerName
             , playerList model.gameState.players
+            ]
+        , Grid.row []
+            [ mainContent model
             ]
         ]
 
@@ -25,17 +28,18 @@ viewPlayerPage model =
 mainContent : Model -> Grid.Column Msg
 mainContent model =
     Grid.col [ Col.sm8 ]
-        [ headLine model.gameSessionId model.playerName
-        , phaseRow model.gameState
+        [ phaseRow model.gameState
         , phaseDependentContent model
         ]
 
 
-headLine : GameSessionId String -> String -> Html Msg
+headLine : GameSessionId String -> String -> Grid.Column Msg
 headLine code playerName =
-    div [ class "jumbotron", style "text-align" "center" ]
-        [ h4 [] [ text <| gameSessionId2String code ]
-        , h1 [] [ text <| "Player " ++ playerName ]
+    Grid.col []
+        [ div [ class "jumbotron", style "text-align" "center" ]
+            [ h4 [] [ text <| gameSessionId2String code ]
+            , h1 [] [ text <| "Player " ++ playerName ]
+            ]
         ]
 
 
@@ -84,9 +88,10 @@ phaseDependentContent model =
 gatheringContent : Model -> Html Msg
 gatheringContent model =
     Grid.row []
-        [ Grid.col [ Col.sm8 ]
+        [ Grid.col []
             [ h1 [] [ text "Gathering" ]
             , p [] [ text gatheringText ]
+            , boardView model
             ]
         ]
 
@@ -147,3 +152,47 @@ reportingText =
     """
     That was all! Here you can see how it went.
     """
+
+
+type alias Square =
+    { player : Maybe Player
+    }
+
+
+type alias Player =
+    { name : String
+    }
+
+
+boardView : Model -> Html Msg
+boardView model =
+    let
+        makeSquare =
+            Square Nothing
+
+        grid =
+            List.repeat 12 (List.repeat 12 makeSquare)
+    in
+    table [] (List.map boardRowView grid)
+
+
+boardRowView : List Square -> Html Msg
+boardRowView squares =
+    tr [] (List.map squareView squares)
+
+
+squareView : Square -> Html Msg
+squareView square =
+    td [ style "border" "solid 1px" ]
+        [ img [ src <| imgUrl square, width 40 ] []
+        ]
+
+
+imgUrl : Square -> String
+imgUrl square =
+    case square.player of
+        Nothing ->
+            "/assets/avatars/empty.png"
+
+        Just player ->
+            player.name
