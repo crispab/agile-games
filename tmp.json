@@ -1,0 +1,33 @@
+[
+  {
+    "status": "OK",
+    "parameters": {
+      "userSessionId": "9a6359fe-d1b8-42a8-85f6-6e333cef8a40"
+    }
+  },
+  {
+    "status": "OK",
+    "parameters": {
+      "someKey1": "1stValue",
+      "someKey2": "2ndValue"
+    }
+  },
+  {
+    "status": "STATE",
+    "gameState": {
+      "players": [
+        "Alice",
+        "Miriam",
+        "Eve"
+      ],
+      "phase": "GATHERING"
+    }
+  },
+  {
+    "status": "STATE",
+    "phase": "GATHERING",
+    "players": [
+      "KKK"
+    ]
+  }
+]
