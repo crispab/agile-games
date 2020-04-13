@@ -3,12 +3,12 @@ module Page.PlayerPage exposing (viewPlayerPage)
 import Bootstrap.Button as Button
 import Bootstrap.ButtonGroup as ButtonGroup
 import Bootstrap.Grid as Grid
-import Bootstrap.Grid.Col as Col
+import Bootstrap.Grid.Col as Col exposing (xs2)
 import Html exposing (Html, div, h1, h4, img, p, table, td, text, tr)
 import Html.Attributes exposing (class, src, style, width)
 import Message exposing (GamePhase(..), GameState, Square)
 import Model exposing (GameSessionId, Model, gameSessionId2String)
-import Msg exposing (Msg(..))
+import Msg exposing (Direction(..), Msg(..))
 import Page.Common exposing (playerList)
 
 
@@ -113,6 +113,7 @@ estimationContent model =
         [ Grid.col [ Col.sm8 ]
             [ h1 [] [ text "Estimation" ]
             , p [] [ text estimationText ]
+            , boardView model
             ]
         ]
 
@@ -131,13 +132,38 @@ executingContent model =
         [ Grid.col [ Col.sm8 ]
             [ h1 [] [ text "Executing" ]
             , p [] [ text executingText ]
+            , boardView model
+            ]
+        , Grid.col [ Col.sm4 ]
+            [ arrowKeys
+            ]
+        ]
+
+
+arrowKeys : Html Msg
+arrowKeys =
+    div []
+        [ Grid.row []
+            [ Grid.col [ xs2 ] []
+            , Grid.col [ xs2 ] [ Button.button [ Button.outlinePrimary, Button.onClick (Move Up) ] [ text "U" ] ]
+            , Grid.col [ xs2 ] []
+            ]
+        , Grid.row []
+            [ Grid.col [ xs2 ] [ Button.button [ Button.outlinePrimary, Button.onClick (Move Left) ] [ text "L" ] ]
+            , Grid.col [ xs2 ] []
+            , Grid.col [ xs2 ] [ Button.button [ Button.outlinePrimary, Button.onClick (Move Right) ] [ text "R" ] ]
+            ]
+        , Grid.row []
+            [ Grid.col [ xs2 ] []
+            , Grid.col [ xs2 ] [ Button.button [ Button.outlinePrimary, Button.onClick (Move Down) ] [ text "D" ] ]
+            , Grid.col [ xs2 ] []
             ]
         ]
 
 
 executingText =
     """
-    Go, Go, Go! Move your avatar by pressing the arrow keys so that you reach your target person.
+    Go, Go, Go! Move your avatar by pressing the arrow keys so that you stand next to your target person.
     """
 
 
@@ -159,12 +185,12 @@ reportingText =
 
 boardView : Model -> Html Msg
 boardView model =
-    table [] (List.map boardRowView model.gameState.board)
+    table [] (List.indexedMap boardRowView model.gameState.board)
 
 
-boardRowView : List Square -> Html Msg
-boardRowView squares =
-    tr [] (List.map squareView squares)
+boardRowView : Int -> List Square -> Html Msg
+boardRowView row squares =
+    tr [] ([ td [] [ text <| String.fromInt row ] ] ++ List.map squareView squares)
 
 
 squareView : Square -> Html Msg

@@ -1,6 +1,7 @@
 package agile.games.api;
 
 import agile.games.PlayerName;
+import agile.games.tts.GamePhase;
 import agile.games.tts.GameSessionCode;
 import io.micronaut.websocket.WebSocketBroadcaster;
 import io.micronaut.websocket.WebSocketSession;
@@ -15,7 +16,9 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static agile.games.api.MessageResponse.ParameterKey.DIRECTION;
 import static agile.games.api.MessageResponse.ParameterKey.GAME_SESSION_CODE;
+import static agile.games.tts.GamePhase.*;
 
 @ServerWebSocket("/ws/tts")
 public class TtsWebSocket {
@@ -46,6 +49,16 @@ public class TtsWebSocket {
                 return respondAndNewState(session, gameService.join(gameSessionCode, playerName, session.getId()));
             case RESUME:
                 return respondAndNewState(session, tryResume(session, commandMessage.getUserSessionId()));
+            case MOVE:
+                return respondAndNewState(session, move(session, commandMessage));
+            case PHASE_GATHERING:
+                return respondAndNewState(session, gotoPhase(session, GATHERING));
+            case PHASE_ASSIGNMENT:
+                return respondAndNewState(session, gotoPhase(session, ASSIGNMENT));
+            case PHASE_EXECUTING:
+                return respondAndNewState(session, gotoPhase(session, EXECUTING));
+            case PHASE_REPORTING:
+                return respondAndNewState(session, gotoPhase(session, REPORTING));
             default:
                 return session.send(MessageResponse.failed("Unknown command." + commandMessage.getCommandType()));
         }
@@ -59,6 +72,14 @@ public class TtsWebSocket {
 
     private MessageResponse tryResume(WebSocketSession session, UserSessionId userSessionId) {
         return gameService.tryResume(session.getId(), userSessionId);
+    }
+
+    private MessageResponse move(WebSocketSession session, CommandMessage commandMessage) {
+        return gameService.move(session.getId(), commandMessage.getParameters().get(DIRECTION.toString()));
+    }
+
+    private MessageResponse gotoPhase(WebSocketSession session, GamePhase gamePhase) {
+        return gameService.gotoPhase(session.getId(), gamePhase);
     }
 
     private Publisher<Message> respondAndNewState(WebSocketSession session, MessageResponse messageResponse) {

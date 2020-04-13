@@ -6,7 +6,12 @@ public class CommandMessage {
     public enum CommandType {
         FACILITATE,
         JOIN,
-        RESUME
+        RESUME,
+        MOVE,
+        PHASE_GATHERING,
+        PHASE_ASSIGNMENT,
+        PHASE_EXECUTING,
+        PHASE_REPORTING,
     }
 
     private CommandType commandType;

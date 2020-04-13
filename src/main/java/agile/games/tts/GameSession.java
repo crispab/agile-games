@@ -91,11 +91,13 @@ public class GameSession {
         return players.get(playerId);
     }
 
-    public void movePlayer(PlayerId playerId, Direction direction) {
+    public int movePlayer(PlayerId playerId, Direction direction) {
         if (gamePhase == GamePhase.EXECUTING) {
-            findPlayerById(playerId).move(direction);
+            int steps = findPlayerById(playerId).move(direction);
             emit(GameEvent.PLAYER_MAY_HAVE_MOVED);
+            return steps;
         }
+        return 0;
     }
 
     public PlayerPosition getPlayerPosition(PlayerId playerId) {

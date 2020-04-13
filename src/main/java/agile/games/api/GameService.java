@@ -59,13 +59,31 @@ public class GameService {
                     .ok(RESUME)
                     .put(USER_SESSION_ID, sessionId.toString());
             result = appendDetails(playerId, gameSession, result);
-            return result ;
+            return result;
         }
+    }
+
+    public MessageResponse move(String webSocketIdStr, String direction) {
+        try {
+            WebSocketId webSocketId = new WebSocketId(webSocketIdStr);
+            GameSessionCode gameSessionCode = socketSessions.get(webSocketId);
+            PlayerId playerId = playerSessions.get(webSocketId);
+            int steps = gameSessions.get(gameSessionCode).movePlayer(playerId, Direction.valueOf(direction));
+            return MessageResponse.ok(MOVED).put(STEPS, "" + steps).put(GAME_SESSION_CODE, gameSessionCode.toString());
+        } catch (Exception e) {
+            return MessageResponse.failed(e.getMessage());
+        }
+    }
+
+    public MessageResponse gotoPhase(String webSocketIdStr, GamePhase gamePhase) {
+        GameSessionCode gameSessionCode = socketSessions.get(new WebSocketId(webSocketIdStr));
+        gameSessions.get(gameSessionCode).setGamePhase(gamePhase);
+        return MessageResponse.ok(PHASED).put(GAME_SESSION_CODE, gameSessionCode.toString());
     }
 
     public MessageResponse facilitate(String webSocketIdStr) {
         LOG.info("Facilitate: {}", webSocketIdStr);
-        GameSession gameSession = new GameSession();
+        GameSession gameSession = new GameSession(12, 12);
         UserId userId = gameSession.newUser();
         gameSession.setFacilitator(userId);
         GameSessionCode gameSessionCode = gameSession.getCode();
@@ -108,7 +126,7 @@ public class GameService {
             GameStateMessage gameStateMessage = new GameStateMessage();
             gameStateMessage.setStatus(STATE);
             GameStateMessage.InnerState innerState = new GameStateMessage.InnerState();
-            innerState.setPhase(GamePhase.GATHERING);
+            innerState.setPhase(gameSession.getGamePhase());
             innerState.setPlayers(gameSession.getPlayerNames());
             innerState.setBoard(gameSession.getBoard());
             gameStateMessage.setGameState(innerState);

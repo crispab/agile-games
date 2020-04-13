@@ -53,7 +53,7 @@ class Player {
         return avatar;
     }
 
-    public void move(Direction direction) {
+    public int move(Direction direction) {
         int steps;
         switch (direction) {
             case UP:
@@ -72,6 +72,7 @@ class Player {
                 throw new IllegalStateException("Unexpected value: " + direction);
         }
         addSteps(steps);
+        return steps;
     }
 
     private void addSteps(int steps) {

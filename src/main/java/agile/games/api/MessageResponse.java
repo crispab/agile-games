@@ -68,7 +68,9 @@ public class MessageResponse implements Message {
         JOINED,
         FACILITATE,
         SESSION_START,
-        RESUME
+        RESUME,
+        MOVED,
+        PHASED
     }
 
     public enum ParameterKey {
@@ -76,6 +78,8 @@ public class MessageResponse implements Message {
         GAME_SESSION_CODE,
         ROOM,
         PLAYER_NAME,
-        PLAYER_AVATAR
+        PLAYER_AVATAR,
+        DIRECTION,
+        STEPS
     }
 }

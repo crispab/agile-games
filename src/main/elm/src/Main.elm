@@ -75,14 +75,10 @@ update msg model =
             ( model, websocketOut <| Command.facilitate model.userSessionId )
 
         GotoPhase gamePhase ->
-            let
-                now =
-                    model.gameState
+            ( model, websocketOut <| Command.gotoPhase gamePhase )
 
-                inNewPhase =
-                    { now | phase = gamePhase }
-            in
-            ( { model | gameState = inNewPhase }, Cmd.none )
+        Move direction ->
+            ( model, websocketOut <| Command.move model.userSessionId direction )
 
 
 updateBasedOnType : MessageType -> Dict String String -> Model -> ( Model, Cmd Msg )

@@ -129,6 +129,8 @@ stringToPhase s =
     Dict.fromList
         [ ( "GATHERING", Gathering )
         , ( "ASSIGNMENT", Assignment )
+        , ( "EXECUTING", Executing )
+        , ( "REPORTING", Reporting )
         ]
         |> Dict.get s
         |> Maybe.withDefault UnknownPhase
