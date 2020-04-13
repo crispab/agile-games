@@ -78,6 +78,12 @@ When all of a sudden some messages never come from the server,
 despite the broadcast, it may be a problem with serialization.
 As with REST, keep a set of classes meant for transportation.
 
+I did a redesign of the API. First there was messages with parameters
+without type. Then I did a strictly typed API and used `oneOf` to 
+identify the type of message. The decoder that understands the message
+gets the job done. This is a much cleaner design and there is no logic
+around the arbitrary parameters list.
+
 ## Micronaut 
 
 I have built several services on Spring Boot but there is a new 
