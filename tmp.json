@@ -32,9 +32,18 @@
   {
     "gameState": {
       "players": [
-        "Alice",
-        "Miriam",
-        "Eve"
+        {
+          "name": "Alice",
+          "avatar": "aliceAvatar.png"
+        },
+        {
+          "name": "Miriam",
+          "avatar": "miriamAvatar.png"
+        },
+        {
+          "name": "Eve",
+          "avatar": "eveAvatar.png"
+        }
       ],
       "phase": "GATHERING",
       "board": [
@@ -55,8 +64,8 @@
     }
   },
   {
-    "fail" : {
-      "failMessage" : "This has failed"
+    "fail": {
+      "failMessage": "This has failed"
     }
   }
 ]

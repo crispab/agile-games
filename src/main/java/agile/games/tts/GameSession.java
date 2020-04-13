@@ -91,13 +91,11 @@ public class GameSession {
         return players.get(playerId);
     }
 
-    public int movePlayer(PlayerId playerId, Direction direction) {
+    public void movePlayer(PlayerId playerId, Direction direction) {
         if (gamePhase == GamePhase.EXECUTING) {
-            int steps = findPlayerById(playerId).move(direction);
+            findPlayerById(playerId).move(direction);
             emit(GameEvent.PLAYER_MAY_HAVE_MOVED);
-            return steps;
         }
-        return 0;
     }
 
     public PlayerPosition getPlayerPosition(PlayerId playerId) {
@@ -264,8 +262,10 @@ public class GameSession {
         return player.getAvatar();
     }
 
-    public List<String> getPlayerNames() {
-        return players.values().stream().map(Player::getName).collect(Collectors.toList());
+    public List<PlayerDto> getPlayerDtos() {
+        return players.values()
+                .stream().map(p -> new PlayerDto(p.getName(), p.getAvatar()))
+                .collect(Collectors.toList());
     }
 
     public PlayerId removePlayer(PlayerId playerId) {

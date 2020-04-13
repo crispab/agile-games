@@ -1,7 +1,7 @@
 module MessageTest exposing (all)
 
 import Expect
-import Message exposing (GamePhase(..), GameState, Message(..), decodeMessage)
+import Message exposing (GamePhase(..), GameState, Message(..), Player, decodeMessage)
 import Test exposing (..)
 
 
@@ -134,9 +134,18 @@ givenGameStateWithPlayers =
       {
         "gameState" : {
           "players" : [
-            "Alice",
-            "Miriam",
-            "Eve"
+            {
+              "name": "Alice",
+              "avatar": "aliceAvatar.png"
+            },
+            {
+              "name": "Miriam",
+              "avatar": "miriamAvatar.png"
+            },
+            {
+              "name": "Eve",
+              "avatar": "eveAvatar.png"
+            }
           ],
           "phase" : "GATHERING",
           "board": [
@@ -168,9 +177,9 @@ expectedGameStateWithPlayers =
 expectedGameStateInfo : GameState
 expectedGameStateInfo =
     { players =
-        [ "Alice"
-        , "Miriam"
-        , "Eve"
+        [ Player "Alice" "aliceAvatar.png"
+        , Player "Miriam" "miriamAvatar.png"
+        , Player "Eve" "eveAvatar.png"
         ]
     , phase = Gathering
     , board =

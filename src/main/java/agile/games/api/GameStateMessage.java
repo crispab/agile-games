@@ -24,7 +24,7 @@ public class GameStateMessage implements Message {
     public static class GameStateInfo {
         private GameSessionCode gameSessionCode;
         private GamePhase phase;
-        private List<String> players;
+        private List<PlayerDto> players;
         private List<List<SquareDto>> board;
 
         public GameSessionCode getGameSessionCode() {
@@ -43,11 +43,11 @@ public class GameStateMessage implements Message {
             this.phase = phase;
         }
 
-        public List<String> getPlayers() {
+        public List<PlayerDto> getPlayers() {
             return players;
         }
 
-        public void setPlayers(List<String> players) {
+        public void setPlayers(List<PlayerDto> players) {
             this.players = players;
         }
 

@@ -45,7 +45,7 @@ type alias FailInfo =
 
 type alias GameState =
     { phase : GamePhase
-    , players : List String
+    , players : List Player
     , board : List (List Square)
     }
 
@@ -168,7 +168,7 @@ gameStateDecoder : Decoder GameState
 gameStateDecoder =
     succeed GameState
         |> required "phase" (map stringToPhase string)
-        |> optional "players" (list string) []
+        |> optional "players" (list decodePlayer) []
         |> required "board" (list (list squareDecoder))
 
 

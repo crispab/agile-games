@@ -119,7 +119,7 @@ public class GameService {
             GameStateMessage.GameStateInfo gameStateInfo = new GameStateMessage.GameStateInfo();
             gameStateInfo.setGameSessionCode(gameSessionCode);
             gameStateInfo.setPhase(gameSession.getGamePhase());
-            gameStateInfo.setPlayers(gameSession.getPlayerNames());
+            gameStateInfo.setPlayers(gameSession.getPlayerDtos());
             gameStateInfo.setBoard(gameSession.getBoard());
             gameStateMessage.setGameState(gameStateInfo);
             return gameStateMessage;
