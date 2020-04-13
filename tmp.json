@@ -13,7 +13,23 @@
     }
   },
   {
-    "status": "STATE",
+    "sessionStart": {
+      "userSessionId": "9a6359fe-d1b8-42a8-85f6-6e333cef8a40"
+    }
+  },
+  {
+    "joined": {
+      "gameSessionCode": "123 456",
+      "playerName": "some name",
+      "playerAvatar": "some avatar"
+    }
+  },
+  {
+    "facilitate": {
+      "gameSessionCode": "123 456"
+    }
+  },
+  {
     "gameState": {
       "players": [
         "Alice",
@@ -36,6 +52,11 @@
           }
         ]
       ]
+    }
+  },
+  {
+    "fail" : {
+      "failMessage" : "This has failed"
     }
   }
 ]

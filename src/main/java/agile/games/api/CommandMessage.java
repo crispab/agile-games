@@ -14,6 +14,10 @@ public class CommandMessage {
         PHASE_REPORTING,
     }
 
+    public enum ParameterKey {
+        DIRECTION
+    }
+
     private CommandType commandType;
     private UserSessionId userSessionId;
     private Map<String, String> parameters;

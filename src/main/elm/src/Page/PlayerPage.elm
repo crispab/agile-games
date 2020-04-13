@@ -1,13 +1,12 @@
 module Page.PlayerPage exposing (viewPlayerPage)
 
 import Bootstrap.Button as Button
-import Bootstrap.ButtonGroup as ButtonGroup
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col exposing (xs2)
 import Html exposing (Html, div, h1, h4, img, p, table, td, text, tr)
 import Html.Attributes exposing (class, src, style, width)
 import Message exposing (GamePhase(..), GameState, Square)
-import Model exposing (GameSessionId, Model, gameSessionId2String)
+import Model exposing (GameSessionCode, Model, gameSessionId2String)
 import Msg exposing (Direction(..), Msg(..))
 import Page.Common exposing (playerList)
 
@@ -16,7 +15,7 @@ viewPlayerPage : Model -> Html Msg
 viewPlayerPage model =
     Grid.container []
         [ Grid.row []
-            [ headLine model.gameSessionId model.playerName model.playerAvatar
+            [ headLine model.gameSessionCode model.playerName model.playerAvatar
             , playerList model.gameState.players
             ]
         , Grid.row []
@@ -28,12 +27,11 @@ viewPlayerPage model =
 mainContent : Model -> Grid.Column Msg
 mainContent model =
     Grid.col [ Col.sm8 ]
-        [ phaseRow model.gameState
-        , phaseDependentContent model
+        [ phaseDependentContent model
         ]
 
 
-headLine : GameSessionId String -> String -> String -> Grid.Column Msg
+headLine : GameSessionCode String -> String -> String -> Grid.Column Msg
 headLine code playerName playerAvatar =
     Grid.col []
         [ div [ class "jumbotron", style "text-align" "center" ]
@@ -44,29 +42,6 @@ headLine code playerName playerAvatar =
                 ]
             ]
         ]
-
-
-phaseRow : GameState -> Html Msg
-phaseRow gameState =
-    Grid.row []
-        [ Grid.col [ Col.sm8 ]
-            [ ButtonGroup.buttonGroup []
-                [ bGroup gameState Gathering "Gathering"
-                , bGroup gameState Assignment "Estimation"
-                , bGroup gameState Executing "Executing"
-                , bGroup gameState Reporting "Reporting"
-                ]
-            ]
-        ]
-
-
-bGroup : GameState -> GamePhase -> String -> ButtonGroup.ButtonItem Msg
-bGroup gameState phase label =
-    if gameState.phase == phase then
-        ButtonGroup.button [ Button.primary ] [ text label ]
-
-    else
-        ButtonGroup.button [ Button.outlinePrimary, Button.onClick <| GotoPhase phase ] [ text label ]
 
 
 phaseDependentContent : Model -> Html Msg
@@ -168,7 +143,7 @@ executingText =
 
 
 reportingContent : Model -> Html Msg
-reportingContent model =
+reportingContent _ =
     Grid.row []
         [ Grid.col [ Col.sm8 ]
             [ h1 [] [ text "Reporting" ]

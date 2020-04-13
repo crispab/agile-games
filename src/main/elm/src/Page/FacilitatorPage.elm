@@ -7,7 +7,7 @@ import Bootstrap.Grid.Col as Col
 import Html exposing (Html, div, h1, h2, text)
 import Html.Attributes exposing (class, style)
 import Message exposing (GamePhase(..), GameState)
-import Model exposing (GameSessionId, Model, gameSessionId2String)
+import Model exposing (GameSessionCode, Model, gameSessionId2String)
 import Msg exposing (Msg(..))
 import Page.Common exposing (playerList)
 
@@ -17,7 +17,7 @@ viewFacilitatorPage model =
     Grid.container []
         [ Grid.row []
             [ Grid.col [ Col.sm ]
-                [ viewHeadLine model.gameSessionId
+                [ viewHeadLine model.gameSessionCode
                 ]
             , playerList model.gameState.players
             ]
@@ -27,7 +27,7 @@ viewFacilitatorPage model =
         ]
 
 
-viewHeadLine : GameSessionId String -> Html Msg
+viewHeadLine : GameSessionCode String -> Html Msg
 viewHeadLine gameSessionID =
     div [ class "jumbotron", style "text-align" "center" ]
         [ h1 [] [ text "Facilitator" ]

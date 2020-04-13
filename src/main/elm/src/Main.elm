@@ -3,11 +3,10 @@ port module Main exposing (main)
 import Bootstrap.Alert as Alert
 import Browser
 import Command
-import Dict exposing (Dict)
 import Html exposing (Html)
 import Json.Encode
-import Message exposing (GamePhase(..), GameState, MessageResponseStatus(..), MessageType(..), decodeMessage)
-import Model exposing (Model, Page(..), UserSessionId, gameSessionIdFromString, initialModel, userSessionId2String, userSessionIdFromString)
+import Message exposing (GamePhase(..), GameState, decodeMessage)
+import Model exposing (Model, Page(..), UserSessionId, gameSessionCodeFromString, initialModel, userSessionId2String, userSessionIdFromString)
 import Msg exposing (Msg(..))
 import Page.FacilitatorPage exposing (viewFacilitatorPage)
 import Page.LobbyPage exposing (viewLobbyPage)
@@ -45,19 +44,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         WebsocketIn message ->
-            let
-                decodedMessage =
-                    decodeMessage message
-            in
-            case decodedMessage.status of
-                OK messageType ->
-                    updateBasedOnType messageType decodedMessage.parameters model
-
-                STATE gameState ->
-                    ( { model | gameState = gameState }, Cmd.none )
-
-                FAIL errorMessage ->
-                    ( { model | alertVisibility = Alert.shown, errorMessage = errorMessage }, Cmd.none )
+            updateBasedOnMessage message model
 
         ChangeCode code ->
             ( { model | code = code, alertVisibility = Alert.closed }, Cmd.none )
@@ -81,14 +68,17 @@ update msg model =
             ( model, websocketOut <| Command.move model.userSessionId direction )
 
 
-updateBasedOnType : MessageType -> Dict String String -> Model -> ( Model, Cmd Msg )
-updateBasedOnType messageType parameters model =
+updateBasedOnMessage : String -> Model -> ( Model, Cmd Msg )
+updateBasedOnMessage messageString model =
     let
+        message =
+            decodeMessage messageString
+
         alertClosed =
             { model | alertVisibility = Alert.closed }
     in
-    case messageType of
-        SessionStart ->
+    case message of
+        Message.SessionStart sessionId ->
             if (String.length <| userSessionId2String model.userSessionId) > 1 then
                 ( { alertClosed
                     | userSessionId = userSessionIdFromString ""
@@ -97,57 +87,40 @@ updateBasedOnType messageType parameters model =
                 )
 
             else
-                let
-                    sessionId =
-                        Maybe.withDefault "" <| Dict.get "USER_SESSION_ID" parameters
-                in
                 ( { alertClosed
                     | userSessionId = userSessionIdFromString <| sessionId
                   }
                 , setStorage sessionId
                 )
 
-        FacilitateMessage ->
+        Message.Joined joinedInfo ->
             ( { alertClosed
-                | gameSessionId = gameSessionIdFromString <| Maybe.withDefault "" <| Dict.get "GAME_SESSION_CODE" parameters
-                , currentPage = FacilitatorPage
-              }
-            , Cmd.none
-            )
-
-        JoinedMessage ->
-            ( { alertClosed
-                | gameSessionId = gameSessionIdFromString <| Maybe.withDefault "" <| Dict.get "GAME_SESSION_CODE" parameters
-                , playerAvatar = Maybe.withDefault "?" <| Dict.get "PLAYER_AVATAR" parameters
+                | playerName = joinedInfo.playerName
+                , playerAvatar = joinedInfo.playerAvatar
                 , currentPage = PlayerPage
               }
             , Cmd.none
             )
 
-        ResumeMessage ->
+        Message.Facilitate facilitateInfo ->
             ( { alertClosed
-                | playerName = Maybe.withDefault "?" <| Dict.get "PLAYER_NAME" parameters
-                , playerAvatar = Maybe.withDefault "?" <| Dict.get "PLAYER_AVATAR" parameters
-                , currentPage = pageFromRoomParameter <| Dict.get "ROOM" parameters
-                , gameSessionId = gameSessionIdFromString <| Maybe.withDefault "" <| Dict.get "GAME_SESSION_CODE" parameters
+                | gameSessionCode = gameSessionCodeFromString facilitateInfo.gameSessionCode
+                , currentPage = FacilitatorPage
               }
             , Cmd.none
             )
 
-        Unknown ->
-            ( alertClosed, Cmd.none )
+        Message.State gameState ->
+            ( { model | gameState = gameState }, Cmd.none )
 
+        Message.UnknownMessage errorMessage ->
+            ( { model | errorMessage = errorMessage, alertVisibility = Alert.shown }, Cmd.none )
 
-pageFromRoomParameter : Maybe String -> Page
-pageFromRoomParameter room =
-    if room == Just "Facilitator" then
-        FacilitatorPage
+        Message.OkMessage okInfo ->
+            ( { model | errorMessage = okInfo.okMessage, alertVisibility = Alert.shown }, Cmd.none )
 
-    else if room == Just "Player" then
-        PlayerPage
-
-    else
-        LobbyPage
+        Message.FailMessage failInfo ->
+            ( { model | errorMessage = failInfo.failMessage, alertVisibility = Alert.shown }, Cmd.none )
 
 
 

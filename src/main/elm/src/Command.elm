@@ -2,7 +2,7 @@ module Command exposing (facilitate, gotoPhase, join, move, resume)
 
 import Json.Encode as Encode
 import Message exposing (GamePhase(..))
-import Model exposing (GameSessionId, UserSessionId, userSessionId2String)
+import Model exposing (GameSessionCode, UserSessionId, userSessionId2String)
 import Msg exposing (Direction(..))
 
 

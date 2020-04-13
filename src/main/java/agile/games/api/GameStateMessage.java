@@ -1,33 +1,39 @@
 package agile.games.api;
 
 import agile.games.tts.GamePhase;
+import agile.games.tts.GameSessionCode;
 
 import java.util.List;
 
 public class GameStateMessage implements Message {
-    private Status status;
-    private InnerState gameState;
+    private GameStateInfo gameState;
 
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public InnerState getGameState() {
+    public GameStateInfo getGameState() {
         return gameState;
     }
 
-    public void setGameState(InnerState gameState) {
+    public void setGameState(GameStateInfo gameState) {
         this.gameState = gameState;
     }
 
-    public static class InnerState {
+    @Override
+    public GameSessionCode gameSessionCode() {
+        return gameState.gameSessionCode;
+    }
+
+    public static class GameStateInfo {
+        private GameSessionCode gameSessionCode;
         private GamePhase phase;
         private List<String> players;
         private List<List<SquareDto>> board;
+
+        public GameSessionCode getGameSessionCode() {
+            return gameSessionCode;
+        }
+
+        public void setGameSessionCode(GameSessionCode gameSessionCode) {
+            this.gameSessionCode = gameSessionCode;
+        }
 
         public GamePhase getPhase() {
             return phase;

@@ -9,12 +9,6 @@ import javax.inject.Singleton;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static agile.games.api.MessageResponse.MessageType.*;
-import static agile.games.api.MessageResponse.ParameterKey.*;
-import static agile.games.api.RoomType.Facilitator;
-import static agile.games.api.RoomType.Lobby;
-import static agile.games.api.Status.STATE;
-
 @Singleton
 public class GameService {
     private static final Logger LOG = LoggerFactory.getLogger(GameService.class);
@@ -24,14 +18,14 @@ public class GameService {
     private Map<WebSocketId, PlayerId> playerSessions = new HashMap<>();
     private Map<GameSessionCode, GameSession> gameSessions = new HashMap<>();
 
-    public MessageResponse registerUser(String webSocketId) {
+    public Message registerUser(String webSocketId) {
         UserSessionId userSessionId = new UserSessionId();
         LOG.info("Register user: {} {}", webSocketId, userSessionId);
         userSessionsSockets.put(userSessionId, new WebSocketId(webSocketId));
-        return MessageResponse.ok(SESSION_START).put(USER_SESSION_ID, userSessionId.toString());
+        return new SessionStartMessage(userSessionId);
     }
 
-    public MessageResponse tryResume(String webSocketIdStr, UserSessionId sessionId) {
+    public Message tryResume(String webSocketIdStr, UserSessionId sessionId) {
         WebSocketId oldWebSocketId = userSessionsSockets.get(sessionId);
         if (oldWebSocketId == null) {
             return registerUser(webSocketIdStr);
@@ -41,47 +35,43 @@ public class GameService {
             userSessionsSockets.put(sessionId, newWebSocketId);
             GameSessionCode gameSessionCode = socketSessions.get(oldWebSocketId);
             if (gameSessionCode == null) {
-                return MessageResponse
-                        .ok(RESUME)
-                        .put(USER_SESSION_ID, sessionId.toString())
-                        .put(ROOM, Lobby.toString());
+                return new OkMessage("Resumed session in lobby");
             }
             socketSessions.remove(oldWebSocketId);
             socketSessions.put(newWebSocketId, gameSessionCode);
             PlayerId playerId = playerSessions.get(oldWebSocketId);
-            if (playerId != null) {
+            if (playerId == null) {
+                LOG.info("Resume the facilitator.");
+                return new FacilitateMessage(gameSessionCode);
+            } else {
+                GameSession gameSession = gameSessions.get(gameSessionCode);
                 LOG.info("Resuming player {}", playerId);
                 playerSessions.remove(oldWebSocketId);
                 playerSessions.put(newWebSocketId, playerId);
+                return JoinedMessage
+                        .gameSessionCode(gameSessionCode)
+                        .playerName(gameSession.getPlayerName(playerId))
+                        .playerAvatar(gameSession.getPlayerAvatar(playerId))
+                        .build();
             }
-            GameSession gameSession = gameSessions.get(gameSessionCode);
-            MessageResponse result = MessageResponse
-                    .ok(RESUME)
-                    .put(USER_SESSION_ID, sessionId.toString());
-            result = appendDetails(playerId, gameSession, result);
-            return result;
         }
     }
 
-    public MessageResponse move(String webSocketIdStr, String direction) {
-        try {
-            WebSocketId webSocketId = new WebSocketId(webSocketIdStr);
-            GameSessionCode gameSessionCode = socketSessions.get(webSocketId);
-            PlayerId playerId = playerSessions.get(webSocketId);
-            int steps = gameSessions.get(gameSessionCode).movePlayer(playerId, Direction.valueOf(direction));
-            return MessageResponse.ok(MOVED).put(STEPS, "" + steps).put(GAME_SESSION_CODE, gameSessionCode.toString());
-        } catch (Exception e) {
-            return MessageResponse.failed(e.getMessage());
-        }
+    public GameSessionCode move(String webSocketIdStr, String direction) {
+        WebSocketId webSocketId = new WebSocketId(webSocketIdStr);
+        GameSessionCode gameSessionCode = socketSessions.get(webSocketId);
+        PlayerId playerId = playerSessions.get(webSocketId);
+        gameSessions.get(gameSessionCode).movePlayer(playerId, Direction.valueOf(direction));
+        return gameSessionCode;
     }
 
-    public MessageResponse gotoPhase(String webSocketIdStr, GamePhase gamePhase) {
+    public GameSessionCode gotoPhase(String webSocketIdStr, GamePhase gamePhase) {
         GameSessionCode gameSessionCode = socketSessions.get(new WebSocketId(webSocketIdStr));
         gameSessions.get(gameSessionCode).setGamePhase(gamePhase);
-        return MessageResponse.ok(PHASED).put(GAME_SESSION_CODE, gameSessionCode.toString());
+        return gameSessionCode;
     }
 
-    public MessageResponse facilitate(String webSocketIdStr) {
+    public Message facilitate(String webSocketIdStr) {
         LOG.info("Facilitate: {}", webSocketIdStr);
         GameSession gameSession = new GameSession(12, 12);
         UserId userId = gameSession.newUser();
@@ -89,26 +79,28 @@ public class GameService {
         GameSessionCode gameSessionCode = gameSession.getCode();
         gameSessions.put(gameSessionCode, gameSession);
         socketSessions.put(new WebSocketId(webSocketIdStr), gameSessionCode);
-        return MessageResponse.ok(FACILITATE).put(GAME_SESSION_CODE, gameSessionCode.toString());
+        return new FacilitateMessage(gameSessionCode);
     }
 
-    public MessageResponse join(GameSessionCode gameSessionCode, PlayerName playerName, String webSocketId) {
+    public Message join(GameSessionCode gameSessionCode, PlayerName playerName, String webSocketId) {
         LOG.info("Join {} {}", gameSessionCode, playerName);
         if (playerName.getName().length() < 2) {
-            return MessageResponse.failed("Name must be at least 2 characters");
+            return new FailMessage("Name must be at least 2 characters");
         }
         GameSession gameSession = gameSessions.get(gameSessionCode);
         if (gameSession == null) {
-            return MessageResponse.failed("Can't find game " + gameSessionCode);
+            return new FailMessage("Can't find game " + gameSessionCode);
         }
+
         UserId userId = gameSession.newUser();
         PlayerId playerId = gameSession.addPlayerNamed(playerName.getName(), userId);
         WebSocketId id = new WebSocketId(webSocketId);
         socketSessions.put(id, gameSessionCode);
         playerSessions.put(id, playerId);
-        MessageResponse result = MessageResponse.ok(JOINED);
-        result = appendDetails(playerId, gameSession, result);
-        return result;
+        return JoinedMessage.gameSessionCode(gameSessionCode)
+                .playerName(gameSession.getPlayerName(playerId))
+                .playerAvatar(gameSession.getPlayerAvatar(playerId))
+                .build();
     }
 
     public List<String> socketSessions(GameSessionCode gameSessionCode) {
@@ -124,15 +116,15 @@ public class GameService {
         GameSession gameSession = gameSessions.get(gameSessionCode);
         if (gameSession != null) {
             GameStateMessage gameStateMessage = new GameStateMessage();
-            gameStateMessage.setStatus(STATE);
-            GameStateMessage.InnerState innerState = new GameStateMessage.InnerState();
-            innerState.setPhase(gameSession.getGamePhase());
-            innerState.setPlayers(gameSession.getPlayerNames());
-            innerState.setBoard(gameSession.getBoard());
-            gameStateMessage.setGameState(innerState);
+            GameStateMessage.GameStateInfo gameStateInfo = new GameStateMessage.GameStateInfo();
+            gameStateInfo.setGameSessionCode(gameSessionCode);
+            gameStateInfo.setPhase(gameSession.getGamePhase());
+            gameStateInfo.setPlayers(gameSession.getPlayerNames());
+            gameStateInfo.setBoard(gameSession.getBoard());
+            gameStateMessage.setGameState(gameStateInfo);
             return gameStateMessage;
         }
-        return MessageResponse.failed("Invalid game session id " + gameSessionCode);
+        return new FailMessage("Invalid game session id " + gameSessionCode);
     }
 
     public Optional<GameSessionCode> leave(String webSocketIdStr) {
@@ -146,14 +138,6 @@ public class GameService {
         }
 
         return gameSessionId;
-    }
-
-    private MessageResponse appendDetails(PlayerId playerId, GameSession gameSession, MessageResponse result) {
-        return result
-                .put(ROOM, playerId == null ? Facilitator.toString() : RoomType.Player.toString())
-                .put(PLAYER_NAME, playerId == null ? Facilitator.toString() : gameSession.getPlayerName(playerId))
-                .put(GAME_SESSION_CODE, gameSession.getCode().toString())
-                .put(PLAYER_AVATAR, playerId == null ? Facilitator.toString() : gameSession.getPlayerAvatar(playerId));
     }
 
     private Optional<GameSessionCode> findGameSessionId(WebSocketId webSocketId) {

@@ -1,4 +1,4 @@
-module Model exposing (GameSessionId, Model, Page(..), UserSessionId, gameSessionId2String, gameSessionIdFromString, initialModel, userSessionId2String, userSessionIdFromString)
+module Model exposing (GameSessionCode, Model, Page(..), UserSessionId, gameSessionCodeFromString, gameSessionId2String, initialModel, userSessionId2String, userSessionIdFromString)
 
 import Bootstrap.Alert as Alert
 import Message exposing (GamePhase(..), GameState)
@@ -17,7 +17,7 @@ type alias Model =
     , playerAvatar : String
     , alertVisibility : Alert.Visibility
     , userSessionId : UserSessionId String
-    , gameSessionId : GameSessionId String
+    , gameSessionCode : GameSessionCode String
     , errorMessage : String
     , gameState : GameState
     }
@@ -35,7 +35,7 @@ initialModel session =
     , playerAvatar = ""
     , alertVisibility = Alert.closed
     , userSessionId = userSessionIdFromString session
-    , gameSessionId = gameSessionIdFromString ""
+    , gameSessionCode = gameSessionCodeFromString ""
     , errorMessage = ""
     , gameState = initialGameState
     }
@@ -59,15 +59,15 @@ userSessionIdFromString s =
     UserSessionId s
 
 
-type GameSessionId s
+type GameSessionCode s
     = GameSessionId String
 
 
-gameSessionId2String : GameSessionId String -> String
+gameSessionId2String : GameSessionCode String -> String
 gameSessionId2String (GameSessionId s) =
     s
 
 
-gameSessionIdFromString : String -> GameSessionId String
-gameSessionIdFromString s =
+gameSessionCodeFromString : String -> GameSessionCode String
+gameSessionCodeFromString s =
     GameSessionId s
