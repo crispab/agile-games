@@ -33,14 +33,17 @@
     "gameState": {
       "players": [
         {
+          "id": "some id1",
           "name": "Alice",
           "avatar": "aliceAvatar.png"
         },
         {
+          "id": "some id2",
           "name": "Miriam",
           "avatar": "miriamAvatar.png"
         },
         {
+          "id": "some id3",
           "name": "Eve",
           "avatar": "eveAvatar.png"
         }

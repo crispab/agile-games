@@ -1,5 +1,6 @@
 module MessageTest exposing (all)
 
+import Dict
 import Expect
 import Message exposing (GamePhase(..), GameState, Message(..), Player, decodeMessage)
 import Test exposing (..)
@@ -118,7 +119,7 @@ expectedGameStateWithNoPlayers =
 
 expectedGameStateInfoNoPlayers : GameState
 expectedGameStateInfoNoPlayers =
-    { players = []
+    { players = Dict.fromList []
     , phase = Gathering
     , board =
         [ [ { player = Nothing } ]
@@ -134,26 +135,30 @@ givenGameStateWithPlayers =
       {
         "gameState" : {
           "players" : [
-            {
-              "name": "Alice",
-              "avatar": "aliceAvatar.png"
-            },
-            {
-              "name": "Miriam",
-              "avatar": "miriamAvatar.png"
-            },
-            {
-              "name": "Eve",
-              "avatar": "eveAvatar.png"
-            }
+               {
+                  "id": "some id1",
+                  "name": "Alice",
+                  "avatar": "aliceAvatar.png"
+                },
+                {
+                  "id": "some id2",
+                  "name": "Miriam",
+                  "avatar": "miriamAvatar.png"
+                },
+                {
+                  "id": "some id3",
+                  "name": "Eve",
+                  "avatar": "eveAvatar.png"
+                }
           ],
           "phase" : "GATHERING",
           "board": [
               [
                 {
                   "player": {
+                    "id": "some id1",
                     "name": "Alice",
-                    "avatar": "circle.png"
+                    "avatar": "aliceAvatar.png"
                   }
                 }
               ],
@@ -177,18 +182,23 @@ expectedGameStateWithPlayers =
 expectedGameStateInfo : GameState
 expectedGameStateInfo =
     { players =
-        [ Player "Alice" "aliceAvatar.png"
-        , Player "Miriam" "miriamAvatar.png"
-        , Player "Eve" "eveAvatar.png"
-        ]
+        Dict.fromList
+            [ ( "some id1", Player "some id1" "Alice" "aliceAvatar.png" )
+            , ( "some id2", Player "some id2" "Miriam" "miriamAvatar.png" )
+            , ( "some id3", Player "some id3" "Eve" "eveAvatar.png" )
+            ]
     , phase = Gathering
     , board =
-        [ [ { player = Just { avatar = "circle.png", name = "Alice" } } ]
+        [ [ { player = Just (Player "some id1" "Alice" "aliceAvatar.png") } ]
         , [ { player = Nothing }
           , { player = Nothing }
           ]
         ]
     }
+
+
+
+{- -}
 
 
 givenFailMessage =

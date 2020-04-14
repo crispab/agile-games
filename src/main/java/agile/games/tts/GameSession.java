@@ -264,7 +264,7 @@ public class GameSession {
 
     public List<PlayerDto> getPlayerDtos() {
         return players.values()
-                .stream().map(p -> new PlayerDto(p.getName(), p.getAvatar()))
+                .stream().map(this::toPlayerDto)
                 .collect(Collectors.toList());
     }
 
@@ -285,6 +285,11 @@ public class GameSession {
     }
 
     private PlayerDto toPlayerDto(Player player) {
-        return player == null ? null : new PlayerDto(player.getName(), player.getAvatar());
+        return player == null ? null :
+                PlayerDto
+                        .id(player.getId().toString())
+                        .name(player.getName())
+                        .avatar(player.getAvatar())
+                        .build();
     }
 }

@@ -8,7 +8,21 @@ module Message exposing
     )
 
 import Dict exposing (Dict)
-import Json.Decode exposing (Decoder, andThen, decodeString, errorToString, field, list, map, null, nullable, oneOf, string, succeed)
+import Json.Decode
+    exposing
+        ( Decoder
+        , andThen
+        , decodeString
+        , errorToString
+        , field
+        , list
+        , map
+        , null
+        , nullable
+        , oneOf
+        , string
+        , succeed
+        )
 import Json.Decode.Pipeline exposing (optional, required)
 
 
@@ -45,7 +59,7 @@ type alias FailInfo =
 
 type alias GameState =
     { phase : GamePhase
-    , players : List Player
+    , players : Dict String Player
     , board : List (List Square)
     }
 
@@ -56,7 +70,8 @@ type alias Square =
 
 
 type alias Player =
-    { name : String
+    { id : String
+    , name : String
     , avatar : String
     }
 
@@ -87,11 +102,11 @@ decodeMessage s =
     case
         decodeString
             (oneOf
-                [ sessionStartDecoder
+                [ gameStateMessageDecoder
+                , sessionStartDecoder
                 , okMessageDecoder
                 , joinedDecoder
                 , facilitateDecoder
-                , gameStateMessageDecoder
                 , failMessageDecoder
                 ]
             )
@@ -168,7 +183,7 @@ gameStateDecoder : Decoder GameState
 gameStateDecoder =
     succeed GameState
         |> required "phase" (map stringToPhase string)
-        |> optional "players" (list decodePlayer) []
+        |> optional "players" decodePlayerListToDict (Dict.fromList [])
         |> required "board" (list (list squareDecoder))
 
 
@@ -198,8 +213,19 @@ nullable decoder =
         ]
 
 
+decodePlayerListToDict : Decoder (Dict String Player)
+decodePlayerListToDict =
+    list decodePlayer |> andThen (\l -> succeed (helper l))
+
+
 decodePlayer : Decoder Player
 decodePlayer =
     succeed Player
+        |> required "id" string
         |> required "name" string
         |> required "avatar" string
+
+
+helper : List Player -> Dict String Player
+helper l =
+    List.map (\p -> ( p.id, p )) l |> Dict.fromList

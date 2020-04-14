@@ -1,6 +1,7 @@
 module Model exposing (GameSessionCode, Model, Page(..), UserSessionId, gameSessionCodeFromString, gameSessionId2String, initialModel, userSessionId2String, userSessionIdFromString)
 
 import Bootstrap.Alert as Alert
+import Dict
 import Message exposing (GamePhase(..), GameState)
 
 
@@ -44,7 +45,7 @@ initialModel session =
 initialGameState : GameState
 initialGameState =
     { phase = Gathering
-    , players = []
+    , players = Dict.fromList []
     , board = [ [] ]
     }
 

@@ -46,9 +46,9 @@ class GameServiceTest {
 
         GameStateMessage message = (GameStateMessage) gameService.gameState(gameSessionCode);
 
-        List<String> players = message.getGameState().getPlayers();
+        List<PlayerDto> players = message.getGameState().getPlayers();
         assertEquals(1, players.size());
-        assertEquals(GOOD_NAME, players.get(0));
+        assertEquals(GOOD_NAME, players.get(0).getName());
     }
 
     private Message doJoin(GameService gameService, GameSessionCode gameSessionCode) {
