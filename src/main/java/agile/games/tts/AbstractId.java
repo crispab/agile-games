@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class AbstractId {
-    public final String id;
+    private final String id;
 
     public AbstractId() {
         this.id = UUID.randomUUID().toString();

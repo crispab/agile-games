@@ -59,6 +59,7 @@ givenJoined =
     """
       {
         "joined": {
+          "playerId": "some id",
           "playerName": "some name",
           "playerAvatar": "some avatar"
         }
@@ -69,7 +70,8 @@ givenJoined =
 expectedJoined : Message.Message
 expectedJoined =
     Joined
-        { playerName = "some name"
+        { playerId = "some id"
+        , playerName = "some name"
         , playerAvatar = "some avatar"
         }
 

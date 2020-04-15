@@ -10,7 +10,7 @@ public class JoinedMessage implements Message {
         joined = new JoinedInfo();
     }
 
-    public static IPlayerName gameSessionCode(GameSessionCode gameSessionCode) {
+    public static IPlayerId gameSessionCode(GameSessionCode gameSessionCode) {
         return new Builder(gameSessionCode);
     }
 
@@ -23,9 +23,15 @@ public class JoinedMessage implements Message {
         return joined;
     }
 
+
+    interface IPlayerId {
+        IPlayerName playerId(String playerId);
+    }
+
     interface IPlayerName {
         IPlayerAvatar playerName(String playerName);
     }
+
 
     interface IPlayerAvatar {
         IBuild playerAvatar(String playerAvatar);
@@ -37,11 +43,16 @@ public class JoinedMessage implements Message {
 
     public static class JoinedInfo {
         private GameSessionCode gameSessionCode;
+        private String playerId;
         private String playerName;
         private String playerAvatar;
 
         public GameSessionCode getGameSessionCode() {
             return gameSessionCode;
+        }
+
+        public String getPlayerId() {
+            return playerId;
         }
 
         public String getPlayerName() {
@@ -53,13 +64,19 @@ public class JoinedMessage implements Message {
         }
     }
 
-    public static class Builder implements IPlayerName, IPlayerAvatar, IBuild {
+    public static class Builder implements IPlayerId, IPlayerName, IPlayerAvatar, IBuild {
 
         private JoinedMessage joinedMessage;
 
         public Builder(GameSessionCode gameSessionCode) {
             joinedMessage = new JoinedMessage();
             joinedMessage.joined.gameSessionCode = gameSessionCode;
+        }
+
+        @Override
+        public IPlayerName playerId(String playerId) {
+            joinedMessage.joined.playerId = playerId;
+            return this;
         }
 
         @Override

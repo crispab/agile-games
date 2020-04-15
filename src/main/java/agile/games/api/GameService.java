@@ -50,6 +50,7 @@ public class GameService {
                 playerSessions.put(newWebSocketId, playerId);
                 return JoinedMessage
                         .gameSessionCode(gameSessionCode)
+                        .playerId(playerId.toString())
                         .playerName(gameSession.getPlayerName(playerId))
                         .playerAvatar(gameSession.getPlayerAvatar(playerId))
                         .build();
@@ -98,6 +99,7 @@ public class GameService {
         socketSessions.put(id, gameSessionCode);
         playerSessions.put(id, playerId);
         return JoinedMessage.gameSessionCode(gameSessionCode)
+                .playerId(playerId.toString())
                 .playerName(gameSession.getPlayerName(playerId))
                 .playerAvatar(gameSession.getPlayerAvatar(playerId))
                 .build();

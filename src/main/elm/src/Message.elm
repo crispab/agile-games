@@ -37,7 +37,8 @@ type Message
 
 
 type alias JoinedInfo =
-    { playerName : String
+    { playerId : String
+    , playerName : String
     , playerAvatar : String
     }
 
@@ -137,6 +138,7 @@ joinedDecoder =
 joinedInfoDecoder : Decoder JoinedInfo
 joinedInfoDecoder =
     succeed JoinedInfo
+        |> required "playerId" string
         |> required "playerName" string
         |> required "playerAvatar" string
 
