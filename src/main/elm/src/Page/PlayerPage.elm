@@ -40,6 +40,7 @@ headLine code playerName playerAvatar =
                 [ text <| "Player " ++ playerName
                 , img [ src <| imgPrefix ++ playerAvatar, width 40 ] []
                 ]
+            , Button.button [ Button.outlineDanger, Button.onClick Leave ] [ text "Leave" ]
             ]
         ]
 

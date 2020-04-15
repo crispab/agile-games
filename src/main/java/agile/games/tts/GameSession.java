@@ -269,6 +269,8 @@ public class GameSession {
     }
 
     public PlayerId removePlayer(PlayerId playerId) {
+        PlayerPosition playerPosition = getPlayerPosition(playerId);
+        board.removePlayerAt(playerPosition);
         return players.remove(playerId).getId();
     }
 
@@ -291,5 +293,9 @@ public class GameSession {
                         .name(player.getName())
                         .avatar(player.getAvatar())
                         .build();
+    }
+
+    public Optional<PlayerDto> getPlayerAt(PlayerPosition playerPosition) {
+        return Optional.ofNullable(getBoard().get(playerPosition.getY()).get(playerPosition.getX()).getPlayer());
     }
 }

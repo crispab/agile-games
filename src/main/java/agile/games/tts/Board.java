@@ -91,4 +91,8 @@ class Board {
         }
         return board;
     }
+
+    public void removePlayerAt(PlayerPosition position) {
+        squares[position.getX()][position.getY()] = new Square();
+    }
 }
