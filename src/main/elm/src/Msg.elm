@@ -13,6 +13,7 @@ type Msg
     | Facilitate
     | GotoPhase GamePhase
     | Move Direction
+    | Leave
 
 
 type Direction

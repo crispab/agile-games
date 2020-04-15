@@ -30,6 +30,7 @@ type Message
     = SessionStart String
     | Joined JoinedInfo
     | Facilitate FacilitateInfo
+    | Left String
     | State GameState
     | OkMessage OkInfo
     | FailMessage FailInfo
@@ -108,6 +109,7 @@ decodeMessage s =
                 , okMessageDecoder
                 , joinedDecoder
                 , facilitateDecoder
+                , leftDecoder
                 , failMessageDecoder
                 ]
             )
@@ -152,6 +154,12 @@ facilitateInfoDecoder : Decoder FacilitateInfo
 facilitateInfoDecoder =
     succeed FacilitateInfo
         |> required "gameSessionCode" string
+
+
+leftDecoder : Decoder Message
+leftDecoder =
+    succeed Left
+        |> required "left" string
 
 
 failMessageDecoder : Decoder Message

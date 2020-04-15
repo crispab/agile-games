@@ -67,6 +67,9 @@ update msg model =
         Move direction ->
             ( model, websocketOut <| Command.move model.userSessionId direction )
 
+        Leave ->
+            ( model, websocketOut <| Command.leave )
+
 
 updateBasedOnMessage : String -> Model -> ( Model, Cmd Msg )
 updateBasedOnMessage messageString model =
@@ -100,6 +103,15 @@ updateBasedOnMessage messageString model =
                 , currentPage = PlayerPage
               }
             , Cmd.none
+            )
+
+        Message.Left code ->
+            ( { model
+                | alertVisibility = Alert.shown
+                , errorMessage = "Left session " ++ code ++ ", but it is still there."
+                , currentPage = LobbyPage
+              }
+            , setStorage ""
             )
 
         Message.Facilitate facilitateInfo ->

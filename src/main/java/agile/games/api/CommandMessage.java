@@ -8,6 +8,7 @@ public class CommandMessage {
         JOIN,
         RESUME,
         MOVE,
+        LEAVE,
         PHASE_GATHERING,
         PHASE_ASSIGNMENT,
         PHASE_EXECUTING,

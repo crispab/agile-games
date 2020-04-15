@@ -50,6 +50,8 @@ public class TtsWebSocket {
                 return respondAndNewState(session, tryResume(session, commandMessage.getUserSessionId()));
             case MOVE:
                 return broadcastNewState(move(session, commandMessage));
+            case LEAVE:
+                return respondAndNewState(session, gameService.leave(session.getId()));
             case PHASE_GATHERING:
                 return broadcastNewState(gotoPhase(session, GATHERING));
             case PHASE_ASSIGNMENT:

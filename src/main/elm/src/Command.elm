@@ -1,4 +1,4 @@
-module Command exposing (facilitate, gotoPhase, join, move, resume)
+module Command exposing (facilitate, gotoPhase, join, leave, move, resume)
 
 import Json.Encode as Encode
 import Message exposing (GamePhase(..))
@@ -71,6 +71,13 @@ gotoPhase gamePhase =
     in
     Encode.object
         [ ( "commandType", Encode.string phaseCommand )
+        ]
+
+
+leave : Encode.Value
+leave =
+    Encode.object
+        [ ( "commandType", Encode.string "LEAVE" )
         ]
 
 

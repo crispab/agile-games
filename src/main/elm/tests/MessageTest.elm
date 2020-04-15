@@ -21,6 +21,10 @@ all =
             \_ ->
                 decodeMessage givenFacilitate
                     |> Expect.equal expectedFacilitate
+        , test "Left" <|
+            \_ ->
+                decodeMessage givenLeft
+                    |> Expect.equal expectedLeft
         , test "Initial game state without Players" <|
             \_ ->
                 decodeMessage givenGameStateWithNoPlayers
@@ -91,6 +95,19 @@ expectedFacilitate =
     Facilitate
         { gameSessionCode = "123 456"
         }
+
+
+givenLeft =
+    """
+      {
+        "left": "123 456"
+      }
+      """
+
+
+expectedLeft : Message.Message
+expectedLeft =
+    Left "123 456"
 
 
 givenGameStateWithNoPlayers =

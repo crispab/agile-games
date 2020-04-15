@@ -32,6 +32,7 @@ viewHeadLine gameSessionID =
     div [ class "jumbotron", style "text-align" "center" ]
         [ h1 [] [ text "Facilitator" ]
         , h2 [] [ text <| "Game code: " ++ gameSessionId2String gameSessionID ]
+        , Button.button [ Button.outlineDanger, Button.onClick Leave ] [ text "Leave" ]
         ]
 
 

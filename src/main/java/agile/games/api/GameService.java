@@ -129,20 +129,19 @@ public class GameService {
         return new FailMessage("Invalid game session id " + gameSessionCode);
     }
 
-    public Optional<GameSessionCode> leave(String webSocketIdStr) {
+    public Message leave(String webSocketIdStr) {
         WebSocketId webSocketId = new WebSocketId(webSocketIdStr);
         LOG.info("Leave: {}", webSocketId);
-        Optional<GameSessionCode> gameSessionId = findGameSessionId(webSocketId);
-        if (gameSessionId.isPresent()) {
-            Optional<GameSession> gameSession = findGameSession(gameSessionId.get());
+        Optional<GameSessionCode> gameSessionCode = findGameSessionCode(webSocketId);
+        if (gameSessionCode.isPresent()) {
+            Optional<GameSession> gameSession = findGameSession(gameSessionCode.get());
             Optional<PlayerId> playerId = findPlayerId(webSocketId);
             playerId.ifPresent(id -> gameSession.map(g -> g.removePlayer(id)));
         }
-
-        return gameSessionId;
+        return gameSessionCode.map(LeftMessage::new).orElseGet(LeftMessage::new);
     }
 
-    private Optional<GameSessionCode> findGameSessionId(WebSocketId webSocketId) {
+    private Optional<GameSessionCode> findGameSessionCode(WebSocketId webSocketId) {
         return Optional.ofNullable(socketSessions.get(webSocketId));
     }
 
