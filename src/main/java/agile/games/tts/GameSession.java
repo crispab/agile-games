@@ -163,23 +163,17 @@ public class GameSession {
     }
 
     private void checkGoal1(Player player) {
-        Player goal1Player = findPlayerById(player.getGoal1());
-        if (player.getPosition().distance(goal1Player.getPosition()) <= 1) {
-            player.setGoal1(null);
-        }
+        Player goal1Player = findPlayerById(player.getGoal1().getTapGoal());
+        player.checkGoal1(goal1Player);
     }
 
     private void checkGoal2(Player player) {
-        Player goal2Player = findPlayerById(player.getGoal2());
-        if (player.getPosition().distance(goal2Player.getPosition()) <= 1) {
-            player.setGoal2(null);
-        }
+        Player goal2Player = findPlayerById(player.getGoal2().getTapGoal());
+        player.checkGoal2(goal2Player);
     }
 
     private void checkEndGoal(Player player) {
-        if (player.getEndGoal().equals(player.getPosition())) {
-            setPlayerState(player.getId(), PlayerState.DONE);
-        }
+        player.checkEndGoal();
     }
 
     public void setFacilitator(UserId userId) {
@@ -196,7 +190,7 @@ public class GameSession {
 
     public PlayerPosition getPlayerEndGoal(PlayerId playerId) {
         Player playerById = findPlayerById(playerId);
-        return playerById.getEndGoal();
+        return playerById.getEndGoal().getGoalPosition();
     }
 
     public PlayerId findPlayerByName(String playerName) {
@@ -210,12 +204,12 @@ public class GameSession {
         throw new IllegalArgumentException("No player named: '" + playerName + "'.");
     }
 
-    public PlayerId getPlayerGoal1(PlayerId playerId) {
+    public PlayerTapGoal getPlayerGoal1(PlayerId playerId) {
         Player player = findPlayerById(playerId);
         return player.getGoal1();
     }
 
-    public PlayerId getPlayerGoal2(PlayerId playerId) {
+    public PlayerTapGoal getPlayerGoal2(PlayerId playerId) {
         Player player = findPlayerById(playerId);
         return player.getGoal2();
     }
@@ -297,5 +291,13 @@ public class GameSession {
 
     public Optional<PlayerDto> getPlayerAt(PlayerPosition playerPosition) {
         return Optional.ofNullable(getBoard().get(playerPosition.getY()).get(playerPosition.getX()).getPlayer());
+    }
+
+    public List<PlayerGoalState> getPlayerGoalStates(PlayerId playerId) {
+        Player player = findPlayerById(playerId);
+        return Arrays.asList(
+                player.getGoal1().getState(),
+                player.getGoal2().getState(),
+                player.getEndGoal().getState());
     }
 }

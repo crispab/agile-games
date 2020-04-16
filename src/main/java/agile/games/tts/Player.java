@@ -7,22 +7,20 @@ class Player {
     private final String avatar;
     private PlayerState state;
     private PlayerPosition position;
-    private PlayerPosition endGoal;
-    private PlayerId goal1;
-    private PlayerId goal2;
-    private Integer estimation1;
-    private Integer estimation2;
-    private Integer estimation3;
-    private int steps1;
+    private PlayerEndGoal endGoal;
+    private PlayerTapGoal goal1;
+    private PlayerTapGoal goal2;
 
     public Player(String name, int x, int y, Board board, String avatar) {
         this.id = new PlayerId();
         this.board = board;
         board.movePlayerTo(x, y, this);
         this.state = PlayerState.INITIAL;
-        this.endGoal = position;
         this.name = name;
         this.avatar = avatar;
+        this.goal1 = new PlayerTapGoal();
+        this.goal2 = new PlayerTapGoal(goal1);
+        this.endGoal = new PlayerEndGoal(position, goal2);
     }
 
     public int getX() {
@@ -80,7 +78,7 @@ class Player {
             return;
         }
         if (isTargetingGoal1()) {
-            this.setSteps1(this.getSteps1()  + steps);
+            this.setSteps1(this.getSteps1() + steps);
         }
     }
 
@@ -92,92 +90,94 @@ class Player {
         this.position = position;
     }
 
-    public PlayerPosition getEndGoal() {
+    public PlayerEndGoal getEndGoal() {
         return endGoal;
     }
 
-    public PlayerId getGoal1() {
+    public PlayerTapGoal getGoal1() {
         return goal1;
     }
 
     public void setGoal1(PlayerId goal1) {
-        this.goal1 = goal1;
+        getGoal1().setTapGoal(goal1);
     }
 
-    public PlayerId getGoal2() {
+    public PlayerTapGoal getGoal2() {
         return goal2;
     }
 
     public void setGoal2(PlayerId goal2) {
-        this.goal2 = goal2;
+        getGoal2().setTapGoal(goal2);
     }
 
     public boolean isTargetingGoal1() {
-        return this.goal1 != null;
+        return getGoal1().getState() != PlayerGoalState.COMPLETED;
     }
 
     public boolean isTargetingGoal2() {
-        return !isTargetingGoal1() && this.getGoal2() != null;
+        return !isTargetingGoal1() && getGoal2().getState() != PlayerGoalState.COMPLETED;
     }
 
     public boolean isTargetingEndGoal() {
-        return !isTargetingGoal1() && !isTargetingGoal2();
-    }
-
-    public int getEstimation1() {
-        return estimation1;
+        return !isTargetingGoal1() && !isTargetingGoal2() && getEndGoal().getState() != PlayerGoalState.COMPLETED;
     }
 
     public void setEstimation1(int estimation1) {
-        this.estimation1 = estimation1;
+        this.goal1.setEstimation(estimation1);
         checkIfAllEstimationsDone();
-    }
-
-    public int getEstimation2() {
-        return estimation2;
     }
 
     public void setEstimation2(int estimation2) {
-        this.estimation2 = estimation2;
+        this.goal2.setEstimation(estimation2);
         checkIfAllEstimationsDone();
     }
 
-    public int getEstimation3() {
-        return estimation3;
-    }
-
     public void setEstimation3(int estimation3) {
-        this.estimation3 = estimation3;
+        this.endGoal.setEstimation(estimation3);
         checkIfAllEstimationsDone();
     }
 
     private void checkIfAllEstimationsDone() {
         if (getState() == PlayerState.INITIAL &&
-                estimation1 != null &&
-                estimation2 != null &&
-                estimation3 != null) {
+                getGoal1().getState() == PlayerGoalState.ESTIMATED &&
+                getGoal2().getState() == PlayerGoalState.ESTIMATED &&
+                getEndGoal().getState() == PlayerGoalState.ESTIMATED)
             setState(PlayerState.ESTIMATION_COMPLETED);
-        }
     }
 
     public void setRemainingEstimations() {
-        if (estimation1 == null) {
-            estimation1 = 0;
+        if (getGoal1().getState() != PlayerGoalState.ESTIMATED) {
+            getGoal1().setEstimation(0);
         }
-        if (estimation2 == null) {
-            estimation2 = 0;
+        if (getGoal2().getState() != PlayerGoalState.ESTIMATED) {
+            getGoal2().setEstimation(0);
         }
-        if (estimation3 == null) {
-            estimation3 = 0;
+        if (getEndGoal().getState() != PlayerGoalState.ESTIMATED) {
+            getEndGoal().setEstimation(0);
         }
         checkIfAllEstimationsDone();
     }
 
     public int getSteps1() {
-        return steps1;
+        return getGoal1().getSteps();
     }
 
     public void setSteps1(int steps1) {
-        this.steps1 = steps1;
+        getGoal1().setSteps(steps1);
+    }
+
+    public void checkGoal1(Player goal1Player) {
+        getGoal1().check(this.position, goal1Player);
+    }
+
+    public void checkGoal2(Player goal1Player) {
+        getGoal2().check(this.position, goal1Player);
+    }
+
+    public void checkEndGoal() {
+        getEndGoal().check(this.position);
+        if (getEndGoal().getState() == PlayerGoalState.COMPLETED) {
+            this.state = PlayerState.DONE;
+        }
     }
 }

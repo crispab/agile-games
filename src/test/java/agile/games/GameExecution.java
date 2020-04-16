@@ -3,14 +3,17 @@ package agile.games;
 import agile.games.tts.PlayerId;
 import agile.games.tts.PlayerPosition;
 import agile.games.tts.PlayerState;
+import agile.games.tts.PlayerTapGoal;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 
 import static agile.games.GameStepUtilities.getGameSession;
 import static agile.games.GameStepUtilities.playerId;
+import static agile.games.tts.PlayerGoalState.COMPLETED;
 import static agile.games.tts.PlayerState.DONE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GameExecution {
 
@@ -38,10 +41,10 @@ public class GameExecution {
         PlayerId target1 = getGameSession().findPlayerByName(targetName1);
         PlayerId target2 = getGameSession().findPlayerByName(targetName2);
 
-        PlayerId goal1 = getGameSession().getPlayerGoal1(player);
-        PlayerId goal2 = getGameSession().getPlayerGoal2(player);
-        assertTrue(target1.equals(goal1) || target2.equals(goal1));
-        assertTrue(target1.equals(goal2) || target2.equals(goal2));
+        PlayerTapGoal goal1 = getGameSession().getPlayerGoal1(player);
+        PlayerTapGoal goal2 = getGameSession().getPlayerGoal2(player);
+        assertTrue(target1.equals(goal1.getTapGoal()) || target2.equals(goal1.getTapGoal()));
+        assertTrue(target1.equals(goal2.getTapGoal()) || target2.equals(goal2.getTapGoal()));
     }
 
     @And("player named {string} is assigned the two goals {string} and {string}")
@@ -54,14 +57,14 @@ public class GameExecution {
 
     @Then("the player has reached the first goal")
     public void thePlayerHasReachedTheFirstGoal() {
-        PlayerId playerGoal1 = getGameSession().getPlayerGoal1(playerId);
-        assertNull(playerGoal1, "Player has not reached goal 1.");
+        PlayerTapGoal playerGoal1 = getGameSession().getPlayerGoal1(playerId);
+        assertEquals(COMPLETED, playerGoal1.getState(), "Player has not reached goal 1.");
     }
 
     @And("the player has reached the second goal")
     public void thePlayerHasReachedTheSecondGoal() {
-        PlayerId playerGoal2 = getGameSession().getPlayerGoal2(playerId);
-        assertNull(playerGoal2, "Player has not reached goal 2.");
+        PlayerTapGoal playerGoal2 = getGameSession().getPlayerGoal2(playerId);
+        assertEquals(COMPLETED, playerGoal2.getState(), "Player has not reached goal 2.");
     }
 
     @Then("the player is done")
