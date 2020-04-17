@@ -78,3 +78,42 @@ Feature: Game Execution
     And 0 "| | | |A| |"
     And 1 "| | | | |B|"
     And 2 "| | | |P| |"
+
+  Scenario: A player must take their goals in order.
+    Given a game is in phase "assignment"
+    And the player is at position 3,2 named "P"
+    And a player named "A"
+    And a player named "B"
+    And the board looks as:
+    And 0 "|A| | | | |"
+    And 1 "| | | | |B|"
+    And 2 "| | | |P| |"
+    And player named "P" is assigned the two goals "A" and "B"
+    When all players has done their estimations
+    And the facilitator starts the game
+    And the player moves in direction "up"
+    Then the player named "P" first goal is in state "estimated"
+    And the board should look like:
+    And 0 "|A| | | | |"
+    And 1 "| | | |P|B|"
+    And 2 "| | | | | |"
+    When the player moves in direction "up"
+    And the player moves in direction "left" 2 times
+    Then the player named "P" first goal is in state "completed"
+    And the board should look like:
+    And 0 "|A|P| | | |"
+    And 1 "| | | | |B|"
+    And 2 "| | | | | |"
+    When the player moves in direction "right" 3 times
+    Then the player named "P" second goal is in state "completed"
+    And the board should look like:
+    And 0 "|A| | | |P|"
+    And 1 "| | | | |B|"
+    And 2 "| | | | | |"
+    When the player moves in direction "left"
+    And the player moves in direction "down" 2 times
+    Then the player named "P" end goal is in state "completed"
+    And the board should look like:
+    And 0 "|A| | | | |"
+    And 1 "| | | | |B|"
+    And 2 "| | | |P| |"
