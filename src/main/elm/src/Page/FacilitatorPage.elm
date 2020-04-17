@@ -42,7 +42,7 @@ phaseRow gameState =
         [ Grid.col [ Col.sm8 ]
             [ ButtonGroup.buttonGroup []
                 [ bGroup gameState Gathering "Gathering"
-                , bGroup gameState Assignment "Estimation"
+                , bGroup gameState Estimation "Estimation"
                 , bGroup gameState Executing "Executing"
                 , bGroup gameState Reporting "Reporting"
                 ]

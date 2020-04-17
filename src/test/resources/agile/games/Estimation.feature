@@ -5,18 +5,18 @@ Feature: Estimation
   players moves during execution, their steps are counted.
 
   Scenario: Game execution waits for estimation
-    Given a game is in phase "assignment"
+    Given a game is in phase "estimation"
     And a player named "Alice"
     But "Alice" has not estimated all their goals
     When the facilitator starts the game
-    Then the game is in phase "assignment"
+    Then the game is in phase "estimation"
 
 
   Scenario: When players move, their steps are counted
     Given a game is in phase "gathering"
     And the player is at position 1,1
     And a player named "Alice"
-    And the facilitator starts the assignments
+    And the facilitator starts the estimations
     When all players has done their estimations
     And the facilitator starts the game
     And the player moves in direction "up"

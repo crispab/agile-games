@@ -57,8 +57,8 @@ gotoPhase gamePhase =
                 Gathering ->
                     "PHASE_GATHERING"
 
-                Assignment ->
-                    "PHASE_ASSIGNMENT"
+                Estimation ->
+                    "PHASE_ESTIMATION"
 
                 Executing ->
                     "PHASE_EXECUTING"

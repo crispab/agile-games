@@ -65,7 +65,7 @@ public class GameSession {
     }
 
     public void start() {
-        if (gamePhase == GamePhase.ASSIGNMENT && allPlayersDoneEstimating()) {
+        if (gamePhase == GamePhase.ESTIMATION && allPlayersDoneEstimating()) {
             gamePhase = GamePhase.EXECUTING;
         }
     }
@@ -83,7 +83,7 @@ public class GameSession {
     }
 
     public void assignTargets() {
-        this.setGamePhase(GamePhase.ASSIGNMENT);
+        this.setGamePhase(GamePhase.ESTIMATION);
         TargetAssigner.assignTargets(new ArrayList<>(this.players.values()));
     }
 

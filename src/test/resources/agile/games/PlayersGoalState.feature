@@ -13,13 +13,13 @@ Feature: Player's Goals State
     And a player named "Bertram"
     And a player named "Cecil"
     And the player named "Alice" first goal is in state "no goal set"
-    When the facilitator starts the assignments
+    When the facilitator starts the estimations
     Then the player named "Alice" first goal is in state "assigned"
     And the player named "Alice" second goal is in state "assigned"
     And the player named "Alice" end goal is in state "assigned"
 
   Scenario: Player has estimated their goals
-    Given a game is in phase "assignment"
+    Given a game is in phase "estimation"
     And a player named "Bertram"
     When "Bertram" has done their estimation
     Then the player named "Bertram" first goal is in state "estimated"

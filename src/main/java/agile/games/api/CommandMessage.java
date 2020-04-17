@@ -10,7 +10,7 @@ public class CommandMessage {
         MOVE,
         LEAVE,
         PHASE_GATHERING,
-        PHASE_ASSIGNMENT,
+        PHASE_ESTIMATION,
         PHASE_EXECUTING,
         PHASE_REPORTING,
     }

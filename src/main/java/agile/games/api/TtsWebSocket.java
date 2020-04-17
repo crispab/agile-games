@@ -54,8 +54,8 @@ public class TtsWebSocket {
                 return respondAndNewState(session, gameService.leave(session.getId()));
             case PHASE_GATHERING:
                 return broadcastNewState(gotoPhase(session, GATHERING));
-            case PHASE_ASSIGNMENT:
-                return broadcastNewState(gotoPhase(session, ASSIGNMENT));
+            case PHASE_ESTIMATION:
+                return broadcastNewState(gotoPhase(session, ESTIMATION));
             case PHASE_EXECUTING:
                 return broadcastNewState(gotoPhase(session, EXECUTING));
             case PHASE_REPORTING:

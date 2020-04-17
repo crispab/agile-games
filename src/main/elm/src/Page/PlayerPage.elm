@@ -51,7 +51,7 @@ phaseDependentContent model =
         Gathering ->
             gatheringContent model
 
-        Assignment ->
+        Estimation ->
             estimationContent model
 
         Executing ->

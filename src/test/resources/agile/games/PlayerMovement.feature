@@ -61,8 +61,8 @@ Feature: Player movement rules
     And 1 "| | | | | |"
     And 2 "| | | | | |"
 
-    Scenario: Player tries to move during assignment phase.
-      Given a game is in phase "assignment"
+    Scenario: Player tries to move during estimation phase.
+      Given a game is in phase "estimation"
       And the player is at position 1,1
       When the player moves in direction "up"
       Then the player is on position 1,1

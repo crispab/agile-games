@@ -20,8 +20,8 @@ public class GameFlowSteps  {
         getGameSession().setGamePhase(GamePhase.valueOf(phase.toUpperCase()));
     }
 
-    @When("the facilitator starts the assignments")
-    public void theFacilitatorStartsTheAssignments() {
+    @When("the facilitator starts the estimations")
+    public void theFacilitatorStartsTheEstimations() {
         getGameSession().assignTargets();
     }
 

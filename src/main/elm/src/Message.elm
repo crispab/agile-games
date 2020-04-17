@@ -80,7 +80,7 @@ type alias Player =
 
 type GamePhase
     = Gathering
-    | Assignment
+    | Estimation
     | Executing
     | Reporting
     | UnknownPhase
@@ -201,7 +201,7 @@ stringToPhase : String -> GamePhase
 stringToPhase s =
     Dict.fromList
         [ ( "GATHERING", Gathering )
-        , ( "ASSIGNMENT", Assignment )
+        , ( "ESTIMATION", Estimation )
         , ( "EXECUTING", Executing )
         , ( "REPORTING", Reporting )
         ]
