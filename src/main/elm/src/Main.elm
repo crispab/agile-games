@@ -98,7 +98,8 @@ updateBasedOnMessage messageString model =
 
         Message.Joined joinedInfo ->
             ( { alertClosed
-                | playerName = joinedInfo.playerName
+                | playerId = joinedInfo.playerId
+                , playerName = joinedInfo.playerName
                 , playerAvatar = joinedInfo.playerAvatar
                 , currentPage = PlayerPage
               }

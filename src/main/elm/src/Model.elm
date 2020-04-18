@@ -14,6 +14,7 @@ type Page
 type alias Model =
     { currentPage : Page
     , code : String
+    , playerId : String
     , playerName : String
     , playerAvatar : String
     , alertVisibility : Alert.Visibility
@@ -32,6 +33,7 @@ initialModel : String -> Model
 initialModel session =
     { currentPage = LobbyPage
     , code = ""
+    , playerId = ""
     , playerName = ""
     , playerAvatar = ""
     , alertVisibility = Alert.closed
