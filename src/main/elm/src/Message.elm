@@ -99,11 +99,16 @@ type alias PlayerGoal =
 
 
 type alias PlayerTapGoal =
-    { targetPlayerId : String, goal : PlayerGoal }
+    { targetPlayerId : String
+    , goal : PlayerGoal
+    }
 
 
 type alias PlayerEndGoal =
-    { targetX : Int, targetY : Int, goal : PlayerGoal }
+    { targetX : Int
+    , targetY : Int
+    , goal : PlayerGoal
+    }
 
 
 type PlayerGoalState
@@ -313,7 +318,7 @@ decodePlayerGoal : Decoder PlayerGoal
 decodePlayerGoal =
     succeed PlayerGoal
         |> required "state" (map string2PlayerGoalState string)
-        |> required "estimation" int
+        |> optional "estimation" int 0
         |> required "steps" int
 
 

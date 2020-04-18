@@ -1,6 +1,6 @@
 package agile.games.tts;
 
-import agile.games.api.PlayerDto;
+import agile.games.api.SquareDto;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -17,7 +17,7 @@ class GameSessionTest {
         PlayerId playerId = gameSession.addPlayerNamed(NAME, gameSession.newUser());
 
         PlayerPosition playerPosition = gameSession.getPlayerPosition(playerId);
-        Optional<PlayerDto> playerAt = gameSession.getPlayerAt(playerPosition);
+        Optional<SquareDto.PlayerRefDto> playerAt = gameSession.getPlayerAt(playerPosition);
         if (playerAt.isPresent()) {
             assertEquals("test", playerAt.get().getName());
         } else {

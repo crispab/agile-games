@@ -4,12 +4,9 @@ public class PlayerDto {
     private String id;
     private String name;
     private String avatar;
+    private PlayerGoalsDto goals;
 
     private PlayerDto() {
-    }
-
-    public static IName id(String id) {
-        return new Builder(id);
     }
 
     public String getName() {
@@ -24,19 +21,31 @@ public class PlayerDto {
         return id;
     }
 
+    public static IName id(String id) {
+        return new Builder(id);
+    }
+
+    public PlayerGoalsDto getGoals() {
+        return goals;
+    }
+
     public interface IName {
         IAvatar name(String name);
     }
 
     public interface IAvatar {
-        IBuild avatar(String avatar);
+        IGoals avatar(String avatar);
+    }
+
+    public interface IGoals {
+        IBuild goals(PlayerGoalsDto goalsDto);
     }
 
     public interface IBuild {
         PlayerDto build();
     }
 
-    public static class Builder implements IName, IAvatar, IBuild {
+    public static class Builder implements IName, IAvatar, IGoals, IBuild {
         private final PlayerDto instance;
 
         public Builder(String id) {
@@ -51,8 +60,14 @@ public class PlayerDto {
         }
 
         @Override
-        public IBuild avatar(String avatar) {
+        public IGoals avatar(String avatar) {
             instance.avatar = avatar;
+            return this;
+        }
+
+        @Override
+        public IBuild goals(PlayerGoalsDto goalsDto) {
+            instance.goals = goalsDto;
             return this;
         }
 
@@ -61,6 +76,5 @@ public class PlayerDto {
             return instance;
         }
     }
-
 }
 

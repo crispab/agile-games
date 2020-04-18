@@ -1,7 +1,6 @@
 package agile.games.tts;
 
-import agile.games.api.PlayerDto;
-import agile.games.api.SquareDto;
+import agile.games.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -262,6 +261,52 @@ public class GameSession {
                 .collect(Collectors.toList());
     }
 
+    private PlayerDto toPlayerDto(Player player) {
+        PlayerTapGoal goal1 = player.getGoal1();
+        PlayerTapGoal goal2 = player.getGoal2();
+        PlayerEndGoal endGoal = player.getEndGoal();
+        PlayerId tapGoal1 = goal1.getTapGoal();
+        PlayerId tapGoal2 = goal2.getTapGoal();
+        return PlayerDto
+                .id(player.getId().toString())
+                .name(player.getName())
+                .avatar(player.getAvatar())
+                .goals(
+                        PlayerGoalsDto
+                                .goal1(
+                                        PlayerTapGoalDto
+                                                .goal(tapGoal2Dto(goal1))
+                                                .targetPlayerId(tapGoal1)
+                                                .build())
+                                .goal2(PlayerTapGoalDto
+                                        .goal(tapGoal2Dto(goal2))
+                                        .targetPlayerId(tapGoal2)
+                                        .build())
+                                .endGoal(PlayerEndGoalDto
+                                        .goal(endGoal2Dto(endGoal))
+                                        .targetX(endGoal.getGoalPosition().getX())
+                                        .targetY(endGoal.getGoalPosition().getY())
+                                        .build())
+                                .build())
+                .build();
+    }
+
+    private PlayerGoalDto tapGoal2Dto(PlayerTapGoal playerTapGoal) {
+        return PlayerGoalDto
+                .state(playerTapGoal.getState())
+                .estimation(playerTapGoal.getEstimation())
+                .steps(playerTapGoal.getSteps())
+                .build();
+    }
+
+    private PlayerGoalDto endGoal2Dto(PlayerEndGoal playerTapGoal) {
+        return PlayerGoalDto
+                .state(playerTapGoal.getState())
+                .estimation(playerTapGoal.getEstimation())
+                .steps(playerTapGoal.getSteps())
+                .build();
+    }
+
     public PlayerId removePlayer(PlayerId playerId) {
         PlayerPosition playerPosition = getPlayerPosition(playerId);
         board.removePlayerAt(playerPosition);
@@ -277,19 +322,19 @@ public class GameSession {
     }
 
     private SquareDto toDto(Square square) {
-        return new SquareDto(toPlayerDto(square.getPlayer()));
+        return new SquareDto(toPlayerRefDto(square.getPlayer()));
     }
 
-    private PlayerDto toPlayerDto(Player player) {
+    private SquareDto.PlayerRefDto toPlayerRefDto(Player player) {
         return player == null ? null :
-                PlayerDto
+                SquareDto.PlayerRefDto
                         .id(player.getId().toString())
                         .name(player.getName())
                         .avatar(player.getAvatar())
                         .build();
     }
 
-    public Optional<PlayerDto> getPlayerAt(PlayerPosition playerPosition) {
+    public Optional<SquareDto.PlayerRefDto> getPlayerAt(PlayerPosition playerPosition) {
         return Optional.ofNullable(getBoard().get(playerPosition.getY()).get(playerPosition.getX()).getPlayer());
     }
 
