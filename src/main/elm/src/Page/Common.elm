@@ -1,12 +1,12 @@
-module Page.Common exposing (playerList)
+module Page.Common exposing (boardView, imgPrefix, playerList)
 
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
 import Bootstrap.ListGroup exposing (li, ul)
 import Dict exposing (Dict)
-import Html exposing (Html, h4, img, text)
-import Html.Attributes exposing (height, src, style)
-import Message exposing (Player, PlayerGoalState(..))
+import Html exposing (Html, h4, img, table, td, text, tr)
+import Html.Attributes exposing (height, src, style, width)
+import Message exposing (Player, PlayerGoalState(..), Square)
 
 
 playerList : Dict String Player -> Grid.Column msg
@@ -84,3 +84,35 @@ avatar url =
 avatarUrl : String -> String
 avatarUrl url =
     "/assets/avatars/" ++ url
+
+
+boardView : List (List Square) -> Html msg
+boardView board =
+    table [] (List.indexedMap boardRowView board)
+
+
+boardRowView : Int -> List Square -> Html msg
+boardRowView row squares =
+    tr [] ([ td [] [ text <| String.fromInt row ] ] ++ List.map squareView squares)
+
+
+squareView : Square -> Html msg
+squareView square =
+    td [ style "border" "solid 1px" ]
+        [ img [ src <| imgUrl square, width 40 ] []
+        ]
+
+
+imgUrl : Square -> String
+imgUrl square =
+    case square.player of
+        Nothing ->
+            "/assets/empty.png"
+
+        Just player ->
+            imgPrefix ++ player.avatar
+
+
+imgPrefix : String
+imgPrefix =
+    "/assets/avatars/"

@@ -3,12 +3,12 @@ module Page.PlayerPage exposing (viewPlayerPage)
 import Bootstrap.Button as Button
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col exposing (xs2)
-import Html exposing (Html, div, h1, h4, img, p, table, td, text, tr)
+import Html exposing (Html, div, h1, h4, img, p, text)
 import Html.Attributes exposing (class, src, style, width)
 import Message exposing (GamePhase(..), GameState, Square)
 import Model exposing (GameSessionCode, Model, gameSessionId2String)
 import Msg exposing (Direction(..), Msg(..))
-import Page.Common exposing (playerList)
+import Page.Common exposing (boardView, imgPrefix, playerList)
 
 
 viewPlayerPage : Model -> Html Msg
@@ -70,7 +70,7 @@ gatheringContent model =
         [ Grid.col []
             [ h1 [] [ text "Gathering" ]
             , p [] [ text gatheringText ]
-            , boardView model
+            , boardView model.gameState.board
             ]
         ]
 
@@ -89,7 +89,7 @@ estimationContent model =
         [ Grid.col [ Col.sm8 ]
             [ h1 [] [ text "Estimation" ]
             , p [] [ text estimationText ]
-            , boardView model
+            , boardView model.gameState.board
             ]
         ]
 
@@ -108,7 +108,7 @@ executingContent model =
         [ Grid.col [ Col.sm8 ]
             [ h1 [] [ text "Executing" ]
             , p [] [ text executingText ]
-            , boardView model
+            , boardView model.gameState.board
             ]
         , Grid.col [ Col.sm4 ]
             [ arrowKeys
@@ -157,34 +157,3 @@ reportingText =
     """
     That was all! Here you can see how it went.
     """
-
-
-boardView : Model -> Html Msg
-boardView model =
-    table [] (List.indexedMap boardRowView model.gameState.board)
-
-
-boardRowView : Int -> List Square -> Html Msg
-boardRowView row squares =
-    tr [] ([ td [] [ text <| String.fromInt row ] ] ++ List.map squareView squares)
-
-
-squareView : Square -> Html Msg
-squareView square =
-    td [ style "border" "solid 1px" ]
-        [ img [ src <| imgUrl square, width 40 ] []
-        ]
-
-
-imgUrl : Square -> String
-imgUrl square =
-    case square.player of
-        Nothing ->
-            "/assets/empty.png"
-
-        Just player ->
-            imgPrefix ++ player.avatar
-
-
-imgPrefix =
-    "/assets/avatars/"
