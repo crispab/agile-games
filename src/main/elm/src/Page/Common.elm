@@ -6,7 +6,7 @@ import Bootstrap.ListGroup exposing (li, ul)
 import Dict exposing (Dict)
 import Html exposing (Html, h4, img, text)
 import Html.Attributes exposing (height, src, style)
-import Message exposing (Player)
+import Message exposing (Player, PlayerGoalState(..))
 
 
 playerList : Dict String Player -> Grid.Column msg
@@ -38,19 +38,41 @@ viewPlayers players =
         ]
 
 
-goal1 _ =
-    img [ src <| goalUrl 3, height 14 ] []
+goal1 : Player -> Html msg
+goal1 player =
+    img [ src <| goalUrl player.goals.goal1.goal.state, height 14 ] []
 
 
-goal2 _ =
-    img [ src <| goalUrl 2, height 14 ] []
+goal2 : Player -> Html msg
+goal2 player =
+    img [ src <| goalUrl player.goals.goal2.goal.state, height 14 ] []
 
 
-endGoal _ =
-    img [ src <| goalUrl 1, height 14 ] []
+endGoal : Player -> Html msg
+endGoal player =
+    img [ src <| goalUrl player.goals.endGoal.goal.state, height 14 ] []
 
 
-goalUrl n =
+goalUrl : PlayerGoalState -> String
+goalUrl state =
+    let
+        n =
+            case state of
+                NO_GOAL_SET ->
+                    1
+
+                ASSIGNED ->
+                    2
+
+                ESTIMATED ->
+                    3
+
+                COMPLETED ->
+                    4
+
+                UNKNOWN_GOAL_STATE ->
+                    1
+    in
     "/assets/goal" ++ String.fromInt n ++ ".png"
 
 

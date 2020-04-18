@@ -1,8 +1,9 @@
 module MessageTest exposing (all)
 
-import Dict
+import Dict exposing (Dict)
 import Expect
-import Message exposing (GamePhase(..), GameState, Message(..), Player, decodeMessage)
+import Json.Decode exposing (decodeString)
+import Message exposing (GamePhase(..), GameState, Message(..), Player, PlayerGoal, PlayerGoalState(..), PlayerGoals, PlayerRef, Square, decodeMessage, gameStateMessageDecoder)
 import Test exposing (..)
 
 
@@ -31,8 +32,8 @@ all =
                     |> Expect.equal expectedGameStateWithNoPlayers
         , test "Game state with Players" <|
             \_ ->
-                decodeMessage givenGameStateWithPlayers
-                    |> Expect.equal expectedGameStateWithPlayers
+                decodeString gameStateMessageDecoder givenGameStateWithPlayers
+                    |> Expect.equal (Ok <| expectedGameStateWithPlayers)
         , test "Something failed" <|
             \_ ->
                 decodeMessage givenFailMessage
@@ -151,45 +152,60 @@ expectedGameStateInfoNoPlayers =
 
 givenGameStateWithPlayers =
     """
-      {
-        "gameState" : {
-          "players" : [
-               {
-                  "id": "some id1",
-                  "name": "Alice",
-                  "avatar": "aliceAvatar.png"
-                },
-                {
-                  "id": "some id2",
-                  "name": "Miriam",
-                  "avatar": "miriamAvatar.png"
-                },
-                {
-                  "id": "some id3",
-                  "name": "Eve",
-                  "avatar": "eveAvatar.png"
-                }
-          ],
-          "phase" : "GATHERING",
-          "board": [
-              [
-                {
-                  "player": {
-                    "id": "some id1",
-                    "name": "Alice",
-                    "avatar": "aliceAvatar.png"
-                  }
-                }
-              ],
-              [
-                {
-                  "player": null
-                },
-                { }
-              ]
-            ]
-        }
-      }
+   {
+     "gameState": {
+       "players": [
+         {
+           "id": "some id1",
+           "name": "Alice",
+           "avatar": "aliceAvatar.png",
+           "goals": {
+             "goal1": {
+               "goal": {
+                 "state": "NO_GOAL_SET",
+                 "estimation": 0,
+                 "steps": 0
+               }
+             },
+             "goal2": {
+               "targetPlayerId": "some id2",
+               "goal": {
+                 "state": "ESTIMATED",
+                 "estimation": 10,
+                 "steps": 0
+               }
+             },
+             "endGoal": {
+               "targetX": 0,
+               "targetY": 2,
+               "goal": {
+                 "state": "ASSIGNED",
+                 "estimation": 0,
+                 "steps": 0
+               }
+             }
+           }
+         }
+       ],
+       "phase": "GATHERING",
+       "board": [
+         [
+           {
+             "player": {
+               "id" : "alice id",
+               "name": "Alice",
+               "avatar": "circle.png"
+             }
+           }
+         ],
+         [
+           {
+             "player": null
+           }
+         ]
+       ]
+     }
+   }
     """
 
 
@@ -202,22 +218,23 @@ expectedGameStateInfo : GameState
 expectedGameStateInfo =
     { players =
         Dict.fromList
-            [ ( "some id1", Player "some id1" "Alice" "aliceAvatar.png" )
-            , ( "some id2", Player "some id2" "Miriam" "miriamAvatar.png" )
-            , ( "some id3", Player "some id3" "Eve" "eveAvatar.png" )
+            [ ( "some id1", Player "some id1" "Alice" "aliceAvatar.png" playerGoals )
             ]
     , phase = Gathering
     , board =
-        [ [ { player = Just (Player "some id1" "Alice" "aliceAvatar.png") } ]
+        [ [ { player = Just (PlayerRef "alice id" "Alice" "circle.png") } ]
         , [ { player = Nothing }
-          , { player = Nothing }
           ]
         ]
     }
 
 
-
-{- -}
+playerGoals : PlayerGoals
+playerGoals =
+    PlayerGoals
+        { targetPlayerId = "", goal = { state = NO_GOAL_SET, estimation = 0, steps = 0 } }
+        { targetPlayerId = "some id2", goal = { state = ESTIMATED, estimation = 10, steps = 0 } }
+        { targetX = 0, targetY = 2, goal = { state = ASSIGNED, estimation = 0, steps = 0 } }
 
 
 givenFailMessage =

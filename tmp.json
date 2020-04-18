@@ -35,7 +35,33 @@
         {
           "id": "some id1",
           "name": "Alice",
-          "avatar": "aliceAvatar.png"
+          "avatar": "aliceAvatar.png",
+          "goals": {
+            "goal1": {
+              "goal": {
+                "state": "NO_GOAL_SET",
+                "estimation": 0,
+                "steps": 0
+              }
+            },
+            "goal2": {
+              "targetPlayerId": "some id2",
+              "goal": {
+                "state": "ESTIMATED",
+                "estimation": 10,
+                "steps": 0
+              }
+            },
+            "endGoal": {
+              "targetX": 5,
+              "targetY": 3,
+              "goal": {
+                "state": "ASSIGNED",
+                "estimation": 0,
+                "steps": 0
+              }
+            }
+          }
         },
         {
           "id": "some id2",

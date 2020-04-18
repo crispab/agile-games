@@ -3,26 +3,24 @@ module Message exposing
     , GameState
     , Message(..)
     , Player
+    , PlayerEndGoal
+    , PlayerGoal
+    , PlayerGoalState(..)
+    , PlayerGoals
+    , PlayerRef
+    , PlayerTapGoal
     , Square
+    , decodeGoals
     , decodeMessage
+    , decodePlayer
+    , decodePlayerEndGoal
+    , decodePlayerGoal
+    , decodePlayerTapGoal
+    , gameStateMessageDecoder
     )
 
 import Dict exposing (Dict)
-import Json.Decode
-    exposing
-        ( Decoder
-        , andThen
-        , decodeString
-        , errorToString
-        , field
-        , list
-        , map
-        , null
-        , nullable
-        , oneOf
-        , string
-        , succeed
-        )
+import Json.Decode exposing (Decoder, andThen, decodeString, errorToString, field, int, list, map, null, nullable, oneOf, string, succeed)
 import Json.Decode.Pipeline exposing (optional, required)
 
 
@@ -67,7 +65,14 @@ type alias GameState =
 
 
 type alias Square =
-    { player : Maybe Player
+    { player : Maybe PlayerRef
+    }
+
+
+type alias PlayerRef =
+    { id : String
+    , name : String
+    , avatar : String
     }
 
 
@@ -75,7 +80,38 @@ type alias Player =
     { id : String
     , name : String
     , avatar : String
+    , goals : PlayerGoals
     }
+
+
+type alias PlayerGoals =
+    { goal1 : PlayerTapGoal
+    , goal2 : PlayerTapGoal
+    , endGoal : PlayerEndGoal
+    }
+
+
+type alias PlayerGoal =
+    { state : PlayerGoalState
+    , estimation : Int
+    , steps : Int
+    }
+
+
+type alias PlayerTapGoal =
+    { targetPlayerId : String, goal : PlayerGoal }
+
+
+type alias PlayerEndGoal =
+    { targetX : Int, targetY : Int, goal : PlayerGoal }
+
+
+type PlayerGoalState
+    = NO_GOAL_SET
+    | ASSIGNED
+    | ESTIMATED
+    | COMPLETED
+    | UNKNOWN_GOAL_STATE
 
 
 type GamePhase
@@ -212,7 +248,15 @@ stringToPhase s =
 squareDecoder : Decoder Square
 squareDecoder =
     succeed Square
-        |> optional "player" (nullable decodePlayer) Nothing
+        |> optional "player" (nullable decodePlayerRef) Nothing
+
+
+decodePlayerRef : Decoder PlayerRef
+decodePlayerRef =
+    succeed PlayerRef
+        |> required "id" string
+        |> required "name" string
+        |> required "avatar" string
 
 
 nullable : Decoder a -> Decoder (Maybe a)
@@ -234,8 +278,52 @@ decodePlayer =
         |> required "id" string
         |> required "name" string
         |> required "avatar" string
+        |> required "goals" decodeGoals
 
 
 helper : List Player -> Dict String Player
 helper l =
     List.map (\p -> ( p.id, p )) l |> Dict.fromList
+
+
+decodeGoals : Decoder PlayerGoals
+decodeGoals =
+    succeed PlayerGoals
+        |> required "goal1" decodePlayerTapGoal
+        |> required "goal2" decodePlayerTapGoal
+        |> required "endGoal" decodePlayerEndGoal
+
+
+decodePlayerTapGoal : Decoder PlayerTapGoal
+decodePlayerTapGoal =
+    succeed PlayerTapGoal
+        |> optional "targetPlayerId" string ""
+        |> required "goal" decodePlayerGoal
+
+
+decodePlayerEndGoal : Decoder PlayerEndGoal
+decodePlayerEndGoal =
+    succeed PlayerEndGoal
+        |> required "targetX" int
+        |> required "targetY" int
+        |> required "goal" decodePlayerGoal
+
+
+decodePlayerGoal : Decoder PlayerGoal
+decodePlayerGoal =
+    succeed PlayerGoal
+        |> required "state" (map string2PlayerGoalState string)
+        |> required "estimation" int
+        |> required "steps" int
+
+
+string2PlayerGoalState : String -> PlayerGoalState
+string2PlayerGoalState s =
+    Dict.fromList
+        [ ( "NO_GOAL_SET", NO_GOAL_SET )
+        , ( "ASSIGNED", ASSIGNED )
+        , ( "ESTIMATED", ESTIMATED )
+        , ( "COMPLETED", COMPLETED )
+        ]
+        |> Dict.get s
+        |> Maybe.withDefault UNKNOWN_GOAL_STATE
