@@ -1,4 +1,4 @@
-module Command exposing (facilitate, gotoPhase, join, leave, move, resume)
+module Command exposing (estimate, facilitate, gotoPhase, join, leave, move, resume)
 
 import Json.Encode as Encode
 import Message exposing (GamePhase(..))
@@ -23,6 +23,21 @@ join userId gameCode playerName =
           , Encode.object
                 [ ( "gameSessionId", Encode.string gameCode )
                 , ( "playerName", Encode.string playerName )
+                ]
+          )
+        ]
+
+
+estimate : UserSessionId String -> String -> String -> String -> Encode.Value
+estimate userId e1 e2 ee =
+    Encode.object
+        [ ( "commandType", Encode.string "ESTIMATE" )
+        , ( "userSessionId", Encode.string <| userSessionId2String userId )
+        , ( "parameters"
+          , Encode.object
+                [ ( "estimation1", Encode.string e1 )
+                , ( "estimation2", Encode.string e2 )
+                , ( "estimationEnd", Encode.string ee )
                 ]
           )
         ]

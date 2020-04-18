@@ -1,5 +1,6 @@
-module Page.Common exposing (boardView, imgPrefix, playerList)
+module Page.Common exposing (avatarImg, boardView, imgPrefix, playerList, viewAlert)
 
+import Bootstrap.Alert as Alert
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
 import Bootstrap.ListGroup exposing (li, ul)
@@ -7,6 +8,7 @@ import Dict exposing (Dict)
 import Html exposing (Html, h4, img, table, td, text, tr)
 import Html.Attributes exposing (height, src, style, width)
 import Message exposing (Player, PlayerGoalState(..), Square)
+import Msg exposing (Msg(..))
 
 
 playerList : Dict String Player -> Grid.Column msg
@@ -103,6 +105,15 @@ squareView square =
         ]
 
 
+avatarImg : String -> Html msg
+avatarImg str =
+    if str == "" then
+        img [ src <| "/assets/empty.png", width 40 ] []
+
+    else
+        img [ src <| imgPrefix ++ str, width 40 ] []
+
+
 imgUrl : Square -> String
 imgUrl square =
     case square.player of
@@ -116,3 +127,14 @@ imgUrl square =
 imgPrefix : String
 imgPrefix =
     "/assets/avatars/"
+
+
+viewAlert : Alert.Visibility -> String -> Html Msg
+viewAlert alertVisibility errorMessage =
+    Alert.config
+        |> Alert.danger
+        |> Alert.dismissable DismissAlert
+        |> Alert.children
+            [ text errorMessage
+            ]
+        |> Alert.view alertVisibility

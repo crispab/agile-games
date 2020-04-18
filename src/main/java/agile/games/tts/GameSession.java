@@ -227,9 +227,9 @@ public class GameSession {
         player.setEstimation2(estimation2);
     }
 
-    public void setPlayerEstimation3(PlayerId playerId, int estimation3) {
+    public void setPlayerEstimationEnd(PlayerId playerId, int estimation3) {
         Player player = findPlayerById(playerId);
-        player.setEstimation3(estimation3);
+        player.setEstimationEnd(estimation3);
     }
 
     public void setRemainingEstimations() {

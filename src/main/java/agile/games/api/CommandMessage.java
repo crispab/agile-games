@@ -7,6 +7,7 @@ public class CommandMessage {
         FACILITATE,
         JOIN,
         RESUME,
+        ESTIMATE,
         MOVE,
         LEAVE,
         PHASE_GATHERING,

@@ -70,6 +70,18 @@ update msg model =
         Leave ->
             ( model, websocketOut <| Command.leave )
 
+        EstimateGoal1 string ->
+            ( { model | estimate1 = string }, Cmd.none )
+
+        EstimateGoal2 string ->
+            ( { model | estimate2 = string }, Cmd.none )
+
+        EstimateEndGoal string ->
+            ( { model | estimateEnd = string }, Cmd.none )
+
+        Estimate ->
+            ( model, websocketOut <| Command.estimate model.userSessionId model.estimate1 model.estimate2 model.estimateEnd )
+
 
 updateBasedOnMessage : String -> Model -> ( Model, Cmd Msg )
 updateBasedOnMessage messageString model =

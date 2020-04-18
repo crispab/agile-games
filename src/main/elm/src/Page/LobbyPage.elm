@@ -1,6 +1,5 @@
 module Page.LobbyPage exposing (viewLobbyPage)
 
-import Bootstrap.Alert as Alert
 import Bootstrap.Button as Button
 import Bootstrap.Card as Card
 import Bootstrap.Card.Block as Block
@@ -12,6 +11,7 @@ import Html exposing (Html, div, h1, text)
 import Html.Attributes exposing (class, for, style)
 import Model exposing (Model)
 import Msg exposing (Msg(..))
+import Page.Common exposing (viewAlert)
 
 
 viewLobbyPage : Model -> Html Msg
@@ -41,7 +41,7 @@ viewJoinOrFacility model =
                 |> Card.headerH4 [] [ text "Join a game" ]
                 |> Card.block []
                     [ Block.text [] [ text "Enter your name and the game code to join." ]
-                    , Block.custom <| viewAlert model
+                    , Block.custom <| viewAlert model.alertVisibility model.errorMessage
                     , Block.custom <|
                         viewJoinGameForm model
                     ]
@@ -60,17 +60,6 @@ viewJoinOrFacility model =
                 |> Card.view
             ]
         ]
-
-
-viewAlert : Model -> Html Msg
-viewAlert model =
-    Alert.config
-        |> Alert.danger
-        |> Alert.dismissable DismissAlert
-        |> Alert.children
-            [ text model.errorMessage
-            ]
-        |> Alert.view model.alertVisibility
 
 
 viewJoinGameForm : Model -> Html Msg

@@ -132,7 +132,7 @@ class Player {
         checkIfAllEstimationsDone();
     }
 
-    public void setEstimation3(int estimation3) {
+    public void setEstimationEnd(int estimation3) {
         this.endGoal.setEstimation(estimation3);
         checkIfAllEstimationsDone();
     }

@@ -60,8 +60,10 @@ public class TtsWebSocket {
                 return broadcastNewState(gotoPhase(session, EXECUTING));
             case PHASE_REPORTING:
                 return broadcastNewState(gotoPhase(session, REPORTING));
+            case ESTIMATE:
+                return respondAndNewState(session, estimate(session, commandMessage));
             default:
-                return session.send(new FailMessage("Unknown command." + commandMessage.getCommandType()));
+                return session.send(new FailMessage("Unknown command. " + commandMessage.getCommandType()));
         }
 
     }
@@ -74,6 +76,17 @@ public class TtsWebSocket {
 
     private Message tryResume(WebSocketSession session, UserSessionId userSessionId) {
         return gameService.tryResume(session.getId(), userSessionId);
+    }
+
+    private Message estimate(WebSocketSession session, CommandMessage commandMessage) {
+        try {
+            int e1 = Integer.parseInt(commandMessage.getParameters().get("estimation1"));
+            int e2 = Integer.parseInt(commandMessage.getParameters().get("estimation2"));
+            int ee = Integer.parseInt(commandMessage.getParameters().get("estimationEnd"));
+            return gameService.estimate(session.getId(), e1, e2, ee);
+        } catch (NumberFormatException ne) {
+            return new FailMessage("Wrong format, should be integer: " + ne.getMessage());
+        }
     }
 
     private GameSessionCode move(WebSocketSession session, CommandMessage commandMessage) {

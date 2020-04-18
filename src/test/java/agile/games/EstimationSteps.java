@@ -27,7 +27,7 @@ public class EstimationSteps {
         PlayerId playerId = getGameSession().findPlayerByName(playerName);
         getGameSession().setPlayerEstimation1(playerId, ESTIMATION_1);
         getGameSession().setPlayerEstimation2(playerId, ESTIMATION_2);
-        getGameSession().setPlayerEstimation3(playerId, ESTIMATION_3);
+        getGameSession().setPlayerEstimationEnd(playerId, ESTIMATION_3);
     }
 
     @And("all players has done their estimations")

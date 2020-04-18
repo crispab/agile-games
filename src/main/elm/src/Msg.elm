@@ -8,6 +8,10 @@ type Msg
     = WebsocketIn String
     | ChangeCode String
     | ChangePlayerName String
+    | EstimateGoal1 String
+    | EstimateGoal2 String
+    | EstimateEndGoal String
+    | Estimate
     | JoinGame
     | DismissAlert Alert.Visibility
     | Facilitate

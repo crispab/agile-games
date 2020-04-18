@@ -17,6 +17,9 @@ type alias Model =
     , playerId : String
     , playerName : String
     , playerAvatar : String
+    , estimate1 : String
+    , estimate2 : String
+    , estimateEnd : String
     , alertVisibility : Alert.Visibility
     , userSessionId : UserSessionId String
     , gameSessionCode : GameSessionCode String
@@ -36,6 +39,9 @@ initialModel session =
     , playerId = ""
     , playerName = ""
     , playerAvatar = ""
+    , estimate1 = ""
+    , estimate2 = ""
+    , estimateEnd = ""
     , alertVisibility = Alert.closed
     , userSessionId = userSessionIdFromString session
     , gameSessionCode = gameSessionCodeFromString ""

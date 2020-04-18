@@ -66,8 +66,21 @@ public class GameService {
         return gameSessionCode;
     }
 
+    public Message estimate(String webSocketIdStr, int e1, int e2, int ee) {
+        WebSocketId webSocketId = new WebSocketId(webSocketIdStr);
+        GameSessionCode gameSessionCode = socketSessions.get(webSocketId);
+        PlayerId playerId = playerSessions.get(webSocketId);
+        gameSessions.get(gameSessionCode).setPlayerEstimation1(playerId, e1);
+        gameSessions.get(gameSessionCode).setPlayerEstimation2(playerId, e2);
+        gameSessions.get(gameSessionCode).setPlayerEstimationEnd(playerId, ee);
+        return new OkMessage("Estimation done").gameSessionCode(gameSessionCode);
+    }
+
     public GameSessionCode gotoPhase(String webSocketIdStr, GamePhase gamePhase) {
         GameSessionCode gameSessionCode = socketSessions.get(new WebSocketId(webSocketIdStr));
+        if (gamePhase == GamePhase.ESTIMATION) {
+            gameSessions.get(gameSessionCode).assignTargets();
+        }
         gameSessions.get(gameSessionCode).setGamePhase(gamePhase);
         return gameSessionCode;
     }
