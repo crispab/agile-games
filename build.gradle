@@ -9,7 +9,7 @@ elm {
     buildDir = file("src/main/resources/static")
     sourceDir = file("src/main/elm/src")
     executionDir = "src/main/elm"
-    executable = org.mohme.gradle.Executable.Provided.INSTANCE
+    executable = org.mohme.gradle.Executable.Download.V_0_19_1.INSTANCE
     debug = true
 }
 
@@ -84,3 +84,7 @@ task cucumber() {
         }
     }
 }
+
+task stage(dependsOn: ['build','elmMake', 'clean'])
+elmMake.mustRunAfter clean
+build.mustRunAfter elmMake
