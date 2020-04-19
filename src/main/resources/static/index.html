@@ -25,8 +25,12 @@
             flags: startingState
         }
     );
-    var host = location.hostname + ":" + 8080;
-    var ws = new WebSocket("ws://" + host + "/ws/tts");
+    var host = location.hostname + ":" + location.port;
+    var protocol = "wss:";
+    if (location.protocol === "http:") {
+        protocol = "ws:"
+    }
+    var ws = new WebSocket(protocol + "//" + host + "/ws/tts");
 
     ws.onmessage = function (message) {
         console.log("WebSocketIn");
