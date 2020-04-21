@@ -28,7 +28,7 @@ Feature: Game Execution
     And 1 "| |P| |A| |"
     And 2 "| | | | |B|"
     And player named "P" is assigned the two goals "A" and "B"
-    And all players has done their estimations
+    And all players have done their estimations
     When the facilitator starts the game
     And the player moves in direction "right"
     Then the board should look like:
@@ -48,7 +48,7 @@ Feature: Game Execution
     And 2 "| | | |P| |"
     When the facilitator starts the estimations
     Then player named "P" has two goals "C" and "D"
-    When all players has done their estimations
+    When all players have done their estimations
     And the facilitator starts the game
     And the player moves in direction "up"
     Then the player has reached the first goal
@@ -69,7 +69,7 @@ Feature: Game Execution
     And 2 "| | | |P| |"
     When the facilitator starts the estimations
     Then player named "P" has two goals "A" and "B"
-    When all players has done their estimations
+    When all players have done their estimations
     And the facilitator starts the game
     And the player moves in direction "up"
     And the player moves in direction "down"
@@ -89,7 +89,7 @@ Feature: Game Execution
     And 1 "| | | | |B|"
     And 2 "| | | |P| |"
     And player named "P" is assigned the two goals "A" and "B"
-    When all players has done their estimations
+    When all players have done their estimations
     And the facilitator starts the game
     And the player moves in direction "up"
     Then the player named "P" first goal is in state "estimated"

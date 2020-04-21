@@ -30,13 +30,23 @@ public class EstimationSteps {
         getGameSession().setPlayerEstimationEnd(playerId, ESTIMATION_3);
     }
 
-    @And("all players has done their estimations")
+    @And("all players have done their estimations")
     public void allPlayersHasDoneTheirEstimations() {
         getGameSession().setRemainingEstimations();
     }
 
     @Then("the player's steps for the first goal are {int}")
-    public void thePlayerSStepsIs(int steps) {
+    public void thePlayerForFirstGoalStepsIs(int steps) {
         assertEquals(steps, getGameSession().getPlayerSteps1(playerId));
+    }
+
+    @Then("the player's steps for the second goal are {int}")
+    public void thePlayersForSecondGoalStepsIs(int steps) {
+        assertEquals(steps, getGameSession().getPlayerSteps2(playerId));
+    }
+
+    @Then("the player's steps for the end goal are {int}")
+    public void thePlayersForEndGoalStepsIs(int steps) {
+        assertEquals(steps, getGameSession().getPlayerEndSteps(playerId));
     }
 }

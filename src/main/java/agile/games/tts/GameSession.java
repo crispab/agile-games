@@ -187,7 +187,7 @@ public class GameSession {
         return users.get(userId);
     }
 
-    public PlayerPosition getPlayerEndGoal(PlayerId playerId) {
+    public PlayerPosition getPlayerEndGoalPosition(PlayerId playerId) {
         Player playerById = findPlayerById(playerId);
         return playerById.getEndGoal().getGoalPosition();
     }
@@ -211,6 +211,11 @@ public class GameSession {
     public PlayerTapGoal getPlayerGoal2(PlayerId playerId) {
         Player player = findPlayerById(playerId);
         return player.getGoal2();
+    }
+
+    public PlayerEndGoal getPlayerEndGoal(PlayerId playerId) {
+        Player player = findPlayerById(playerId);
+        return player.getEndGoal();
     }
 
     public PlayerState getPlayerState(PlayerId playerId) {
@@ -239,6 +244,16 @@ public class GameSession {
     public int getPlayerSteps1(PlayerId playerId) {
         Player player = findPlayerById(playerId);
         return player.getSteps1();
+    }
+
+    public int getPlayerSteps2(PlayerId playerId) {
+        Player player = findPlayerById(playerId);
+        return player.getSteps2();
+    }
+
+    public int getPlayerEndSteps(PlayerId playerId) {
+        Player player = findPlayerById(playerId);
+        return player.getEndSteps();
     }
 
     public GameSessionCode getCode() {

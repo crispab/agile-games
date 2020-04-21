@@ -80,6 +80,12 @@ class Player {
         if (isTargetingGoal1()) {
             this.setSteps1(this.getSteps1() + steps);
         }
+        if (isTargetingGoal2()) {
+            this.setSteps2(this.getSteps2() + steps);
+        }
+        if (isTargetingEndGoal()) {
+            this.setEndSteps(this.getEndSteps() + steps);
+        }
     }
 
     public PlayerPosition getPosition() {
@@ -162,8 +168,24 @@ class Player {
         return getGoal1().getSteps();
     }
 
+    public int getSteps2() {
+        return getGoal2().getSteps();
+    }
+
+    public void setSteps2(int steps2) {
+        getGoal2().setSteps(steps2);
+    }
+
     public void setSteps1(int steps1) {
         getGoal1().setSteps(steps1);
+    }
+
+    public int getEndSteps() {
+        return getEndGoal().getSteps();
+    }
+
+    public void setEndSteps(int steps) {
+        getEndGoal().setSteps(steps);
     }
 
     public void checkGoal1(Player goal1Player) {

@@ -1,9 +1,6 @@
 package agile.games;
 
-import agile.games.tts.PlayerId;
-import agile.games.tts.PlayerPosition;
-import agile.games.tts.PlayerState;
-import agile.games.tts.PlayerTapGoal;
+import agile.games.tts.*;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -21,7 +18,7 @@ public class GameExecution {
 
     @Then("the player has end goal to reach {int},{int}")
     public void thePlayerHasEndGoalToReach(int x, int y) {
-        PlayerPosition endPosition = getGameSession().getPlayerEndGoal(playerId);
+        PlayerPosition endPosition = getGameSession().getPlayerEndGoalPosition(playerId);
         assertEquals(new PlayerPosition(x, y), endPosition);
     }
 
@@ -65,6 +62,12 @@ public class GameExecution {
     public void thePlayerHasReachedTheSecondGoal() {
         PlayerTapGoal playerGoal2 = getGameSession().getPlayerGoal2(playerId);
         assertEquals(COMPLETED, playerGoal2.getState(), "Player has not reached goal 2.");
+    }
+
+    @And("the player has reached the end goal")
+    public void thePlayerHasReachedTheEndGoal() {
+        PlayerEndGoal playerEndGoal = getGameSession().getPlayerEndGoal(playerId);
+        assertEquals(COMPLETED, playerEndGoal.getState(), "Player has not reached end goal.");
     }
 
     @Then("the player is done")
