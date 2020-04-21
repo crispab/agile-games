@@ -3,6 +3,16 @@
 This is the queue for future features. Not. It is my memory list for things
 that come up, and I wish to offload my brain by putting them here.
 
+## Bugs
+
+### Same persons as goals
+
+There seem to be possible to get assigned the same two persons as goals.
+
+### Too few icons
+
+There should be a lot more than three icons. :)
+
 ## Publish the BDD report
 
 While putting the specification in a Word document has some value, 
@@ -24,7 +34,7 @@ valuable to users when the group is not large enough.
 
 When executing, it is help ful to see which target is the current one.
 
-### Show end goal on the board¨
+### Show end goal on the board
 
 The end position should be marked visually, so it is easy to understand 
 where to go.
