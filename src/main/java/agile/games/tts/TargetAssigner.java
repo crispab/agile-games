@@ -23,7 +23,7 @@ public class TargetAssigner {
             }
             for (int attempts = 0; attempts <= MAX_ATTEMPTS; attempts++) {
                 Player target2 = pickRandomlyFromList(random, playerList);
-                if (!target2.getId().equals(player.getId()) && !target2.getId().equals(player.getGoal1())) {
+                if (!target2.getId().equals(player.getId()) && !target2.getId().equals(player.getGoal1().getTapGoal())) {
                     assignGoal2(player, target2.getId());
                     break;
                 }
