@@ -1,10 +1,11 @@
 module Page.PlayerPage exposing (viewPlayerPage)
 
 import Bootstrap.Button as Button
+import Bootstrap.ButtonGroup as ButtonGroup
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
 import Bootstrap.Grid as Grid
-import Bootstrap.Grid.Col as Col exposing (xs, xs2, xs3)
+import Bootstrap.Grid.Col as Col exposing (xs, xs3)
 import Dict
 import Html exposing (Html, div, h1, h4, img, p, text)
 import Html.Attributes exposing (class, for, src, style, width)
@@ -170,6 +171,7 @@ executingContent model =
         [ Grid.col [ Col.sm8 ]
             [ h1 [] [ text "Executing" ]
             , p [] [ text executingText ]
+            , currentTarget model
             , boardView model.gameState.board myPos
             ]
         , Grid.col [ Col.sm4 ]
@@ -178,30 +180,57 @@ executingContent model =
         ]
 
 
+currentTarget : Model -> Html msg
+currentTarget model =
+    case Dict.get model.playerId model.gameState.players of
+        Just my ->
+            if my.goals.goal1.goal.state /= Message.COMPLETED then
+                let
+                    targetPlayer1 =
+                        Dict.get my.goals.goal1.targetPlayerId model.gameState.players
+                in
+                case targetPlayer1 of
+                    Just tp ->
+                        p [] [ text "Goal 1: ", avatarImg tp.avatar ]
+
+                    Nothing ->
+                        p [] [ text "Goal 1!" ]
+
+            else if my.goals.goal2.goal.state /= Message.COMPLETED then
+                let
+                    targetPlayer2 =
+                        Dict.get my.goals.goal2.targetPlayerId model.gameState.players
+                in
+                case targetPlayer2 of
+                    Just tp ->
+                        p [] [ text "Goal 2: ", avatarImg tp.avatar ]
+
+                    Nothing ->
+                        p [] [ text "Goal 2!" ]
+
+            else if my.goals.endGoal.goal.state /= Message.COMPLETED then
+                p [] [ text "End goal: ", img [ src " /assets/endSquare.png", width 40 ] [] ]
+
+            else
+                p [] [ text "You're done!" ]
+
+        Nothing ->
+            div [] []
+
+
 arrowKeys : Html Msg
 arrowKeys =
-    div []
-        [ Grid.row []
-            [ Grid.col [ xs2 ] []
-            , Grid.col [ xs2 ] [ Button.button [ Button.outlinePrimary, Button.onClick (Move Up) ] [ text "U" ] ]
-            , Grid.col [ xs2 ] []
-            ]
-        , Grid.row []
-            [ Grid.col [ xs2 ] [ Button.button [ Button.outlinePrimary, Button.onClick (Move Left) ] [ text "L" ] ]
-            , Grid.col [ xs2 ] []
-            , Grid.col [ xs2 ] [ Button.button [ Button.outlinePrimary, Button.onClick (Move Right) ] [ text "R" ] ]
-            ]
-        , Grid.row []
-            [ Grid.col [ xs2 ] []
-            , Grid.col [ xs2 ] [ Button.button [ Button.outlinePrimary, Button.onClick (Move Down) ] [ text "D" ] ]
-            , Grid.col [ xs2 ] []
-            ]
+    ButtonGroup.buttonGroup []
+        [ ButtonGroup.button [ Button.outlinePrimary, Button.onClick (Move Left) ] [ text "<- L" ]
+        , ButtonGroup.button [ Button.outlinePrimary, Button.onClick (Move Up) ] [ text "U" ]
+        , ButtonGroup.button [ Button.outlinePrimary, Button.onClick (Move Down) ] [ text "D" ]
+        , ButtonGroup.button [ Button.outlinePrimary, Button.onClick (Move Right) ] [ text "R ->" ]
         ]
 
 
 executingText =
     """
-    Go, Go, Go! Move your avatar by pressing the arrow keys so that you stand next to your target person.
+    Go, Go, Go! Move your avatar by pressing the buttons so that you reach next goal.
     """
 
 
