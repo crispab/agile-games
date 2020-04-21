@@ -29,14 +29,7 @@ valuable to users when the group is not large enough.
 
 ## Executing 
 
-### Show current target
-
-When executing, it is help ful to see which target is the current one.
-
-### Show end goal on the board
-
-The end position should be marked visually, so it is easy to understand 
-where to go.
+Nothing right now.
 
 ## Reporting
 
