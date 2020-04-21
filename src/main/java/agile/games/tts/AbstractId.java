@@ -18,8 +18,8 @@ public class AbstractId {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AbstractId playerId = (AbstractId) o;
-        return id.equals(playerId.id);
+        AbstractId abstractId = (AbstractId) o;
+        return id.equals(abstractId.id);
     }
 
     @Override
