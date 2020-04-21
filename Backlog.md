@@ -35,8 +35,7 @@ Nothing right now.
 
 ### Report outcome
 
-When reporting, show outcome with estimations per goal and total, 
-for each player. Both players and facilitator should see them.
+Nothing right now.
 
 ## Facilitation
 
