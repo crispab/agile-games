@@ -39,7 +39,12 @@ mainContent model =
 headLine : GameSessionCode String -> String -> String -> Grid.Column Msg
 headLine code playerName playerAvatar =
     Grid.col []
-        [ div [ class "jumbotron", style "text-align" "center" ]
+        [ div
+            [ class "jumbotron"
+            , style "text-align" "center"
+            , style "background-image" "url(https://www.crisp.se/wp-content/themes/crisp/images/crisp-logo-smaller-20171009.png)"
+            , style "background-repeat" "no-repeat"
+            ]
             [ h4 [] [ text <| gameSessionId2String code ]
             , h1 []
                 [ text <| "Player " ++ playerName

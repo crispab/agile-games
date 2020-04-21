@@ -33,7 +33,12 @@ viewFacilitatorPage model =
 
 viewHeadLine : GameSessionCode String -> Html Msg
 viewHeadLine gameSessionID =
-    div [ class "jumbotron", style "text-align" "center" ]
+    div
+        [ class "jumbotron"
+        , style "text-align" "center"
+        , style "background-image" "url(https://www.crisp.se/wp-content/themes/crisp/images/crisp-logo-smaller-20171009.png)"
+        , style "background-repeat" "no-repeat"
+        ]
         [ h1 [] [ text "Facilitator" ]
         , h2 [] [ text <| "Game code: " ++ gameSessionId2String gameSessionID ]
         , Button.button [ Button.outlineDanger, Button.onClick Leave ] [ text "Leave" ]

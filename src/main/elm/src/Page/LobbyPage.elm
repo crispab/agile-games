@@ -28,7 +28,12 @@ viewLobbyPage model =
 
 viewLobbyHeadline : Html Msg
 viewLobbyHeadline =
-    div [ class "jumbotron", style "text-align" "center" ]
+    div
+        [ class "jumbotron"
+        , style "text-align" "center"
+        , style "background-image" "url(https://www.crisp.se/wp-content/themes/crisp/images/crisp-logo-smaller-20171009.png)"
+        , style "background-repeat" "no-repeat"
+        ]
         [ h1 [] [ text "Welcome to tap-the-shoulder" ]
         ]
 
