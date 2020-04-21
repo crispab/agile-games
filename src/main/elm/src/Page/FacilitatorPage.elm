@@ -9,7 +9,7 @@ import Html.Attributes exposing (class, style)
 import Message exposing (GamePhase(..), GameState)
 import Model exposing (GameSessionCode, Model, gameSessionId2String)
 import Msg exposing (Msg(..))
-import Page.Common exposing (boardView, playerList)
+import Page.Common exposing (boardView, playerList, reportingTable)
 
 
 viewFacilitatorPage : Model -> Html Msg
@@ -24,6 +24,7 @@ viewFacilitatorPage model =
         , Grid.row []
             [ Grid.col []
                 [ phaseRow model.gameState
+                , reportingTable model.gameState.players
                 , boardView model.gameState.board ( -1, -1 )
                 ]
             ]

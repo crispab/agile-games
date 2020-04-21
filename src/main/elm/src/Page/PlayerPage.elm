@@ -12,7 +12,7 @@ import Html.Attributes exposing (class, for, src, style, width)
 import Message exposing (GamePhase(..), GameState, Player, Square)
 import Model exposing (GameSessionCode, Model, gameSessionId2String)
 import Msg exposing (Direction(..), Msg(..))
-import Page.Common exposing (avatarImg, boardView, imgPrefix, playerList, viewAlert)
+import Page.Common exposing (avatarImg, boardView, imgPrefix, playerList, reportingTable, viewAlert)
 
 
 viewPlayerPage : Model -> Html Msg
@@ -235,16 +235,19 @@ executingText =
 
 
 reportingContent : Model -> Html Msg
-reportingContent _ =
+reportingContent model =
     Grid.row []
-        [ Grid.col [ Col.sm8 ]
+        [ Grid.col [ Col.sm12 ]
             [ h1 [] [ text "Reporting" ]
             , p [] [ text reportingText ]
+            , reportingTable model.gameState.players
             ]
         ]
 
 
+reportingText : String
 reportingText =
     """
-    That was all! Here you can see how it went.
+    That was all! Here you can see how it went. The numbers
+    are estimated and outcome (E/O).
     """

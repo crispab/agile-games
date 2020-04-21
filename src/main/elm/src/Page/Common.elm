@@ -1,11 +1,11 @@
-module Page.Common exposing (avatarImg, boardView, imgPrefix, playerList, viewAlert)
+module Page.Common exposing (avatarImg, boardView, imgPrefix, playerList, reportingTable, smallAvatar, viewAlert)
 
 import Bootstrap.Alert as Alert
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
 import Bootstrap.ListGroup exposing (li, ul)
 import Dict exposing (Dict)
-import Html exposing (Html, h4, img, table, td, text, tr)
+import Html exposing (Html, h4, img, table, tbody, td, text, th, thead, tr)
 import Html.Attributes exposing (height, src, style, width)
 import Message exposing (Player, PlayerGoalState(..), Square)
 import Msg exposing (Msg(..))
@@ -30,7 +30,7 @@ viewPlayers players =
                             [ goal1 player
                             , goal2 player
                             , endGoal player
-                            , avatar player.avatar
+                            , smallAvatar player.avatar
                             , text <| " " ++ player.name
                             ]
                     )
@@ -78,8 +78,8 @@ goalUrl state =
     "/assets/goal" ++ String.fromInt n ++ ".png"
 
 
-avatar : String -> Html msg
-avatar url =
+smallAvatar : String -> Html msg
+smallAvatar url =
     img [ src <| avatarUrl url, height 14, style "margin-left" "5px" ] []
 
 
@@ -148,3 +148,56 @@ viewAlert alertVisibility errorMessage =
             [ text errorMessage
             ]
         |> Alert.view alertVisibility
+
+
+reportingTable : Dict String Player -> Html msg
+reportingTable players =
+    table []
+        [ thead []
+            [ tr []
+                [ th [] [ text "Player" ]
+                , th [] [ text "Goal 1 E/O" ]
+                , th [] [ text "Goal 2 E/O" ]
+                , th [] [ text "End goal E/O" ]
+                , th [] [ text "Total E/O" ]
+                ]
+            ]
+        , tbody []
+            (List.map reportRow <| Dict.values players)
+        ]
+
+
+reportRow : Player -> Html msg
+reportRow player =
+    let
+        g1Estimation =
+            player.goals.goal1.goal.estimation
+
+        g2Estimation =
+            player.goals.goal2.goal.estimation
+
+        endEstimation =
+            player.goals.endGoal.goal.estimation
+
+        totalEstimation =
+            g1Estimation + g2Estimation + endEstimation
+
+        g1Steps =
+            player.goals.goal1.goal.steps
+
+        g2Steps =
+            player.goals.goal2.goal.steps
+
+        endSteps =
+            player.goals.endGoal.goal.steps
+
+        totalSteps =
+            g1Steps + g2Steps + endSteps
+    in
+    tr []
+        [ td [] [ smallAvatar player.avatar, text <| " " ++ player.name ]
+        , td [] [ text <| String.fromInt g1Estimation ++ "/" ++ String.fromInt g1Steps ]
+        , td [] [ text <| String.fromInt g2Estimation ++ "/" ++ String.fromInt g2Steps ]
+        , td [] [ text <| String.fromInt endEstimation ++ "/" ++ String.fromInt endSteps ]
+        , td [] [ text <| String.fromInt totalEstimation ++ "/" ++ String.fromInt totalSteps ]
+        ]
