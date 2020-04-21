@@ -74,7 +74,7 @@ gatheringContent model =
         [ Grid.col []
             [ h1 [] [ text "Gathering" ]
             , p [] [ text gatheringText ]
-            , boardView model.gameState.board
+            , boardView model.gameState.board ( -1, -1 )
             ]
         ]
 
@@ -103,7 +103,7 @@ estimationContent model =
                     [ h1 [] [ text "Estimation" ]
                     , p [] [ text estimationText ]
                     , estimationForm model player
-                    , boardView model.gameState.board
+                    , boardView model.gameState.board ( -1, -1 )
                     ]
                 ]
 
@@ -157,11 +157,20 @@ estimationForm model player =
 
 executingContent : Model -> Html Msg
 executingContent model =
+    let
+        myPos =
+            case Dict.get model.playerId model.gameState.players of
+                Just p ->
+                    ( p.goals.endGoal.targetX, p.goals.endGoal.targetY )
+
+                Nothing ->
+                    ( -1, -1 )
+    in
     Grid.row []
         [ Grid.col [ Col.sm8 ]
             [ h1 [] [ text "Executing" ]
             , p [] [ text executingText ]
-            , boardView model.gameState.board
+            , boardView model.gameState.board myPos
             ]
         , Grid.col [ Col.sm4 ]
             [ arrowKeys

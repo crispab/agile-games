@@ -24,7 +24,7 @@ viewFacilitatorPage model =
         , Grid.row []
             [ Grid.col []
                 [ phaseRow model.gameState
-                , boardView model.gameState.board
+                , boardView model.gameState.board ( -1, -1 )
                 ]
             ]
         ]

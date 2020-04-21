@@ -5,13 +5,7 @@ that come up, and I wish to offload my brain by putting them here.
 
 ## Bugs
 
-### Same persons as goals
-
-There seem to be possible to get assigned the same two persons as goals.
-
-### Too few icons
-
-There should be a lot more than three icons. :)
+No known bugs.
 
 ### Need to reload
 

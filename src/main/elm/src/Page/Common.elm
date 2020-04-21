@@ -88,21 +88,27 @@ avatarUrl url =
     "/assets/avatars/" ++ url
 
 
-boardView : List (List Square) -> Html msg
-boardView board =
-    table [] (List.indexedMap boardRowView board)
+boardView : List (List Square) -> ( Int, Int ) -> Html msg
+boardView board ( x, y ) =
+    table [] (List.indexedMap (boardRowView ( x, y )) board)
 
 
-boardRowView : Int -> List Square -> Html msg
-boardRowView row squares =
-    tr [] ([ td [] [ text <| String.fromInt row ] ] ++ List.map squareView squares)
+boardRowView : ( Int, Int ) -> Int -> List Square -> Html msg
+boardRowView ( x, y ) row squares =
+    tr [] ([ td [] [ text <| String.fromInt row ] ] ++ List.indexedMap (squareView ( x, y ) row) squares)
 
 
-squareView : Square -> Html msg
-squareView square =
-    td [ style "border" "solid 1px" ]
-        [ img [ src <| imgUrl square, width 40 ] []
-        ]
+squareView : ( Int, Int ) -> Int -> Int -> Square -> Html msg
+squareView ( x, y ) row col square =
+    if y == row && x == col then
+        td [ style "border" "solid 1px" ]
+            [ img [ src <| imgUrl square True, width 40 ] []
+            ]
+
+    else
+        td [ style "border" "solid 1px" ]
+            [ img [ src <| imgUrl square False, width 40 ] []
+            ]
 
 
 avatarImg : String -> Html msg
@@ -114,11 +120,15 @@ avatarImg str =
         img [ src <| imgPrefix ++ str, width 40 ] []
 
 
-imgUrl : Square -> String
-imgUrl square =
+imgUrl : Square -> Bool -> String
+imgUrl square endSquare =
     case square.player of
         Nothing ->
-            "/assets/empty.png"
+            if endSquare then
+                "/assets/endSquare.png"
+
+            else
+                "/assets/empty.png"
 
         Just player ->
             imgPrefix ++ player.avatar
