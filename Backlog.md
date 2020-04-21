@@ -13,6 +13,11 @@ There seem to be possible to get assigned the same two persons as goals.
 
 There should be a lot more than three icons. :)
 
+### Need to reload
+
+It has been reported that the players need to reload when the facilitator
+clicks for estimation. Possible cause is websocket timeout (speculation).
+
 ## Publish the BDD report
 
 While putting the specification in a Word document has some value, 
