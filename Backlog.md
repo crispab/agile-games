@@ -55,3 +55,12 @@ They are small, and they are cryptic.
 Show the next phase to the facilitator so that they do not skip one 
 by mistake.
 
+## Release notes
+
+After actually doing a release, although they decided not to use it,
+it struck me that doing release notes in some interesting way is
+certainly on the table.
+
+## Build pipe
+
+Why not set up a build pipe? Like Travis?
