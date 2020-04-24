@@ -7,10 +7,17 @@ that come up, and I wish to offload my brain by putting them here.
 
 No known bugs.
 
-### Need to reload
+## Usability
 
-It has been reported that the players need to reload when the facilitator
-clicks for estimation. Possible cause is websocket timeout (speculation).
+### Recognize arrow keys
+
+While buttons are necessary for touch screen users, majority will use a 
+keyboard and expect the arrow keys to work.
+
+### Be lean on interpreting game code
+
+Trim of spaces and accept thtat users sometimes forget the space in the middle as
+it is perceived as a 6-digit number.
 
 ## Publish the BDD report
 

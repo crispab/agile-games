@@ -8,7 +8,7 @@ I want to learn several things
 ## Specification by Example
 
 Although I have previous experiences with BDD tools such as Cucumber and Spock, 
-I feel slightly rusty. But the main learning I am pursuing is the
+I feel slightly rusty. The main learning I am pursuing is the
 specification part rather than the testing.
 
 The tools are  working well as test tools, I am interested in writing accessible and
@@ -21,21 +21,23 @@ board. I ended up in some kind of ascii art.
 What is it about specification vs test? A specification describes 
 functions in the system. It will only be what's interesting from a
 business rules perspective. So everything in it must be fulfilled 
-by the system but it is only a subset of it. 
+by the system, but it is only a subset of it. 
 
-For example, the specification talks about players having names but 
+For example, the specification talks about players having names, but 
 it does not state how these names are given. That may be left open
-or be described later versions of the specification. It does not talk 
-about what users see on screen. That is design but we are not testing
-here and user experience is not achieved by writing something in
+or be described later versions of the specification. 
+
+It does not talk about what users see on screen. 
+We are not testing, so we do not look for things coming up correctly
+on screen. User experience is not achieved by writing something in
 Gherkin.
 
 While working with Cucumber, I learned that there are reporting 
 tools but the output from them are the result of running a suite.
-That is a mindset of testing and I was more interested in specification
+That is a mindset of testing, and I was more interested in specification
 as said. 
 
-Being readable is a main concern so I first tried printing from 
+Being readable is a main concern, so I first tried printing from 
 the development environment, then copy and paste into Word but was not 
 happy. I ended up writing an extremely simple Gherkin parser that 
 outputs HTML which Word can easily digest. Takes all the specification
@@ -71,6 +73,13 @@ tries to use it immediately. But then the sockets may not be
 ready so instead it waits for the server to send its response
 to the socket connection establishment.
 
+I also learned that the web sockets have a time out where they close.
+Typically, players need to wait for others to join and there is no
+traffic on their socket resulting in a time out. I suspect that it is the
+server's decision. The client gets traffic, but the server gets nothing
+and decides to close the connection. Question is, what shall the client
+do when that happens? I opted for a simple reload.
+
 In hindsight, the url approach had been easier to implement but
 user experience had suffered somewhat.
 
@@ -78,7 +87,7 @@ When all of a sudden some messages never come from the server,
 despite the broadcast, it may be a problem with serialization.
 As with REST, keep a set of classes meant for transportation.
 
-I did a redesign of the API. First there was messages with parameters
+I did a redesign of the API. First there were messages with parameters
 without type. Then I did a strictly typed API and used `oneOf` to 
 identify the type of message. The decoder that understands the message
 gets the job done. This is a much cleaner design and there is no logic
@@ -100,7 +109,7 @@ the build.
 
 After used `elm-ui` which is a very Elm specific library, I felt 
 like trying Bootstrap with an Elm client. I have not used
-Bootstrap for years so I have forgot a lot and there are many 
+Bootstrap for years, so I have forgot a lot and there are many 
 new things. Mostly it is built on Flexbox which was not a thing
-back then. There is an Elm library which makes it type safe
+back then. There is an Elm library which makes it type safe,
 so I will go with that. 

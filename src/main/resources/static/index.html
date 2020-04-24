@@ -38,6 +38,11 @@
         app.ports.websocketIn.send(message.data);
     };
 
+    ws.onclose = function (event) {
+        console.log("Connection was closed.");
+        location.reload();
+    };
+
     app.ports.websocketOut.subscribe(function (msg) {
         console.log("WebSocketOut");
         console.log(msg);
