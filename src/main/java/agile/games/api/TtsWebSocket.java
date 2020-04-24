@@ -23,8 +23,8 @@ import static agile.games.tts.GamePhase.*;
 public class TtsWebSocket {
     private static final Logger LOG = LoggerFactory.getLogger(TtsWebSocket.class);
 
-    private WebSocketBroadcaster broadcaster;
-    private GameService gameService;
+    private final WebSocketBroadcaster broadcaster;
+    private final GameService gameService;
 
     public TtsWebSocket(WebSocketBroadcaster broadcaster, GameService gameService) {
         this.broadcaster = broadcaster;
@@ -94,6 +94,7 @@ public class TtsWebSocket {
     }
 
     private GameSessionCode gotoPhase(WebSocketSession session, GamePhase gamePhase) {
+        LOG.info("New state by {}: {}", session.getId(), gamePhase);
         return gameService.gotoPhase(session.getId(), gamePhase);
     }
 
