@@ -11,7 +11,7 @@ Shows the problem of estimation in a complex world. Participants are asked to
 estimate the number of steps it takes to reach two other persons in the room.
 
 This is available now at
- [http://agile-games.herkouapp.com](http://agile-games.herkouapp.com).
+ [https://agile-games.herokuapp.com/](https://agile-games.herokuapp.com/).
 
 ## Other ideas
 
